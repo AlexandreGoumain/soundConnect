@@ -1,0 +1,49 @@
+@use "sass:color";
+
+// Couleurs principales
+$primary-color: #6d9cff;
+$secondary-color: #1a1a1a;
+$tertiary-color: #3b60e4;
+$text-color: #fff;
+$text-hover: #a7a7a7;
+$background-color: #ebdcd5;
+$background-color-secondary: #034b80;
+
+// tailles de police
+$font-size-xs: 0.75rem;
+$font-size-sm: 0.875rem;
+$font-size-md: 1rem;
+$font-size-lg: 1.125rem;
+$font-size-xl: 1.5rem;
+$font-size-xxl: 2rem;
+
+// Tailles d'écran pour les media queries
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+
+// Spacing
+$space-xs: 0.5rem;
+$space-sm: 1rem;
+$space-md: 2rem;
+$space-lg: 3rem;
+
+// Fonts
+$font-main: "Inter", sans-serif;
+$font-heading: "Montserrat", sans-serif;
+
+// Animations
+$transition-speed: 0.3s;
+
+// Boutons
+$btn-primary: $primary-color;
+$btn-secondary: $secondary-color;
+$btn-tertiary: $tertiary-color;
+$btn-background-primary: $text-color;
+$btn-text: $text-color;
+$btn-hover: color.adjust($primary-color, $lightness: -10%);
+$btn-radius: 4px;
+$btn-padding: 0.75rem 1.5rem;
+$btn-font-size: 1.1rem;
+$btn-font-weight: 600;
+$btn-transition: background-color $transition-speed ease;

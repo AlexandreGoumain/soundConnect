@@ -1,0 +1,44 @@
+@use "variables" as v;
+@use "sass:color";
+
+body {
+    font-family: v.$font-main;
+    background-color: v.$background-color;
+    color: v.$text-color;
+    width: 100%;
+    min-width: 100%;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 v.$space-md;
+    box-sizing: border-box;
+}
+
+/* Typographie */
+h1 {
+    font-family: v.$font-heading;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: v.$space-md;
+    color: v.$text-color;
+}
+
+h2 {
+    font-family: v.$font-heading;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: v.$space-sm;
+}
+
+h3 {
+    font-family: v.$font-heading;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+p {
+    color: v.$text-color;
+}

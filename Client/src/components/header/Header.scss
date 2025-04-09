@@ -1,0 +1,54 @@
+@use "../../styles" as s;
+@use "sass:color";
+
+.header {
+    background-color: red;
+    width: 100%;
+
+    .container {
+        @include s.flex-between;
+        flex-direction: column;
+        padding: s.$space-sm;
+        width: 100%;
+
+        @include s.tablet-up {
+            flex-direction: row;
+            padding: s.$space-md;
+        }
+
+        @include s.desktop-up {
+            padding: s.$space-lg;
+        }
+    }
+
+    .header-content {
+        text-align: center;
+        width: 100%;
+
+        h1 {
+            color: s.$text-color;
+            font-size: s.$font-size-xl;
+
+            @include s.tablet-up {
+                font-size: s.$font-size-xxl;
+            }
+
+            @include s.desktop-up {
+                font-size: calc(s.$font-size-xxl * 1.2);
+            }
+        }
+
+        p {
+            color: s.$text-color;
+            font-size: s.$font-size-md;
+
+            @include s.tablet-up {
+                font-size: s.$font-size-lg;
+            }
+
+            @include s.desktop-up {
+                font-size: calc(s.$font-size-lg * 1.1);
+            }
+        }
+    }
+}
