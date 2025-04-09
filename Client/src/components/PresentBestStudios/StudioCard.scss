@@ -1,0 +1,21 @@
+@use "../../styles" as s;
+
+.studio-card {
+    display: flex;
+    flex-direction: column;
+    background-color: #0000ff;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+
+    h3 {
+        color: s.$text-color;
+        font-size: s.$font-size-xl;
+        margin: 10px 0;
+    }
+
+    p {
+        color: s.$text-color;
+        font-size: s.$font-size-md;
+    }
+}
