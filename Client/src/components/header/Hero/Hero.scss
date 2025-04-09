@@ -1,0 +1,60 @@
+@use "../../../styles" as s;
+@use "sass:color";
+
+.hero {
+    background-color: s.$background-color-muted;
+    padding: s.$space-md s.$space-lg;
+    text-align: center;
+    border-radius: 4px;
+    margin: 0 auto;
+
+    h2 {
+        color: s.$text-color;
+        font-size: s.$font-size-xxl;
+        font-weight: bold;
+        margin-bottom: s.$space-sm;
+    }
+
+    p {
+        color: s.$text-color;
+        font-size: s.$font-size-md;
+        margin-bottom: s.$space-md;
+    }
+
+    .search-container {
+        display: flex;
+        flex-direction: column;
+        gap: s.$space-sm;
+    }
+
+    .search-input {
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        font-size: s.$font-size-md;
+        width: 100%;
+    }
+
+    .buttons-container {
+        display: flex;
+        gap: s.$space-sm;
+    }
+
+    .search-button {
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        font-size: s.$font-size-md;
+        color: s.$text-color;
+        cursor: pointer;
+        flex: 1;
+
+        &.primary {
+            background-color: s.$primary-color;
+        }
+
+        &.secondary {
+            background-color: #666;
+        }
+    }
+}
