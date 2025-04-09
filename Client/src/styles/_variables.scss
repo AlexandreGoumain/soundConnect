@@ -5,6 +5,8 @@ $primary-color: #6d9cff;
 $secondary-color: #1a1a1a;
 $tertiary-color: #3b60e4;
 $text-color: #fff;
+$background-color-muted: rgba(104, 104, 104, 0.7);
+$text-color-secondary: rgba(255, 255, 255, 0.7);
 $text-hover: #a7a7a7;
 $background-color: #ebdcd5;
 $background-color-secondary: #034b80;
@@ -16,7 +18,7 @@ $font-size-md: 1rem;
 $font-size-lg: 1.125rem;
 $font-size-xl: 1.5rem;
 $font-size-xxl: 2rem;
-
+$font-size-xxxl: 2.5rem;
 // Tailles d'écran pour les media queries
 $mobile: 480px;
 $tablet: 768px;

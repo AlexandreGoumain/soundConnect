@@ -1,0 +1,83 @@
+@use "../../styles" as s;
+
+.footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: s.$background-color-secondary;
+    gap: 20px;
+
+    @include s.tablet-up {
+        flex-direction: row;
+    }
+
+    .logo {
+        font-size: s.$font-size-xl;
+        font-weight: bold;
+        color: s.$text-color;
+        margin: 0;
+        margin-bottom: 10px;
+
+        @include s.tablet-up {
+            font-size: s.$font-size-xl;
+        }
+
+        @include s.desktop-up {
+            font-size: s.$font-size-xxl;
+        }
+    }
+
+    section {
+        width: 100%;
+        padding: s.$space-xs s.$space-xs;
+
+        p {
+            font-size: s.$font-size-sm;
+            color: s.$text-color-secondary;
+        }
+
+        h2 {
+            font-size: s.$font-size-md;
+            margin: 0;
+            margin-bottom: 10px;
+            font-weight: bold;
+
+            @include s.tablet-up {
+                font-size: s.$font-size-lg;
+            }
+        }
+
+        ul {
+            margin: 5px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+
+            li {
+                list-style: none;
+                a {
+                    color: s.$text-color-secondary;
+                }
+
+                @include s.tablet-up {
+                    font-size: s.$font-size-md;
+                }
+            }
+        }
+
+        .social-links {
+            display: flex;
+            flex-direction: row;
+            font-size: s.$font-size-md;
+            gap: 25px;
+
+            @include s.tablet-up {
+                font-size: s.$font-size-xl;
+            }
+
+            @include s.desktop-up {
+                font-size: s.$font-size-xxl;
+            }
+        }
+    }
+}
