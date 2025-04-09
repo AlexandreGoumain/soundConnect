@@ -1,0 +1,14 @@
+@use "./styles" as s;
+
+.app {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 100%;
+}
+
+.main-content {
+    padding: s.$space-lg 0;
+    background-color: s.$background-color;
+    width: 100%;
+}

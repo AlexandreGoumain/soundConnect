@@ -1,0 +1,9 @@
+@forward "variables";
+@forward "mixins";
+@forward "reset";
+@forward "global";
+
+/* 
+  Ce fichier agit comme point d'entrée pour tous les styles de l'application.
+  Il est importé dans main.jsx et regroupe tous les modules SCSS.
+*/
