@@ -36,12 +36,14 @@ const StudioSchema = new Schema({
     },
     website: {
         type: String,
+        required: false,
     },
     owner_id: {
         type: Schema.Types.ObjectId,
         ref: "User",
     },
     tags: {
+        required: false,
         type: [String],
         default: [],
         validate: {

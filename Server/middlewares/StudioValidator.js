@@ -1,4 +1,39 @@
-import Joi from "joi";
+const Joi = require("joi");
+
+const tldsAllowed = [
+    "com",
+    "net",
+    "fr",
+    "eu",
+    "org",
+    "info",
+    "biz",
+    "pro",
+    "name",
+    "co",
+    "be",
+    "ca",
+    "ch",
+    "de",
+    "es",
+    "it",
+    "nl",
+    "pl",
+    "pt",
+    "ro",
+    "ru",
+    "se",
+    "tr",
+    "ua",
+    "vn",
+    "io",
+    "au",
+    "nz",
+    "in",
+    "mx",
+    "ar",
+    "br",
+];
 
 const createDayHoursSchema = () => {
     return Joi.object({
@@ -15,10 +50,11 @@ const createDayHoursSchema = () => {
 };
 
 const studioValidator = Joi.object({
-    name: Joi.string().required(),
-    description: Joi.string().required(),
-    address: Joi.string().required(),
-    city: Joi.string().required(),
+    owner_id: Joi.string().required(),
+    name: Joi.string().max(50).required(),
+    description: Joi.string().max(1000).required(),
+    address: Joi.string().max(250).required(),
+    city: Joi.string().max(100).required(),
     hourly_rate: Joi.number().required(),
     phone: Joi.string()
         .pattern(/^(0|\+33)[1-9]([-. ]?[0-9]{2}){4}$/)
@@ -29,15 +65,19 @@ const studioValidator = Joi.object({
     email: Joi.string()
         .email({
             minDomainSegments: 2,
-            tlds: { allow: ["com", "net"] },
+            tlds: {
+                allow: tldsAllowed,
+            },
         })
         .required(),
     website: Joi.string().uri(),
     tags: Joi.array()
         .items(Joi.string())
+        .min(0)
         .max(5)
         .message("Vous ne pouvez pas avoir plus de 5 tags")
-        .required(),
+        .optional()
+        .default([]),
     operating_hours: Joi.object({
         monday: createDayHoursSchema(),
         tuesday: createDayHoursSchema(),

@@ -34,17 +34,18 @@ const seedDatabase = async () => {
 
         const roles = await Role.insertMany([
             {
-                name: "admin",
+                name: "Admin",
                 description: "Administrateur avec tous les droits",
             },
             {
-                name: "client",
+                name: "Artiste",
                 description:
-                    "Utilisateur standard pouvant réserver des studios",
+                    "Utilisateur standard pouvant réserver des sessions studios",
             },
             {
-                name: "studio",
-                description: "Propriétaire de studio avec droits de gestion",
+                name: "Studio",
+                description:
+                    "Propriétaire de studio avec droits de gestion des sessions",
             },
         ]);
 
@@ -60,29 +61,29 @@ const seedDatabase = async () => {
                 reviews: [],
             },
             {
-                username: "client1",
-                email: "client1@example.com",
+                username: "Artiste1",
+                email: "Artiste1@example.com",
                 password: hashedPassword,
                 roles: [roles[1]._id],
                 reviews: [],
             },
             {
-                username: "studio_owner",
-                email: "studio@example.com",
+                username: "Studio1",
+                email: "Studio1@example.com",
                 password: hashedPassword,
                 roles: [roles[2]._id],
                 reviews: [],
             },
             {
-                username: "multi_role",
-                email: "multi@example.com",
+                username: "Multi_role",
+                email: "Multi_role@example.com",
                 password: hashedPassword,
                 roles: [roles[1]._id, roles[2]._id],
                 reviews: [],
             },
             {
-                username: "autre_multi_role",
-                email: "autre_multi@example.com",
+                username: "Multi_role2",
+                email: "Multi_role2@example.com",
                 password: hashedPassword,
                 roles: [roles[0]._id, roles[1]._id],
                 reviews: [],
