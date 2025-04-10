@@ -7,6 +7,7 @@ const RoleRouter = require("./routes/roles");
 const UserRouter = require("./routes/users");
 const authRouter = require("./routes/auth");
 const StudioRouter = require("./routes/studios");
+const ReviewRouter = require("./routes/reviews");
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/users", UserRouter);
 app.use("/roles", RoleRouter);
 app.use("/auth", authRouter);
 app.use("/studios", StudioRouter);
+app.use("/reviews", ReviewRouter);
 
 app.use((err, req, res, next) => {
     const statusCode = res.statusCode ? res.statusCode : 500;
