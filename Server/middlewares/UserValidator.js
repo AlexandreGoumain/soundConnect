@@ -1,16 +1,49 @@
-import Joi from "joi";
+const Joi = require("joi");
 
-const userValidator = Joi.object({
+const userCreateValidator = Joi.object({
     username: Joi.string().alphanum().min(3).max(30).required(),
-
-    email: Joi.string().email({
-        minDomainSegments: 2,
-        tlds: { allow: ["com", "net"] },
-    }),
-
-    password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
-
-    roles: Joi.array().items(Joi.string()).required(),
+    email: Joi.string()
+        .email({
+            minDomainSegments: 2,
+            tlds: { allow: ["com", "net"] },
+        })
+        .required(),
+    password: Joi.string().min(8).max(30).required(),
+    roles: Joi.array()
+        .items(
+            Joi.alternatives().try(
+                Joi.string(),
+                Joi.object() // Pour accepter les ObjectId de MongoDB
+            )
+        )
+        .required(),
 });
 
-module.exports = userValidator;
+const userUpdateValidator = Joi.object({
+    username: Joi.string().alphanum().min(3).max(30).required(),
+    email: Joi.string()
+        .email({
+            minDomainSegments: 2,
+            tlds: { allow: ["com", "net"] },
+        })
+        .required(),
+    roles: Joi.array()
+        .items(
+            Joi.alternatives().try(
+                Joi.string(),
+                Joi.object() // Pour accepter les ObjectId de MongoDB
+            )
+        )
+        .required(),
+});
+
+const passwordUpdateValidator = Joi.object({
+    currentPassword: Joi.string().required(),
+    newPassword: Joi.string().min(8).max(30).required(),
+});
+
+module.exports = {
+    userCreateValidator,
+    userUpdateValidator,
+    passwordUpdateValidator,
+};

@@ -1,4 +1,4 @@
-import Joi from "joi";
+const Joi = require("joi");
 
 const equipmentCategoryValidator = Joi.object({
     name: Joi.string().min(2).max(100).trim().required().messages({
