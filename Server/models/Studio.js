@@ -18,6 +18,10 @@ const StudioSchema = new Schema({
         type: String,
         required: true,
     },
+    city: {
+        type: String,
+        required: true,
+    },
     hourly_rate: {
         type: Number,
         required: true,
@@ -49,32 +53,81 @@ const StudioSchema = new Schema({
     },
     operating_hours: {
         monday: {
-            open: { type: String, min: "00:00", max: "24:00" },
-            close: { type: String, min: "00:00", max: "24:00" },
+            is_open: { type: Boolean, default: false },
+            open: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
+            close: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
         },
         tuesday: {
-            open: { type: String, min: "00:00", max: "24:00" },
-            close: { type: String, min: "00:00", max: "24:00" },
+            is_open: { type: Boolean, default: false },
+            open: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
+            close: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
         },
         wednesday: {
-            open: { type: String, min: "00:00", max: "24:00" },
-            close: { type: String, min: "00:00", max: "24:00" },
+            is_open: { type: Boolean, default: false },
+            open: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
+            close: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
         },
         thursday: {
-            open: { type: String, min: "00:00", max: "24:00" },
-            close: { type: String, min: "00:00", max: "24:00" },
+            is_open: { type: Boolean, default: false },
+            open: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
+            close: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
         },
         friday: {
-            open: { type: String, min: "00:00", max: "24:00" },
-            close: { type: String, min: "00:00", max: "24:00" },
+            is_open: { type: Boolean, default: false },
+            open: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
+            close: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
         },
         saturday: {
-            open: { type: String, min: "00:00", max: "24:00" },
-            close: { type: String, min: "00:00", max: "24:00" },
+            is_open: { type: Boolean, default: false },
+            open: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
+            close: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
         },
         sunday: {
-            open: { type: String, min: "00:00", max: "24:00" },
-            close: { type: String, min: "00:00", max: "24:00" },
+            is_open: { type: Boolean, default: false },
+            open: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
+            close: {
+                hour: { type: Number, min: 0, max: 23 },
+                minute: { type: Number, min: 0, max: 59 },
+            },
         },
     },
     created_at: {
