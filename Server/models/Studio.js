@@ -37,6 +37,16 @@ const StudioSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "User",
     },
+    tags: {
+        type: [String],
+        default: [],
+        validate: {
+            validator: function (tags) {
+                return tags.length <= 5;
+            },
+            message: "Vous ne pouvez pas avoir plus de 5 tags",
+        },
+    },
     operating_hours: {
         monday: {
             open: { type: String, min: "00:00", max: "24:00" },

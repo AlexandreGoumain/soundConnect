@@ -292,6 +292,7 @@ const seedDatabase = async () => {
                 email: "contact@studioharmony.com",
                 website: "www.studioharmony.com",
                 owner_id: users[2]._id,
+                tags: ["professionnel", "acoustique", "mixage", "mastering"],
                 reviews: [],
                 operating_hours: {
                     monday: { open: "09:00", close: "18:00" },
@@ -313,6 +314,12 @@ const seedDatabase = async () => {
                 email: "info@soundfactory.com",
                 website: "www.soundfactory.com",
                 owner_id: users[3]._id,
+                tags: [
+                    "haut de gamme",
+                    "enregistrement",
+                    "production",
+                    "mixage",
+                ],
                 reviews: [],
                 operating_hours: {
                     monday: { open: "10:00", close: "20:00" },
@@ -334,6 +341,7 @@ const seedDatabase = async () => {
                 email: "contact@beatlab.com",
                 website: "www.beatlab.com",
                 owner_id: users[3]._id,
+                tags: ["électronique", "beat making", "production", "DJ"],
                 reviews: [],
                 operating_hours: {
                     monday: { open: "12:00", close: "22:00" },
