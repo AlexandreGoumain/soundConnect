@@ -5,6 +5,7 @@ const User = require("../models/User");
 
 const StudioReview = mongoose.model("StudioReview", createStudioReviewSchema());
 
+// Méthodes pour les avis des studios sur les utilisateurs
 const createReviewByStudioToUser = async (req, res) => {
     const { rating, comment, userIdToReview, studioId, reviewerId } = req.body;
 
@@ -66,44 +67,11 @@ const updateReviewByStudioToUser = async (req, res) => {
             });
         }
 
-        const updatedReview = await StudioReview.findByIdAndUpdate(
-            reviewId,
-            {
-                rating,
-                comment,
-            },
-            { new: true }
-        );
-
-        res.status(200).json(updatedReview);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const getReviewById = async (req, res) => {
-    const { reviewId } = req.params;
-
-    try {
-        const review = await StudioReview.findById(reviewId);
-
-        if (!review) {
-            return res.status(403).json({
-                message: "L'avis que vous voulez modifier n'existe plus",
-            });
-        }
-
-        res.status(200).json(review);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-const getAllReviews = async (req, res) => {
-    try {
-        const reviews = await StudioReview.find();
-
-        res.status(200).json(reviews);
+        await StudioReview.findByIdAndUpdate(reviewId, {
+            rating,
+            comment,
+        });
+        res.status(200).json({ message: "Avis modifié avec succès" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -124,7 +92,7 @@ const deleteReviewByStudioToUser = async (req, res) => {
 
         if (review.reviewer_id.toString() !== studioUserId) {
             return res.status(403).json({
-                message: "Vous n'êtes pas autorisé à modifier cet avis",
+                message: "Vous n'êtes pas autorisé à supprimer cet avis",
             });
         }
 
@@ -136,10 +104,38 @@ const deleteReviewByStudioToUser = async (req, res) => {
     }
 };
 
+const getAllReviewsMadeByStudioToUser = async (req, res) => {
+    try {
+        const users = await User.find().populate("reviews");
+        const userReviews = users.reduce((acc, user) => {
+            if (user.reviews && user.reviews.length > 0) {
+                return [...acc, ...user.reviews];
+            }
+            return acc;
+        }, []);
+
+        res.status(200).json(userReviews);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getReviewsByStudio = async (req, res) => {
+    const { studioId } = req.params;
+    try {
+        const reviews = await StudioReview.find({ studio_id: studioId })
+            .populate("reviewer_id", "username")
+            .populate("studio_id", "name");
+        res.status(200).json(reviews);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createReviewByStudioToUser,
     updateReviewByStudioToUser,
-    getReviewById,
-    getAllReviews,
     deleteReviewByStudioToUser,
+    getAllReviewsMadeByStudioToUser,
+    getReviewsByStudio,
 };

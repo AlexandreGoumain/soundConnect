@@ -25,6 +25,11 @@ const createUserReviewSchema = () => {
         ...baseReviewSchema,
         reviewer_id: {
             type: Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
+        studio_id: {
+            type: Schema.Types.ObjectId,
             ref: "Studio",
             required: true,
         },
@@ -36,6 +41,11 @@ const createStudioReviewSchema = () => {
     return new Schema({
         ...baseReviewSchema,
         reviewer_id: {
+            type: Schema.Types.ObjectId,
+            ref: "Studio",
+            required: true,
+        },
+        user_id: {
             type: Schema.Types.ObjectId,
             ref: "User",
             required: true,

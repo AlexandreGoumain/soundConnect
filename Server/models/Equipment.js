@@ -17,6 +17,7 @@ const EquipmentSchema = new Schema({
     },
     brand: {
         type: String,
+        required: true,
     },
     isVerified: {
         type: Boolean,
@@ -27,6 +28,10 @@ const EquipmentSchema = new Schema({
         ref: "User",
     },
     created_at: {
+        type: Date,
+        default: Date.now,
+    },
+    updated_at: {
         type: Date,
         default: Date.now,
     },
