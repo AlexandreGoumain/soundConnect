@@ -1,13 +1,16 @@
-import "./Header.scss";
 import Navbar from "./Navbar/Navbar";
 
 export default function Header() {
     return (
-        <header className="header">
+        <header className="w-full bg-red">
             <Navbar />
-            <div className="header-content">
-                <h1>Bienvenue sur SoundConnect</h1>
-                <p>Votre plateforme musicale</p>
+            <div className="text-center w-full">
+                <h1 className="text-xl md:text-xxl lg:text-3xl text-white">
+                    Bienvenue sur SoundConnect
+                </h1>
+                <p className="text-md md:text-lg lg:text-xl text-white">
+                    Votre plateforme musicale
+                </p>
             </div>
         </header>
     );

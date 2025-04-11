@@ -1,0 +1,14 @@
+/* 
+ * Tailwind-like SCSS System
+ * Ce fichier importe tous les modules de notre système Tailwind maison
+ */
+
+@forward "colors"; // Système de couleurs
+@forward "spacing"; // Marges, paddings et espacements
+@forward "typography"; // Typographie
+@forward "flexbox"; // Flex et Grid
+@forward "sizing"; // Largeurs et hauteurs
+@forward "borders"; // Bordures et arrondis
+@forward "effects"; // Ombres et effets
+@forward "utilities"; // Utilitaires divers
+@forward "responsive"; // Media queries

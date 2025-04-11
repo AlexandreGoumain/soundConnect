@@ -22,6 +22,14 @@ const UserSchema = new Schema({
             ref: "Role",
         },
     ],
+    firstName: {
+        type: String,
+        required: true,
+    },
+    lastName: {
+        type: String,
+        required: true,
+    },
     created_at: {
         type: Date,
         default: Date.now,

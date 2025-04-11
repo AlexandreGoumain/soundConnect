@@ -12,11 +12,11 @@ const links = [
 const buttonLinks = [
     {
         label: "Connexion",
-        path: "/connexion",
+        path: "/login",
     },
     {
         label: "Inscription",
-        path: "/inscription",
+        path: "/register",
     },
 ];
 

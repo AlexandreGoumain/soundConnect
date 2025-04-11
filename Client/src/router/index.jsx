@@ -9,7 +9,9 @@ import { Route, Routes } from "react-router-dom";
 const Home = lazy(() => import("../pages/Home"));
 const Loading = lazy(() => import("../pages/Loading"));
 const Error = lazy(() => import("../pages/Error"));
-// const Login = lazy(() => import("../pages/Login"));
+const Login = lazy(() => import("../pages/Login"));
+
+const StudioList = lazy(() => import("../pages/StudioList"));
 // const Register = lazy(() => import("../pages/Register"));
 // const NotFound = lazy(() => import("../pages/NotFound"));
 
@@ -19,13 +21,14 @@ const AppRouter = () => {
             <Routes>
                 {/* Public routes */}
                 <Route path="/" element={<Home />} />
-                {/* <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} /> */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/studios/list" element={<StudioList />} />
+                {/* <Route path="/register" element={<Register />} /> */}
 
                 {/* Protected routes */}
                 {/* <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Route> */}
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    </Route> */}
 
                 {/* Not found route */}
                 <Route path="*" element={<Error />} />
