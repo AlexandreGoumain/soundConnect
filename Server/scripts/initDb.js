@@ -8,6 +8,8 @@ const Studio = require("../models/Studio");
 const StudioEquipment = require("../models/StudioEquipment");
 const Reservation = require("../models/Reservation");
 const Image = require("../models/Image");
+const UserReview = require("../models/UserReview");
+const StudioReview = require("../models/StudioReview");
 const bcrypt = require("bcryptjs");
 
 dotenv.config();
@@ -29,6 +31,8 @@ const seedDatabase = async () => {
         await StudioEquipment.deleteMany({});
         await Reservation.deleteMany({});
         await Image.deleteMany({});
+        await UserReview.deleteMany({});
+        await StudioReview.deleteMany({});
 
         console.log("Base de données nettoyée");
 
@@ -58,35 +62,40 @@ const seedDatabase = async () => {
                 email: "admin@soundconnect.com",
                 password: hashedPassword,
                 roles: [roles[0]._id],
-                reviews: [],
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 username: "Artiste1",
                 email: "Artiste1@example.com",
                 password: hashedPassword,
                 roles: [roles[1]._id],
-                reviews: [],
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 username: "Studio1",
                 email: "Studio1@example.com",
                 password: hashedPassword,
                 roles: [roles[2]._id],
-                reviews: [],
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 username: "Multi_role",
                 email: "Multi_role@example.com",
                 password: hashedPassword,
                 roles: [roles[1]._id, roles[2]._id],
-                reviews: [],
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 username: "Multi_role2",
                 email: "Multi_role2@example.com",
                 password: hashedPassword,
                 roles: [roles[0]._id, roles[1]._id],
-                reviews: [],
+                created_at: new Date(),
+                updated_at: new Date(),
             },
         ]);
 
@@ -95,76 +104,91 @@ const seedDatabase = async () => {
         const categories = await EquipmentCategory.insertMany([
             {
                 name: "Microphones",
-                description:
-                    "Tous types de microphones pour l'enregistrement vocal et instrumental",
+                description: "Microphones pour enregistrement",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Interfaces Audio",
-                description:
-                    "Convertisseurs analogique/numérique pour l'enregistrement",
+                description: "Interfaces audio pour enregistrement",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Instruments",
-                description:
-                    "Instruments de musique disponibles dans le studio",
+                description: "Instruments de musique",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
-                name: "Enceintes/Monitoring",
-                description: "Systèmes d'écoute et de monitoring studio",
+                name: "Moniteurs",
+                description: "Moniteurs de studio",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
-                name: "Processeurs d'effets",
-                description:
-                    "Compresseurs, égaliseurs, reverbs et autres effets",
+                name: "Processeurs",
+                description: "Processeurs de signal audio",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
-                name: "Tables de mixage",
-                description: "Consoles analogiques et numériques",
+                name: "Consoles",
+                description: "Consoles de mixage",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Casques",
-                description: "Casques d'écoute pour monitoring",
+                description: "Casques de monitoring",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
-                name: "Câbles et connectiques",
-                description:
-                    "Tous types de câbles et adaptateurs pour le studio",
+                name: "Câbles",
+                description: "Câbles et connectiques",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
-                name: "Stations de travail (DAW)",
-                description:
-                    "Logiciels et équipements pour la production audio",
+                name: "Logiciels",
+                description: "Logiciels audio",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
-                name: "Acoustique",
-                description:
-                    "Traitement acoustique, panneaux, absorbeurs et diffuseurs",
+                name: "Traitement Acoustique",
+                description: "Équipements de traitement acoustique",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Synthétiseurs",
-                description: "Synthétiseurs analogiques et numériques",
-                isVerified: false,
-                created_by: users[2]._id,
+                description: "Synthétiseurs et contrôleurs MIDI",
+                isVerified: true,
+                created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
         ]);
 
@@ -178,6 +202,8 @@ const seedDatabase = async () => {
                 brand: "Neumann",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Universal Audio Apollo",
@@ -186,6 +212,8 @@ const seedDatabase = async () => {
                 brand: "Universal Audio",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Piano à queue Yamaha C7",
@@ -194,6 +222,8 @@ const seedDatabase = async () => {
                 brand: "Yamaha",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Genelec 8040",
@@ -202,6 +232,8 @@ const seedDatabase = async () => {
                 brand: "Genelec",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Universal Audio 1176LN",
@@ -210,6 +242,8 @@ const seedDatabase = async () => {
                 brand: "Universal Audio",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "SSL AWS 948",
@@ -219,6 +253,8 @@ const seedDatabase = async () => {
                 brand: "Solid State Logic",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Beyerdynamic DT 770 Pro",
@@ -227,6 +263,8 @@ const seedDatabase = async () => {
                 brand: "Beyerdynamic",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Mogami Gold Studio",
@@ -235,6 +273,8 @@ const seedDatabase = async () => {
                 brand: "Mogami",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Pro Tools Ultimate",
@@ -244,6 +284,8 @@ const seedDatabase = async () => {
                 brand: "Avid",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "GIK Acoustics Panneaux",
@@ -253,6 +295,8 @@ const seedDatabase = async () => {
                 brand: "GIK Acoustics",
                 isVerified: true,
                 created_by: users[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Shure SM58",
@@ -261,6 +305,8 @@ const seedDatabase = async () => {
                 brand: "Shure",
                 isVerified: true,
                 created_by: users[2]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Focusrite Scarlett 2i2",
@@ -269,6 +315,8 @@ const seedDatabase = async () => {
                 brand: "Focusrite",
                 isVerified: true,
                 created_by: users[2]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
             {
                 name: "Moog Grandmother",
@@ -277,6 +325,8 @@ const seedDatabase = async () => {
                 brand: "Moog",
                 isVerified: false,
                 created_by: users[2]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
             },
         ]);
 
@@ -613,6 +663,58 @@ const seedDatabase = async () => {
         ]);
 
         console.log("Images créées");
+
+        // Création des reviews utilisateurs sur les studios
+        await UserReview.insertMany([
+            {
+                rating: 4,
+                comment:
+                    "Excellent studio, bon équipement et personnel accueillant",
+                reviewer_id: users[1]._id,
+                studio_id: studios[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+            {
+                rating: 5,
+                comment:
+                    "Parfait pour l'enregistrement vocal, excellente acoustique",
+                reviewer_id: users[3]._id,
+                studio_id: studios[0]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+            {
+                rating: 3,
+                comment: "Bon studio mais un peu cher pour ce qui est proposé",
+                reviewer_id: users[1]._id,
+                studio_id: studios[1]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+        ]);
+
+        // Création des reviews studios sur les utilisateurs
+        await StudioReview.insertMany([
+            {
+                rating: 5,
+                comment: "Excellent artiste, ponctuel et professionnel",
+                reviewer_id: studios[0]._id,
+                user_id: users[1]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+            {
+                rating: 4,
+                comment: "Très bon musicien, respectueux du matériel",
+                reviewer_id: studios[1]._id,
+                user_id: users[1]._id,
+                created_at: new Date(),
+                updated_at: new Date(),
+            },
+        ]);
+
+        console.log("Reviews créées");
 
         console.log("Base de données initialisée avec succès!");
         process.exit(0);

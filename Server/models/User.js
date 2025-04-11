@@ -1,9 +1,5 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const { createUserReviewSchema } = require("./ReviewSchema");
-
-// Utilisation du schéma de review réutilisable
-const ReviewSchema = createUserReviewSchema();
 
 const UserSchema = new Schema({
     username: {
@@ -20,7 +16,6 @@ const UserSchema = new Schema({
         type: String,
         required: true,
     },
-    // Remplacer role_id par un tableau roles
     roles: [
         {
             type: Schema.Types.ObjectId,
@@ -35,8 +30,6 @@ const UserSchema = new Schema({
         type: Date,
         default: Date.now,
     },
-    // Reviews intégrées dans le document utilisateur
-    reviews: [ReviewSchema],
 });
 
 module.exports = mongoose.model("User", UserSchema);

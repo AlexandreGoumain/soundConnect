@@ -1,9 +1,5 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const { createStudioReviewSchema } = require("./ReviewSchema");
-
-// Utilisation du schéma de review réutilisable
-const ReviewSchema = createStudioReviewSchema();
 
 const StudioSchema = new Schema({
     name: {
@@ -140,8 +136,6 @@ const StudioSchema = new Schema({
         type: Date,
         default: Date.now,
     },
-    // Reviews intégrées dans le document studio
-    reviews: [ReviewSchema],
 });
 
 module.exports = mongoose.model("Studio", StudioSchema);

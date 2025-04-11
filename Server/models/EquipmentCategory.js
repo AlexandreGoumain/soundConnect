@@ -9,6 +9,7 @@ const EquipmentCategorySchema = new Schema({
     },
     description: {
         type: String,
+        required: true,
     },
     isVerified: {
         type: Boolean,
@@ -19,6 +20,10 @@ const EquipmentCategorySchema = new Schema({
         ref: "User",
     },
     created_at: {
+        type: Date,
+        default: Date.now,
+    },
+    updated_at: {
         type: Date,
         default: Date.now,
     },

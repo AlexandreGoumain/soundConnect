@@ -1,13 +1,20 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const ImageSchema = new Schema({
-    filename: {
+const UserReviewSchema = new Schema({
+    rating: {
+        type: Number,
+        required: true,
+        min: 1,
+        max: 5,
+    },
+    comment: {
         type: String,
         required: true,
     },
-    alt_text: {
-        type: String,
+    reviewer_id: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
         required: true,
     },
     studio_id: {
@@ -25,4 +32,4 @@ const ImageSchema = new Schema({
     },
 });
 
-module.exports = mongoose.model("Image", ImageSchema);
+module.exports = mongoose.model("UserReview", UserReviewSchema);
