@@ -1,0 +1,618 @@
+// Définition des breakpoints (mobile-first)
+$breakpoints: (
+    "sm": 640px,
+    "md": 768px,
+    "lg": 1024px,
+    "xl": 1280px,
+);
+
+// Génération des classes responsive pour toutes les utilités
+@each $breakpoint-name, $breakpoint-value in $breakpoints {
+    @media (min-width: $breakpoint-value) {
+        // Display
+        .#{$breakpoint-name}\:block {
+            display: block;
+        }
+        .#{$breakpoint-name}\:inline-block {
+            display: inline-block;
+        }
+        .#{$breakpoint-name}\:inline {
+            display: inline;
+        }
+        .#{$breakpoint-name}\:flex {
+            display: flex;
+        }
+        .#{$breakpoint-name}\:inline-flex {
+            display: inline-flex;
+        }
+        .#{$breakpoint-name}\:grid {
+            display: grid;
+        }
+        .#{$breakpoint-name}\:inline-grid {
+            display: inline-grid;
+        }
+        .#{$breakpoint-name}\:hidden {
+            display: none;
+        }
+
+        // Flex properties
+        .#{$breakpoint-name}\:flex-row {
+            flex-direction: row;
+        }
+        .#{$breakpoint-name}\:flex-row-reverse {
+            flex-direction: row-reverse;
+        }
+        .#{$breakpoint-name}\:flex-col {
+            flex-direction: column;
+        }
+        .#{$breakpoint-name}\:flex-col-reverse {
+            flex-direction: column-reverse;
+        }
+        .#{$breakpoint-name}\:flex-wrap {
+            flex-wrap: wrap;
+        }
+        .#{$breakpoint-name}\:flex-wrap-reverse {
+            flex-wrap: wrap-reverse;
+        }
+        .#{$breakpoint-name}\:flex-nowrap {
+            flex-wrap: nowrap;
+        }
+        .#{$breakpoint-name}\:flex-1 {
+            flex: 1 1 0%;
+        }
+        .#{$breakpoint-name}\:flex-auto {
+            flex: 1 1 auto;
+        }
+        .#{$breakpoint-name}\:flex-initial {
+            flex: 0 1 auto;
+        }
+        .#{$breakpoint-name}\:flex-none {
+            flex: none;
+        }
+
+        // Justify/Align
+        .#{$breakpoint-name}\:justify-start {
+            justify-content: flex-start;
+        }
+        .#{$breakpoint-name}\:justify-end {
+            justify-content: flex-end;
+        }
+        .#{$breakpoint-name}\:justify-center {
+            justify-content: center;
+        }
+        .#{$breakpoint-name}\:justify-between {
+            justify-content: space-between;
+        }
+        .#{$breakpoint-name}\:justify-around {
+            justify-content: space-around;
+        }
+        .#{$breakpoint-name}\:justify-evenly {
+            justify-content: space-evenly;
+        }
+        .#{$breakpoint-name}\:items-start {
+            align-items: flex-start;
+        }
+        .#{$breakpoint-name}\:items-end {
+            align-items: flex-end;
+        }
+        .#{$breakpoint-name}\:items-center {
+            align-items: center;
+        }
+        .#{$breakpoint-name}\:items-baseline {
+            align-items: baseline;
+        }
+        .#{$breakpoint-name}\:items-stretch {
+            align-items: stretch;
+        }
+
+        // Grid
+        .#{$breakpoint-name}\:grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+        .#{$breakpoint-name}\:grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .#{$breakpoint-name}\:grid-cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+        .#{$breakpoint-name}\:grid-cols-4 {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+        .#{$breakpoint-name}\:grid-cols-5 {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+        .#{$breakpoint-name}\:grid-cols-6 {
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+        .#{$breakpoint-name}\:grid-cols-7 {
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+        }
+        .#{$breakpoint-name}\:grid-cols-8 {
+            grid-template-columns: repeat(8, minmax(0, 1fr));
+        }
+        .#{$breakpoint-name}\:grid-cols-9 {
+            grid-template-columns: repeat(9, minmax(0, 1fr));
+        }
+        .#{$breakpoint-name}\:grid-cols-10 {
+            grid-template-columns: repeat(10, minmax(0, 1fr));
+        }
+        .#{$breakpoint-name}\:grid-cols-11 {
+            grid-template-columns: repeat(11, minmax(0, 1fr));
+        }
+        .#{$breakpoint-name}\:grid-cols-12 {
+            grid-template-columns: repeat(12, minmax(0, 1fr));
+        }
+        .#{$breakpoint-name}\:grid-cols-none {
+            grid-template-columns: none;
+        }
+
+        // Tailles de texte
+        .#{$breakpoint-name}\:text-xs {
+            font-size: 0.75rem;
+        }
+        .#{$breakpoint-name}\:text-sm {
+            font-size: 0.875rem;
+        }
+        .#{$breakpoint-name}\:text-base {
+            font-size: 1rem;
+        }
+        .#{$breakpoint-name}\:text-lg {
+            font-size: 1.125rem;
+        }
+        .#{$breakpoint-name}\:text-xl {
+            font-size: 1.25rem;
+        }
+        .#{$breakpoint-name}\:text-2xl {
+            font-size: 1.5rem;
+        }
+        .#{$breakpoint-name}\:text-3xl {
+            font-size: 1.875rem;
+        }
+        .#{$breakpoint-name}\:text-4xl {
+            font-size: 2.25rem;
+        }
+        .#{$breakpoint-name}\:text-5xl {
+            font-size: 3rem;
+        }
+        .#{$breakpoint-name}\:text-6xl {
+            font-size: 3.75rem;
+        }
+
+        // Espacement (quelques exemples, on peut étendre selon les besoins)
+        .#{$breakpoint-name}\:p-0 {
+            padding: 0;
+        }
+        .#{$breakpoint-name}\:p-1 {
+            padding: 0.25rem;
+        }
+        .#{$breakpoint-name}\:p-2 {
+            padding: 0.5rem;
+        }
+        .#{$breakpoint-name}\:p-3 {
+            padding: 0.75rem;
+        }
+        .#{$breakpoint-name}\:p-4 {
+            padding: 1rem;
+        }
+        .#{$breakpoint-name}\:p-5 {
+            padding: 1.25rem;
+        }
+        .#{$breakpoint-name}\:p-6 {
+            padding: 1.5rem;
+        }
+        .#{$breakpoint-name}\:p-8 {
+            padding: 2rem;
+        }
+        .#{$breakpoint-name}\:p-10 {
+            padding: 2.5rem;
+        }
+        .#{$breakpoint-name}\:p-12 {
+            padding: 3rem;
+        }
+
+        .#{$breakpoint-name}\:px-0 {
+            padding-left: 0;
+            padding-right: 0;
+        }
+        .#{$breakpoint-name}\:px-1 {
+            padding-left: 0.25rem;
+            padding-right: 0.25rem;
+        }
+        .#{$breakpoint-name}\:px-2 {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+        .#{$breakpoint-name}\:px-3 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        .#{$breakpoint-name}\:px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .#{$breakpoint-name}\:px-5 {
+            padding-left: 1.25rem;
+            padding-right: 1.25rem;
+        }
+        .#{$breakpoint-name}\:px-6 {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+        .#{$breakpoint-name}\:px-8 {
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+        .#{$breakpoint-name}\:px-10 {
+            padding-left: 2.5rem;
+            padding-right: 2.5rem;
+        }
+        .#{$breakpoint-name}\:px-12 {
+            padding-left: 3rem;
+            padding-right: 3rem;
+        }
+
+        .#{$breakpoint-name}\:py-0 {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .#{$breakpoint-name}\:py-1 {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+        .#{$breakpoint-name}\:py-2 {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .#{$breakpoint-name}\:py-3 {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+        .#{$breakpoint-name}\:py-4 {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        .#{$breakpoint-name}\:py-5 {
+            padding-top: 1.25rem;
+            padding-bottom: 1.25rem;
+        }
+        .#{$breakpoint-name}\:py-6 {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+        .#{$breakpoint-name}\:py-8 {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .#{$breakpoint-name}\:py-10 {
+            padding-top: 2.5rem;
+            padding-bottom: 2.5rem;
+        }
+        .#{$breakpoint-name}\:py-12 {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+
+        .#{$breakpoint-name}\:m-0 {
+            margin: 0;
+        }
+        .#{$breakpoint-name}\:m-1 {
+            margin: 0.25rem;
+        }
+        .#{$breakpoint-name}\:m-2 {
+            margin: 0.5rem;
+        }
+        .#{$breakpoint-name}\:m-3 {
+            margin: 0.75rem;
+        }
+        .#{$breakpoint-name}\:m-4 {
+            margin: 1rem;
+        }
+        .#{$breakpoint-name}\:m-5 {
+            margin: 1.25rem;
+        }
+        .#{$breakpoint-name}\:m-6 {
+            margin: 1.5rem;
+        }
+        .#{$breakpoint-name}\:m-8 {
+            margin: 2rem;
+        }
+        .#{$breakpoint-name}\:m-10 {
+            margin: 2.5rem;
+        }
+        .#{$breakpoint-name}\:m-12 {
+            margin: 3rem;
+        }
+
+        .#{$breakpoint-name}\:mx-0 {
+            margin-left: 0;
+            margin-right: 0;
+        }
+        .#{$breakpoint-name}\:mx-1 {
+            margin-left: 0.25rem;
+            margin-right: 0.25rem;
+        }
+        .#{$breakpoint-name}\:mx-2 {
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+        }
+        .#{$breakpoint-name}\:mx-3 {
+            margin-left: 0.75rem;
+            margin-right: 0.75rem;
+        }
+        .#{$breakpoint-name}\:mx-4 {
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+        .#{$breakpoint-name}\:mx-5 {
+            margin-left: 1.25rem;
+            margin-right: 1.25rem;
+        }
+        .#{$breakpoint-name}\:mx-6 {
+            margin-left: 1.5rem;
+            margin-right: 1.5rem;
+        }
+        .#{$breakpoint-name}\:mx-8 {
+            margin-left: 2rem;
+            margin-right: 2rem;
+        }
+        .#{$breakpoint-name}\:mx-10 {
+            margin-left: 2.5rem;
+            margin-right: 2.5rem;
+        }
+        .#{$breakpoint-name}\:mx-12 {
+            margin-left: 3rem;
+            margin-right: 3rem;
+        }
+        .#{$breakpoint-name}\:mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .#{$breakpoint-name}\:my-0 {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        .#{$breakpoint-name}\:my-1 {
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .#{$breakpoint-name}\:my-2 {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .#{$breakpoint-name}\:my-3 {
+            margin-top: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        .#{$breakpoint-name}\:my-4 {
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+        .#{$breakpoint-name}\:my-5 {
+            margin-top: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+        .#{$breakpoint-name}\:my-6 {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .#{$breakpoint-name}\:my-8 {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .#{$breakpoint-name}\:my-10 {
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .#{$breakpoint-name}\:my-12 {
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+        }
+        .#{$breakpoint-name}\:my-auto {
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        // Width/Height responsive
+        .#{$breakpoint-name}\:w-full {
+            width: 100%;
+        }
+        .#{$breakpoint-name}\:w-1\/2 {
+            width: 50%;
+        }
+        .#{$breakpoint-name}\:w-1\/3 {
+            width: 33.333333%;
+        }
+        .#{$breakpoint-name}\:w-2\/3 {
+            width: 66.666667%;
+        }
+        .#{$breakpoint-name}\:w-1\/4 {
+            width: 25%;
+        }
+        .#{$breakpoint-name}\:w-3\/4 {
+            width: 75%;
+        }
+        .#{$breakpoint-name}\:w-1\/5 {
+            width: 20%;
+        }
+        .#{$breakpoint-name}\:w-2\/5 {
+            width: 40%;
+        }
+        .#{$breakpoint-name}\:w-3\/5 {
+            width: 60%;
+        }
+        .#{$breakpoint-name}\:w-4\/5 {
+            width: 80%;
+        }
+        .#{$breakpoint-name}\:w-auto {
+            width: auto;
+        }
+
+        // Positions
+        .#{$breakpoint-name}\:static {
+            position: static;
+        }
+        .#{$breakpoint-name}\:fixed {
+            position: fixed;
+        }
+        .#{$breakpoint-name}\:absolute {
+            position: absolute;
+        }
+        .#{$breakpoint-name}\:relative {
+            position: relative;
+        }
+        .#{$breakpoint-name}\:sticky {
+            position: sticky;
+        }
+
+        // Alignement de texte
+        .#{$breakpoint-name}\:text-left {
+            text-align: left;
+        }
+        .#{$breakpoint-name}\:text-center {
+            text-align: center;
+        }
+        .#{$breakpoint-name}\:text-right {
+            text-align: right;
+        }
+        .#{$breakpoint-name}\:text-justify {
+            text-align: justify;
+        }
+
+        // Colonnes et lignes
+        .#{$breakpoint-name}\:col-span-1 {
+            grid-column: span 1 / span 1;
+        }
+        .#{$breakpoint-name}\:col-span-2 {
+            grid-column: span 2 / span 2;
+        }
+        .#{$breakpoint-name}\:col-span-3 {
+            grid-column: span 3 / span 3;
+        }
+        .#{$breakpoint-name}\:col-span-4 {
+            grid-column: span 4 / span 4;
+        }
+        .#{$breakpoint-name}\:col-span-5 {
+            grid-column: span 5 / span 5;
+        }
+        .#{$breakpoint-name}\:col-span-6 {
+            grid-column: span 6 / span 6;
+        }
+        .#{$breakpoint-name}\:col-span-7 {
+            grid-column: span 7 / span 7;
+        }
+        .#{$breakpoint-name}\:col-span-8 {
+            grid-column: span 8 / span 8;
+        }
+        .#{$breakpoint-name}\:col-span-9 {
+            grid-column: span 9 / span 9;
+        }
+        .#{$breakpoint-name}\:col-span-10 {
+            grid-column: span 10 / span 10;
+        }
+        .#{$breakpoint-name}\:col-span-11 {
+            grid-column: span 11 / span 11;
+        }
+        .#{$breakpoint-name}\:col-span-12 {
+            grid-column: span 12 / span 12;
+        }
+        .#{$breakpoint-name}\:col-span-full {
+            grid-column: 1 / -1;
+        }
+
+        // marges spécifiques mb, mt, etc.
+        .#{$breakpoint-name}\:mt-0 {
+            margin-top: 0;
+        }
+        .#{$breakpoint-name}\:mt-1 {
+            margin-top: 0.25rem;
+        }
+        .#{$breakpoint-name}\:mt-2 {
+            margin-top: 0.5rem;
+        }
+        .#{$breakpoint-name}\:mt-3 {
+            margin-top: 0.75rem;
+        }
+        .#{$breakpoint-name}\:mt-4 {
+            margin-top: 1rem;
+        }
+        .#{$breakpoint-name}\:mt-5 {
+            margin-top: 1.25rem;
+        }
+        .#{$breakpoint-name}\:mt-6 {
+            margin-top: 1.5rem;
+        }
+        .#{$breakpoint-name}\:mt-8 {
+            margin-top: 2rem;
+        }
+        .#{$breakpoint-name}\:mt-10 {
+            margin-top: 2.5rem;
+        }
+        .#{$breakpoint-name}\:mt-12 {
+            margin-top: 3rem;
+        }
+        .#{$breakpoint-name}\:mt-16 {
+            margin-top: 4rem;
+        }
+        .#{$breakpoint-name}\:mt-20 {
+            margin-top: 5rem;
+        }
+        .#{$breakpoint-name}\:mt-24 {
+            margin-top: 6rem;
+        }
+
+        .#{$breakpoint-name}\:mb-0 {
+            margin-bottom: 0;
+        }
+        .#{$breakpoint-name}\:mb-1 {
+            margin-bottom: 0.25rem;
+        }
+        .#{$breakpoint-name}\:mb-2 {
+            margin-bottom: 0.5rem;
+        }
+        .#{$breakpoint-name}\:mb-3 {
+            margin-bottom: 0.75rem;
+        }
+        .#{$breakpoint-name}\:mb-4 {
+            margin-bottom: 1rem;
+        }
+        .#{$breakpoint-name}\:mb-5 {
+            margin-bottom: 1.25rem;
+        }
+        .#{$breakpoint-name}\:mb-6 {
+            margin-bottom: 1.5rem;
+        }
+        .#{$breakpoint-name}\:mb-8 {
+            margin-bottom: 2rem;
+        }
+        .#{$breakpoint-name}\:mb-10 {
+            margin-bottom: 2.5rem;
+        }
+        .#{$breakpoint-name}\:mb-12 {
+            margin-bottom: 3rem;
+        }
+        .#{$breakpoint-name}\:mb-16 {
+            margin-bottom: 4rem;
+        }
+        .#{$breakpoint-name}\:mb-20 {
+            margin-bottom: 5rem;
+        }
+        .#{$breakpoint-name}\:mb-24 {
+            margin-bottom: 6rem;
+        }
+
+        // Ajoutez ici d'autres classes responsive selon vos besoins
+    }
+}
+
+/* 
+  Note: Ce fichier implémente une approche mobile-first où les classes 
+  avec préfixes (md:, lg:, etc.) ne s'appliquent qu'à partir du breakpoint 
+  spécifié et au-delà.
+  
+  Exemple d'utilisation:
+  <div class="w-full md:w-1/2 lg:w-1/3">
+    Ce div occupe 100% de la largeur sur mobile, 50% sur tablette, 
+    et 33.333% sur desktop
+  </div>
+*/

@@ -1,9 +1,11 @@
-@forward "variables";
-@forward "mixins";
-@forward "reset";
-@forward "global";
+@forward "reset"; // Reset CSS de base
+@forward "variables"; // Variables globales
+@forward "tailwind"; // Système utilitaire principal
 
-/* 
-  Ce fichier agit comme point d'entrée pour tous les styles de l'application.
-  Il est importé dans main.jsx et regroupe tous les modules SCSS.
+/*
+  Point d'entrée principal pour les styles de l'application.
+  Architecture simplifiée:
+  - reset: Normalisation des styles entre navigateurs
+  - variables: Définitions des couleurs, espaces, typographie
+  - tailwind: Système utilitaire complet inspiré de Tailwind
 */

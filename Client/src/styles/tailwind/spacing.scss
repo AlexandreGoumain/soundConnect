@@ -1,0 +1,174 @@
+@use "sass:list";
+
+// Définition des espacements
+$spacings: (
+    "0": 0,
+    "0-5": 0.125rem,
+    // 2px
+    "1": 0.25rem,
+    // 4px
+    "1-5": 0.375rem,
+    // 6px
+    "2": 0.5rem,
+    // 8px
+    "2-5": 0.625rem,
+    // 10px
+    "3": 0.75rem,
+    // 12px
+    "3-5": 0.875rem,
+    // 14px
+    "4": 1rem,
+    // 16px
+    "5": 1.25rem,
+    // 20px
+    "6": 1.5rem,
+    // 24px
+    "7": 1.75rem,
+    // 28px
+    "8": 2rem,
+    // 32px
+    "9": 2.25rem,
+    // 36px
+    "10": 2.5rem,
+    // 40px
+    "11": 2.75rem,
+    // 44px
+    "12": 3rem,
+    // 48px
+    "14": 3.5rem,
+    // 56px
+    "16": 4rem,
+    // 64px
+    "20": 5rem,
+    // 80px
+    "24": 6rem,
+    // 96px
+    "28": 7rem,
+    // 112px
+    "32": 8rem,
+    // 128px
+    "36": 9rem,
+    // 144px
+    "40": 10rem,
+    // 160px
+    "44": 11rem,
+    // 176px
+    "48": 12rem,
+    // 192px
+    "52": 13rem,
+    // 208px
+    "56": 14rem,
+    // 224px
+    "60": 15rem,
+    // 240px
+    "64": 16rem,
+    // 256px
+    "72": 18rem,
+    // 288px
+    "80": 20rem,
+    // 320px
+    "96": 24rem // 384px,,
+);
+
+// Directions
+$directions: (
+    "": "",
+    "t": "-top",
+    "r": "-right",
+    "b": "-bottom",
+    "l": "-left",
+    "x": "-left" "-right",
+    "y": "-top" "-bottom",
+);
+
+// Génération des classes de marge
+@each $space-name, $space-value in $spacings {
+    @each $direction-abbr, $direction-suffix in $directions {
+        @if $direction-abbr == "" {
+            .m-#{$space-name} {
+                margin: $space-value;
+            }
+        } @else if $direction-abbr == "x" {
+            .mx-#{$space-name} {
+                margin-left: $space-value;
+                margin-right: $space-value;
+            }
+        } @else if $direction-abbr == "y" {
+            .my-#{$space-name} {
+                margin-top: $space-value;
+                margin-bottom: $space-value;
+            }
+        } @else {
+            .m#{$direction-abbr}-#{$space-name} {
+                margin#{list.nth($direction-suffix, 1)}: $space-value;
+            }
+        }
+    }
+}
+
+// Génération des classes de padding
+@each $space-name, $space-value in $spacings {
+    @each $direction-abbr, $direction-suffix in $directions {
+        @if $direction-abbr == "" {
+            .p-#{$space-name} {
+                padding: $space-value;
+            }
+        } @else if $direction-abbr == "x" {
+            .px-#{$space-name} {
+                padding-left: $space-value;
+                padding-right: $space-value;
+            }
+        } @else if $direction-abbr == "y" {
+            .py-#{$space-name} {
+                padding-top: $space-value;
+                padding-bottom: $space-value;
+            }
+        } @else {
+            .p#{$direction-abbr}-#{$space-name} {
+                padding#{list.nth($direction-suffix, 1)}: $space-value;
+            }
+        }
+    }
+}
+
+// Classes pour les espacements négatifs (pour les marges)
+@each $space-name, $space-value in $spacings {
+    @if $space-name != "0" {
+        @each $direction-abbr, $direction-suffix in $directions {
+            @if $direction-abbr == "" {
+                .-m-#{$space-name} {
+                    margin: -$space-value;
+                }
+            } @else if $direction-abbr == "x" {
+                .-mx-#{$space-name} {
+                    margin-left: -$space-value;
+                    margin-right: -$space-value;
+                }
+            } @else if $direction-abbr == "y" {
+                .-my-#{$space-name} {
+                    margin-top: -$space-value;
+                    margin-bottom: -$space-value;
+                }
+            } @else {
+                .-m#{$direction-abbr}-#{$space-name} {
+                    margin#{list.nth($direction-suffix, 1)}: -$space-value;
+                }
+            }
+        }
+    }
+}
+
+// Classes d'espacement
+.space-x-0 > * + * {
+    margin-left: 0;
+}
+@each $space-name, $space-value in $spacings {
+    @if $space-name != "0" {
+        .space-x-#{$space-name} > * + * {
+            margin-left: $space-value;
+        }
+        .space-y-#{$space-name} > * + * {
+            margin-top: $space-value;
+        }
+    }
+}

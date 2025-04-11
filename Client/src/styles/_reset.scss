@@ -1,3 +1,8 @@
+/* 
+ * Reset & Base Styles
+ * Normalisation et styles de base
+ */
+
 /* Reset de base */
 *,
 *::before,
@@ -16,6 +21,20 @@ body {
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+body {
+    background-color: var(--background-color, #ebdcd5);
+    color: var(--text-color, #fff);
+}
+
+/* Container */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
 }
 
 /* Éléments de formulaire */
@@ -50,6 +69,25 @@ h5,
 h6 {
     font-size: inherit;
     font-weight: inherit;
+    font-family: var(--font-heading, "Montserrat", sans-serif);
+}
+
+/* Base typographique */
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-md, 2rem);
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm, 1rem);
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 /* Images */
@@ -60,13 +98,8 @@ svg {
     height: auto;
 }
 
-/* Éviter les problèmes de débordement */
-body {
-    overflow-x: hidden;
-}
-
 /* Focus visible */
 :focus {
-    outline: 2px solid #6d9cff;
+    outline: 2px solid var(--primary-color, #6d9cff);
     outline-offset: 2px;
 }

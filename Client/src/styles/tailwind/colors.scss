@@ -1,0 +1,115 @@
+// Palette de couleurs
+$colors: (
+    "primary": (
+        "50": #f0f9ff,
+        "100": #e0f2fe,
+        "200": #bae6fd,
+        "300": #7dd3fc,
+        "400": #38bdf8,
+        "500": #0ea5e9,
+        "600": #0284c7,
+        "700": #0369a1,
+        "800": #075985,
+        "900": #0c4a6e,
+        "950": #082f49,
+    ),
+    "gray": (
+        "50": #f9fafb,
+        "100": #f3f4f6,
+        "200": #e5e7eb,
+        "300": #d1d5db,
+        "400": #9ca3af,
+        "500": #6b7280,
+        "600": #4b5563,
+        "700": #374151,
+        "800": #1f2937,
+        "900": #111827,
+        "950": #030712,
+    ),
+    "success": (
+        "light": #86efac,
+        "default": #22c55e,
+        "dark": #15803d,
+    ),
+    "error": (
+        "light": #fca5a5,
+        "default": #ef4444,
+        "dark": #b91c1c,
+    ),
+    "warning": (
+        "light": #fde68a,
+        "default": #f59e0b,
+        "dark": #b45309,
+    ),
+    "info": (
+        "light": #93c5fd,
+        "default": #3b82f6,
+        "dark": #1d4ed8,
+    ),
+);
+
+// Génération des classes de couleurs de texte
+@each $color-name, $shades in $colors {
+    @each $shade-name, $value in $shades {
+        .text-#{$color-name}-#{$shade-name} {
+            color: $value;
+        }
+    }
+}
+
+// Génération des classes de couleurs d'arrière-plan
+@each $color-name, $shades in $colors {
+    @each $shade-name, $value in $shades {
+        .bg-#{$color-name}-#{$shade-name} {
+            background-color: $value;
+        }
+    }
+}
+
+// Génération des classes de couleurs de bordure
+@each $color-name, $shades in $colors {
+    @each $shade-name, $value in $shades {
+        .border-#{$color-name}-#{$shade-name} {
+            border-color: $value;
+        }
+    }
+}
+
+// Couleurs spéciales
+.text-white {
+    color: white;
+}
+.text-black {
+    color: black;
+}
+.bg-white {
+    background-color: white;
+}
+.bg-black {
+    background-color: black;
+}
+.bg-muted {
+    background-color: var(--background-color-muted);
+}
+.border-white {
+    border-color: white;
+}
+.border-black {
+    border-color: black;
+}
+
+// Classes d'opacité de texte
+@for $i from 0 through 10 {
+    $opacity: $i * 0.1;
+    .text-opacity-#{$i * 10} {
+        opacity: $opacity;
+    }
+}
+
+// Classes d'opacité de fond
+@for $i from 0 through 10 {
+    $opacity: $i * 0.1;
+    .bg-opacity-#{$i * 10} {
+        background-color: rgba(var(--bg-color), $opacity);
+    }
+}

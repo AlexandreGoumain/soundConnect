@@ -1,16 +1,25 @@
 @use "sass:color";
 
+/*
+ * Variables globales
+ * Définit les variables SASS et les variables CSS correspondantes
+ */
+
 // Couleurs principales
 $primary-color: #6d9cff;
 $secondary-color: #1a1a1a;
 $tertiary-color: #3b60e4;
+$error-color: #ff4500;
 $text-color: #fff;
-$background-color-muted: rgba(104, 104, 104, 0.7);
 $text-color-secondary: rgba(255, 255, 255, 0.7);
 $text-hover: #a7a7a7;
+
 $background-color: #ebdcd5;
 $background-color-secondary: #034b80;
-$background-color-presentation-studio: #ebdcd5;
+$background-color-muted: rgba(104, 104, 104, 0.7);
+$background-color-presentation-studio: #ffffff;
+$border-color: #ccc;
+$text-dark: #333;
 
 // tailles de police
 $font-size-xs: 0.75rem;
@@ -20,6 +29,7 @@ $font-size-lg: 1.125rem;
 $font-size-xl: 1.5rem;
 $font-size-xxl: 2rem;
 $font-size-xxxl: 2.5rem;
+
 // Tailles d'écran pour les media queries
 $mobile: 480px;
 $tablet: 768px;
@@ -39,14 +49,57 @@ $font-heading: "Montserrat", sans-serif;
 $transition-speed: 0.3s;
 
 // Boutons
-$btn-primary: $primary-color;
-$btn-secondary: $secondary-color;
-$btn-tertiary: $tertiary-color;
-$btn-background-primary: $text-color;
-$btn-text: $text-color;
-$btn-hover: color.adjust($primary-color, $lightness: -10%);
-$btn-radius: 4px;
+$btn-text-primary: $text-color;
+$btn-text-secondary: $secondary-color;
+
+$btn-background-primary: $tertiary-color;
+$btn-background-secondary: $text-color;
+
+$btn-primary-hover: color.adjust($primary-color, $lightness: -10%);
+$btn-secondary-hover: color.adjust($secondary-color, $lightness: -10%);
+
+$btn-radius: 0.25rem;
 $btn-padding: 0.75rem 1.5rem;
 $btn-font-size: 1.1rem;
 $btn-font-weight: 600;
 $btn-transition: background-color $transition-speed ease;
+
+// Génération des variables CSS
+:root {
+    // Couleurs
+    --primary-color: #{$primary-color};
+    --secondary-color: #{$secondary-color};
+    --tertiary-color: #{$tertiary-color};
+    --error-color: #{$error-color};
+    --text-color: #{$text-color};
+    --background-color: #{$background-color};
+    --background-color-secondary: #{$background-color-secondary};
+    --background-color-muted: #{$background-color-muted};
+    --text-color-secondary: #{$text-color-secondary};
+    --text-hover: #{$text-hover};
+    --border-color: #{$border-color};
+    --text-dark: #{$text-dark};
+
+    // Typographie
+    --font-main: #{$font-main};
+    --font-heading: #{$font-heading};
+    --font-size-xs: #{$font-size-xs};
+    --font-size-sm: #{$font-size-sm};
+    --font-size-md: #{$font-size-md};
+    --font-size-lg: #{$font-size-lg};
+    --font-size-xl: #{$font-size-xl};
+    --font-size-xxl: #{$font-size-xxl};
+    --font-size-xxxl: #{$font-size-xxxl};
+
+    // Spacing
+    --space-xs: #{$space-xs};
+    --space-sm: #{$space-sm};
+    --space-md: #{$space-md};
+    --space-lg: #{$space-lg};
+
+    // Transitions
+    --transition-speed: #{$transition-speed};
+
+    // Boutons
+    --btn-radius: #{$btn-radius};
+}

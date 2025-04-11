@@ -1,0 +1,188 @@
+// Définition des tailles de police
+$font-sizes: (
+    "xs": 0.75rem,
+    // 12px
+    "sm": 0.875rem,
+    // 14px
+    "base": 1rem,
+    // 16px
+    "lg": 1.125rem,
+    // 18px
+    "xl": 1.25rem,
+    // 20px
+    "2xl": 1.5rem,
+    // 24px
+    "3xl": 1.875rem,
+    // 30px
+    "4xl": 2.25rem,
+    // 36px
+    "5xl": 3rem,
+    // 48px
+    "6xl": 3.75rem,
+    // 60px
+    "7xl": 4.5rem,
+    // 72px
+    "8xl": 6rem,
+    // 96px
+    "9xl": 8rem // 128px,,,
+);
+
+// Épaisseurs de police
+$font-weights: (
+    "thin": 100,
+    "extralight": 200,
+    "light": 300,
+    "normal": 400,
+    "medium": 500,
+    "semibold": 600,
+    "bold": 700,
+    "extrabold": 800,
+    "black": 900,
+);
+
+// Line Heights
+$line-heights: (
+    "none": 1,
+    "tight": 1.25,
+    "snug": 1.375,
+    "normal": 1.5,
+    "relaxed": 1.625,
+    "loose": 2,
+);
+
+// Letter Spacing
+$letter-spacings: (
+    "tighter": -0.05em,
+    "tight": -0.025em,
+    "normal": 0,
+    "wide": 0.025em,
+    "wider": 0.05em,
+    "widest": 0.1em,
+);
+
+// Font Families
+.font-sans {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+.font-serif {
+    font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+}
+.font-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+}
+
+// Génération des classes de taille de police
+@each $size-name, $size-value in $font-sizes {
+    .text-#{$size-name} {
+        font-size: $size-value;
+    }
+}
+
+// Génération des classes d'épaisseur de police
+@each $weight-name, $weight-value in $font-weights {
+    .font-#{$weight-name} {
+        font-weight: $weight-value;
+    }
+}
+
+// Génération des classes de hauteur de ligne
+@each $height-name, $height-value in $line-heights {
+    .leading-#{$height-name} {
+        line-height: $height-value;
+    }
+}
+
+// Génération des classes d'espacement de lettres
+@each $spacing-name, $spacing-value in $letter-spacings {
+    .tracking-#{$spacing-name} {
+        letter-spacing: $spacing-value;
+    }
+}
+
+// Autres propriétés typographiques
+.text-left {
+    text-align: left;
+}
+.text-center {
+    text-align: center;
+}
+.text-right {
+    text-align: right;
+}
+.text-justify {
+    text-align: justify;
+}
+.text-start {
+    text-align: start;
+}
+.text-end {
+    text-align: end;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+.lowercase {
+    text-transform: lowercase;
+}
+.capitalize {
+    text-transform: capitalize;
+}
+.normal-case {
+    text-transform: none;
+}
+
+.italic {
+    font-style: italic;
+}
+.not-italic {
+    font-style: normal;
+}
+
+.underline {
+    text-decoration: underline;
+}
+.line-through {
+    text-decoration: line-through;
+}
+.no-underline {
+    text-decoration: none;
+}
+
+.antialiased {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.subpixel-antialiased {
+    -webkit-font-smoothing: auto;
+    -moz-osx-font-smoothing: auto;
+}
+
+// Truncation et overflow
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.overflow-ellipsis {
+    text-overflow: ellipsis;
+}
+.whitespace-nowrap {
+    white-space: nowrap;
+}
+.whitespace-normal {
+    white-space: normal;
+}
+.break-normal {
+    overflow-wrap: normal;
+    word-break: normal;
+}
+.break-words {
+    overflow-wrap: break-word;
+}
+.break-all {
+    word-break: break-all;
+}
