@@ -3,14 +3,11 @@ import { comparePassword } from "../utils/auth.js";
 
 export const getAllUsers = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-
-        const result = await User.findAll(page, limit);
+        const users = await User.findAll();
 
         res.json({
             success: true,
-            data: result,
+            data: { users },
         });
     } catch (error) {
         console.error("Error retrieving users:", error);

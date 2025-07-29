@@ -76,36 +76,17 @@ class User {
         return users.length > 0 ? users[0] : null;
     }
 
-    static async findAll(page = 1, limit = 10) {
-        const offset = (page - 1) * limit;
-
-        // total count
-        const [countResult] = await pool.execute(
-            "SELECT COUNT(*) as total FROM users"
-        );
-        const total = countResult[0].total;
-
-        // Utilisateurs avec pagination
+    static async findAll() {
         const [users] = await pool.execute(
             `SELECT u.id, u.username, u.email, u.first_name, u.last_name, 
                     u.phone, u.city, u.postal_code, u.created_at, u.updated_at,
                     r.name as role_name, r.id as role_id, r.description as role_description
              FROM users u 
              JOIN roles r ON u.role_id = r.id 
-             ORDER BY u.created_at DESC
-             LIMIT ? OFFSET ?`,
-            [limit, offset]
+             ORDER BY u.created_at DESC`
         );
 
-        return {
-            users,
-            pagination: {
-                currentPage: page,
-                totalPages: Math.ceil(total / limit),
-                totalUsers: total,
-                limit,
-            },
-        };
+        return users;
     }
 
     static async update(id, updateData) {
