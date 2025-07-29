@@ -112,6 +112,8 @@ class User {
         const allowedFields = [
             "first_name",
             "last_name",
+            "username",
+            "email",
             "phone",
             "city",
             "postal_code",

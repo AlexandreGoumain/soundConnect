@@ -84,6 +84,17 @@ export const updateUserSchema = Joi.object({
         "string.max": "First name cannot exceed 50 characters",
     }),
 
+    username: Joi.string().alphanum().min(3).max(50).optional().messages({
+        "string.alphanum": "Username must contain only letters and numbers",
+        "string.min": "Username must contain at least 3 characters",
+        "string.max": "Username cannot exceed 50 characters",
+    }),
+
+    email: Joi.string().email().max(100).optional().messages({
+        "string.email": "Email must be valid",
+        "string.max": "Email cannot exceed 100 characters",
+    }),
+
     last_name: Joi.string().min(2).max(50).optional().messages({
         "string.min": "Last name must contain at least 2 characters",
         "string.max": "Last name cannot exceed 50 characters",
