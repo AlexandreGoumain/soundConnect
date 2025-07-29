@@ -1,10 +1,8 @@
-// Configuration of the MySQL database
 import dotenv from "dotenv";
 import mysql from "mysql2/promise";
 
 dotenv.config();
 
-// Configuration of the connection
 const dbConfig = {
     port: process.env.DB_PORT,
     user: process.env.DB_USER,

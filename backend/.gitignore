@@ -11,5 +11,11 @@ yarn-error.log*
 .vscode/
 .idea/
 
-# Database
+# Database && test files (for testing)
 *.sql
+*.http
+
+
+
+#TODO: 
+-   create new branch with auth changes
