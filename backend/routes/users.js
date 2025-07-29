@@ -33,6 +33,6 @@ router.put(
     changePassword
 );
 
-router.delete("/:id", authenticateToken, requireRoles(["admin"]), deleteUser);
+router.delete("/:id", authenticateToken, deleteUser);
 
 export default router;

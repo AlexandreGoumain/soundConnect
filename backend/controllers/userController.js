@@ -153,12 +153,14 @@ export const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // prevent user from deleting their own account
-        if (req.user.id === parseInt(id)) {
-            return res.status(400).json({
+        // Check permissions: user can delete own account OR admin can delete any account
+        const isOwner = req.user.id === parseInt(id);
+        const isAdmin = req.user.role_name === "admin";
+
+        if (!isOwner && !isAdmin) {
+            return res.status(403).json({
                 success: false,
-                message:
-                    "You cannot delete your own account (admin users cannot be deleted)",
+                message: "Unauthorized: You can only delete your own account",
             });
         }
 
