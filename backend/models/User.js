@@ -116,6 +116,30 @@ class User {
 
         values.push(id);
 
+        if (updateData.email) {
+            const emailExists = await User.emailExists(updateData.email, id);
+            if (emailExists) {
+                throw new Error("This email is already in use");
+            }
+        }
+
+        if (updateData.username) {
+            const usernameExists = await User.usernameExists(
+                updateData.username,
+                id
+            );
+            if (usernameExists) {
+                throw new Error("This username is already in use");
+            }
+        }
+
+        if (updateData.phone) {
+            const phoneExists = await User.phoneExists(updateData.phone, id);
+            if (phoneExists) {
+                throw new Error("This phone number is already in use");
+            }
+        }
+
         await pool.execute(
             `UPDATE users SET ${updates.join(
                 ", "
@@ -159,6 +183,21 @@ class User {
     static async usernameExists(username, excludeId = null) {
         let query = "SELECT COUNT(*) as count FROM users WHERE username = ?";
         let params = [username];
+
+        if (excludeId) {
+            query += " AND id != ?";
+            params.push(excludeId);
+        }
+
+        const [result] = await pool.execute(query, params);
+        return result[0].count > 0;
+    }
+
+    static async phoneExists(phone, excludeId = null) {
+        if (!phone) return false;
+
+        let query = "SELECT COUNT(*) as count FROM users WHERE phone = ?";
+        let params = [phone];
 
         if (excludeId) {
             query += " AND id != ?";

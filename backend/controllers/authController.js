@@ -23,10 +23,10 @@ export const register = async (req, res) => {
             postal_code,
         } = req.body;
 
-        // check if email and username are unique
-        const [emailExists, usernameExists] = await Promise.all([
+        const [emailExists, usernameExists, phoneExists] = await Promise.all([
             User.emailExists(email),
             User.usernameExists(username),
+            User.phoneExists(phone),
         ]);
 
         if (emailExists) {
@@ -43,7 +43,13 @@ export const register = async (req, res) => {
             });
         }
 
-        // create user
+        if (phoneExists) {
+            return res.status(400).json({
+                success: false,
+                message: "This phone number is already in use",
+            });
+        }
+
         const user = await User.create({
             username,
             email,
