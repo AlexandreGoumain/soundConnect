@@ -11,6 +11,7 @@ import { testConnection } from "./config/database.js";
 
 // Routes
 import authRoutes from "./routes/auth.js";
+import studioRoutes from "./routes/studios.js";
 import userRoutes from "./routes/users.js";
 
 const app = express();
@@ -46,6 +47,7 @@ app.get("/api/test", (req, res) => {
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/studios", studioRoutes);
 
 // Middleware for non-existent routes
 app.use("*", (req, res) => {
