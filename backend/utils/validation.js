@@ -34,13 +34,13 @@ export const registerSchema = Joi.object({
             "any.required": "Password is required",
         }),
 
-    role_id: Joi.number().integer().valid(2, 3).required().messages({
-        "number.base": "Please select a valid role",
-        "number.integer": "Role must be a valid number",
-        "any.only":
-            "The selected role is not valid. Choose between: Artist, or Studio Owner",
-        "any.required": "Please select a role",
-    }),
+    role_id: Joi.string()
+        .guid({ version: ["uuidv4", "uuidv5"] })
+        .required()
+        .messages({
+            "string.guid": "Role ID must be a valid UUID",
+            "any.required": "Please select a role",
+        }),
 
     first_name: Joi.string().min(2).max(50).required().messages({
         "string.min": "First name must contain at least 2 characters",
@@ -315,5 +315,54 @@ export const updateStudioSchema = Joi.object({
 
     images: Joi.string().max(2000).optional().allow("").messages({
         "string.max": "Images URLs cannot exceed 2000 characters",
+    }),
+});
+
+// =====================
+// RESERVATION VALIDATION SCHEMAS
+// =====================
+
+export const createReservationSchema = Joi.object({
+    studio_id: Joi.string()
+        .guid({ version: ["uuidv4", "uuidv5"] })
+        .required()
+        .messages({
+            "string.guid": "Studio ID must be a valid UUID",
+            "any.required": "Studio ID is required",
+        }),
+
+    start_datetime: Joi.date().iso().required().messages({
+        "date.base": "Start datetime must be a valid date",
+        "date.format": "Start datetime must be in ISO format",
+        "any.required": "Start datetime is required",
+    }),
+
+    end_datetime: Joi.date()
+        .iso()
+        .greater(Joi.ref("start_datetime"))
+        .required()
+        .messages({
+            "date.base": "End datetime must be a valid date",
+            "date.format": "End datetime must be in ISO format",
+            "date.greater": "End datetime must be after start datetime",
+            "any.required": "End datetime is required",
+        }),
+
+    special_requests: Joi.string().max(1000).optional().allow("").messages({
+        "string.max": "Special requests cannot exceed 1000 characters",
+    }),
+});
+
+export const updateReservationSchema = Joi.object({
+    status: Joi.string()
+        .valid("pending", "confirmed", "cancelled", "completed")
+        .optional()
+        .messages({
+            "any.only":
+                "Status must be one of: pending, confirmed, cancelled, completed",
+        }),
+
+    special_requests: Joi.string().max(1000).optional().allow("").messages({
+        "string.max": "Special requests cannot exceed 1000 characters",
     }),
 });

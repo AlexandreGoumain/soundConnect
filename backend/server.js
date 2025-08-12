@@ -11,6 +11,7 @@ import { testConnection } from "./config/database.js";
 
 // Routes
 import authRoutes from "./routes/auth.js";
+import reservationRoutes from "./routes/reservations.js";
 import studioRoutes from "./routes/studios.js";
 import userRoutes from "./routes/users.js";
 
@@ -46,6 +47,7 @@ app.get("/api/test", (req, res) => {
 
 // API routes
 app.use("/api/auth", authRoutes);
+app.use("/api/reservations", reservationRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/studios", studioRoutes);
 

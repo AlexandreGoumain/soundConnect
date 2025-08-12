@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { pool } from "../config/database.js";
 import { hashPassword } from "../utils/auth.js";
 
@@ -17,12 +18,14 @@ class User {
 
         // hash password
         const hashedPassword = await hashPassword(password);
+        const id = randomUUID();
 
         const [result] = await pool.execute(
             `INSERT INTO users 
-             (username, email, password, role_id, first_name, last_name, phone, city, postal_code) 
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+             (id, username, email, password, role_id, first_name, last_name, phone, city, postal_code) 
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
+                id,
                 username,
                 email,
                 hashedPassword,
@@ -35,7 +38,7 @@ class User {
             ]
         );
 
-        return await this.findById(result.insertId);
+        return await this.findById(id);
     }
 
     static async findById(id) {

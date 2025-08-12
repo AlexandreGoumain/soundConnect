@@ -31,7 +31,7 @@ export const getUserById = async (req, res) => {
         }
 
         // check if user has permission to access this user (admin or owner)
-        if (req.user.role_name !== "admin" && req.user.id !== parseInt(id)) {
+        if (req.user.role_name !== "admin" && req.user.id !== id) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized",
@@ -57,7 +57,7 @@ export const updateProfile = async (req, res) => {
         const updateData = req.body;
 
         // check if user has permission to update this user (admin or owner)
-        if (req.user.role_name !== "admin" && req.user.id !== parseInt(id)) {
+        if (req.user.role_name !== "admin" && req.user.id !== id) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized",
@@ -101,7 +101,7 @@ export const changePassword = async (req, res) => {
         const { currentPassword, newPassword } = req.body;
 
         // check if user has permission to update this user (admin or owner)
-        if (req.user.role_name !== "admin" && req.user.id !== parseInt(id)) {
+        if (req.user.role_name !== "admin" && req.user.id !== id) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized",
@@ -154,7 +154,7 @@ export const deleteUser = async (req, res) => {
         const { id } = req.params;
 
         // Check permissions: user can delete own account OR admin can delete any account
-        const isOwner = req.user.id === parseInt(id);
+        const isOwner = req.user.id === id;
         const isAdmin = req.user.role_name === "admin";
 
         if (!isOwner && !isAdmin) {

@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { pool } from "../config/database.js";
 
 class Studio {
@@ -33,12 +34,15 @@ class Studio {
             throw new Error("This phone number is already in use");
         }
 
+        const id = randomUUID();
+
         const [result] = await pool.execute(
             `INSERT INTO studios (
-                name, description, street_number, street_name, postal_code, city, country,
+                id, name, description, street_number, street_name, postal_code, city, country,
                 hourly_rate, phone, email, website, equipment_list, tags, images, owner_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
+                id,
                 name,
                 description,
                 street_number,
@@ -57,10 +61,7 @@ class Studio {
             ]
         );
 
-        if (result.insertId) {
-            return await this.findById(result.insertId);
-        }
-        return null;
+        return await this.findById(id);
     }
 
     static async findAll() {
