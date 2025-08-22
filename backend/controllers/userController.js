@@ -3,6 +3,14 @@ import { comparePassword } from "../utils/auth.js";
 
 export const getAllUsers = async (req, res) => {
     try {
+        // Only admin can access all users
+        if (req.user.role_name !== "admin") {
+            return res.status(403).json({
+                success: false,
+                message: "Unauthorized: Admin access required",
+            });
+        }
+
         const users = await User.findAll();
 
         res.json({
@@ -34,7 +42,7 @@ export const getUserById = async (req, res) => {
         if (req.user.role_name !== "admin" && req.user.id !== id) {
             return res.status(403).json({
                 success: false,
-                message: "Unauthorized",
+                message: "Unauthorized: You can only access your own profile",
             });
         }
 
@@ -60,7 +68,7 @@ export const updateProfile = async (req, res) => {
         if (req.user.role_name !== "admin" && req.user.id !== id) {
             return res.status(403).json({
                 success: false,
-                message: "Unauthorized",
+                message: "Unauthorized: You can only update your own profile",
             });
         }
 
@@ -100,11 +108,11 @@ export const changePassword = async (req, res) => {
         const { id } = req.params;
         const { currentPassword, newPassword } = req.body;
 
-        // check if user has permission to update this user (admin or owner)
+        // check if user has permission to change password (admin or owner)
         if (req.user.role_name !== "admin" && req.user.id !== id) {
             return res.status(403).json({
                 success: false,
-                message: "Unauthorized",
+                message: "Unauthorized: You can only change your own password",
             });
         }
 

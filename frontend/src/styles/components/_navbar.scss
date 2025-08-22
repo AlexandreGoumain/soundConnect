@@ -1,0 +1,263 @@
+@use "../utils/variables" as *;
+@use "../utils/mixins" as *;
+
+.navbar {
+    background-color: var(--primary);
+    color: var(--text-white);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    &-container {
+        @include flex-between;
+        padding: $spacing-sm;
+        max-width: $desktop;
+        margin: 0 auto;
+
+        @include tablet {
+            padding: $spacing-md;
+        }
+    }
+
+    &-brand {
+        font-size: $font-size-xl;
+        font-weight: 600;
+        color: var(--text-white);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--text-white);
+            opacity: 0.9;
+        }
+    }
+
+    &-nav {
+        display: flex;
+        list-style: none;
+        gap: $spacing-md;
+        align-items: center;
+
+        @include tablet {
+            gap: $spacing-lg;
+        }
+    }
+
+    &-item {
+        a {
+            color: var(--text-white);
+            text-decoration: none;
+            font-weight: 500;
+            padding: $spacing-xs $spacing-sm;
+            border-radius: $border-radius;
+            transition: all $transition-base;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: var(--text-white);
+            }
+
+            &.active {
+                background-color: rgba(255, 255, 255, 0.2);
+                color: var(--text-white);
+            }
+        }
+    }
+
+    &-actions {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+
+        @include tablet {
+            gap: $spacing-md;
+        }
+
+        .login-btn {
+            color: var(--text-white);
+            border-color: var(--text-white);
+        }
+    }
+
+    // Desktop navigation
+    .desktop-nav {
+        display: none;
+
+        @include tablet {
+            display: flex;
+        }
+    }
+
+    .desktop-actions {
+        display: none;
+
+        @include tablet {
+            display: flex;
+            align-items: center;
+            gap: $spacing-md;
+        }
+    }
+
+    // User dropdown styles
+    .user-dropdown {
+        position: relative;
+
+        .user-menu-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--text-white);
+            font-size: $font-size-sm;
+            font-weight: 500;
+            transition: all $transition-base;
+            display: flex;
+            align-items: center;
+            gap: $spacing-xs;
+
+            .user-icon {
+                font-size: $font-size-md;
+            }
+
+            .dropdown-icon {
+                font-size: $font-size-sm;
+                transition: transform $transition-base;
+            }
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                border-color: rgba(255, 255, 255, 0.5);
+            }
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: $text-dark;
+            border-radius: $border-radius;
+            box-shadow: $shadow-lg;
+            min-width: 180px;
+            z-index: 1000;
+            margin-top: $spacing-xs;
+
+            .dropdown-item {
+                display: block;
+                width: 100%;
+                padding: $spacing-sm $spacing-md;
+                color: $text-white;
+                text-decoration: none;
+                font-size: $font-size-sm;
+                font-weight: 500;
+                border: none;
+                background: none;
+                text-align: left;
+                cursor: pointer;
+                transition: background-color $transition-base;
+
+                &:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                    color: $text-white;
+                }
+
+                &.logout-btn {
+                    color: #ef4444;
+
+                    &:hover {
+                        background-color: rgba(239, 68, 68, 0.1);
+                        color: #ef4444;
+                    }
+                }
+            }
+
+            .dropdown-divider {
+                margin: $spacing-xs 0;
+                border: none;
+                border-top: 1px solid $border-light;
+            }
+        }
+    }
+
+    // Mobile menu toggle
+    &-toggle {
+        display: block;
+        background: none;
+        border: none;
+        font-size: $font-size-lg;
+        color: var(--text-white);
+        cursor: pointer;
+
+        @include tablet {
+            display: none;
+        }
+    }
+
+    // Mobile menu
+    .mobile-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: $text-dark;
+        box-shadow: $shadow-lg;
+        z-index: 999;
+
+        @include tablet {
+            display: none;
+        }
+    }
+
+    .mobile-menu-content {
+        padding: $spacing-md;
+    }
+
+    .mobile-menu-item {
+        display: block;
+        width: 100%;
+        padding: $spacing-md;
+        color: $text-white;
+        text-decoration: none;
+        font-size: $font-size-base;
+        font-weight: 500;
+        border: none;
+        background: none;
+        text-align: left;
+        cursor: pointer;
+        transition: background-color $transition-base;
+        border-radius: $border-radius;
+
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        &.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        &.logout-btn {
+            color: #ef4444;
+
+            &:hover {
+                background-color: rgba(239, 68, 68, 0.1);
+            }
+        }
+    }
+
+    .mobile-menu-divider {
+        margin: $spacing-md 0;
+        border: none;
+        border-top: 1px solid $border-light;
+    }
+
+    .mobile-user-info {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        padding: $spacing-md;
+        color: $text-white;
+        font-weight: 600;
+        font-size: $font-size-base;
+    }
+
+    .mobile-user-icon {
+        font-size: $font-size-lg;
+    }
+}

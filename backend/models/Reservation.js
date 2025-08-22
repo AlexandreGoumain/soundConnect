@@ -66,9 +66,9 @@ class Reservation {
                     u.username, u.email as user_email, u.first_name, u.last_name,
                     s.name as studio_name, s.email as studio_email, s.city as studio_city,
                     s.owner_id as studio_owner_id
-             FROM reservations r 
-             JOIN users u ON r.user_id = u.id 
-             JOIN studios s ON r.studio_id = s.id 
+             FROM reservations r
+             JOIN users u ON r.user_id = u.id
+             JOIN studios s ON r.studio_id = s.id
              ORDER BY r.created_at DESC`
         );
 
@@ -204,23 +204,6 @@ class Reservation {
         const [result] = await pool.execute(query, params);
         return result[0].count > 0;
     }
-
-    // static async getReservationStats(studio_id) {
-    //     const [stats] = await pool.execute(
-    //         `SELECT
-    //             COUNT(*) as total_reservations,
-    //             COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_count,
-    //             COUNT(CASE WHEN status = 'confirmed' THEN 1 END) as confirmed_count,
-    //             COUNT(CASE WHEN status = 'cancelled' THEN 1 END) as cancelled_count,
-    //             COUNT(CASE WHEN status = 'completed' THEN 1 END) as completed_count,
-    //             COALESCE(SUM(CASE WHEN status = 'completed' THEN total_price ELSE 0 END), 0) as total_revenue
-    //          FROM reservations
-    //          WHERE studio_id = ?`,
-    //         [studio_id]
-    //     );
-
-    //     return stats.length > 0 ? stats[0] : null;
-    // }
 }
 
 export default Reservation;

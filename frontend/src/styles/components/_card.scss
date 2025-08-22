@@ -1,0 +1,53 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.card {
+  @include card;
+
+  &-header {
+    margin-bottom: $spacing-md;
+    padding-bottom: $spacing-md;
+    border-bottom: 1px solid var(--border-color);
+
+    .card-title {
+      margin-bottom: $spacing-xs;
+    }
+
+    .card-subtitle {
+      color: var(--text-muted);
+      font-size: $font-size-sm;
+      margin-bottom: 0;
+    }
+  }
+
+  &-body {
+    margin-bottom: $spacing-md;
+  }
+
+  &-footer {
+    margin-top: $spacing-md;
+    padding-top: $spacing-md;
+    border-top: 1px solid var(--border-color);
+    @include flex-between;
+    gap: $spacing-md;
+    flex-direction: column;
+
+    @include tablet {
+      flex-direction: row;
+    }
+  }
+
+  &-compact {
+    padding: $spacing-md;
+  }
+
+  &-hover {
+    transition: all $transition-base;
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: $shadow-lg;
+    }
+  }
+}

@@ -1,0 +1,89 @@
+@use 'variables' as *;
+
+// Media queries - Mobile First
+@mixin tablet {
+  @media (min-width: #{$mobile}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$tablet}) {
+    @content;
+  }
+}
+
+@mixin large-desktop {
+  @media (min-width: #{$desktop}) {
+    @content;
+  }
+}
+
+// Flexbox utilities
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Button base
+@mixin button-base {
+  border-radius: $border-radius;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: $font-size-base;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all $transition-base;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// Card component
+@mixin card {
+  background: var(--card-bg);
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow;
+  padding: $spacing-lg;
+  border: 1px solid var(--border-color);
+}
+
+// Input base
+@mixin input-base {
+  border-radius: $border-radius;
+  border: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  font-size: $font-size-base;
+  font-family: inherit;
+  transition: border-color $transition-base;
+  background: var(--input-bg);
+  color: var(--text-color);
+  
+  &:focus {
+    outline: none;
+    border-color: $primary-blue;
+  }
+  
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}

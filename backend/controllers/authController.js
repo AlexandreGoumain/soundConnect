@@ -49,26 +49,6 @@ export const register = async (req, res) => {
                 break;
         }
 
-        // if (emailExists) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "This email is already in use",
-        //     });
-        // }
-
-        // if (usernameExists) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "This username is already in use",
-        //     });
-        // }
-
-        // if (phoneExists) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "This phone number is already in use",
-        //     });
-        // }
 
         const user = await User.create({
             username,

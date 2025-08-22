@@ -1,0 +1,90 @@
+@use '../utils/variables' as *;
+@use '../utils/mixins' as *;
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  width: 100%;
+  left: 20px;
+  right: 20px;
+
+  @include tablet {
+    left: auto;
+    right: 20px;
+    max-width: 400px;
+    width: auto;
+  }
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  padding: $spacing-md;
+  border-radius: $border-radius;
+  box-shadow: var(--shadow-md);
+  color: white;
+  font-weight: 500;
+  animation: slideIn 0.3s ease-out;
+  position: relative;
+  min-height: 60px;
+
+  &-message {
+    flex: 1;
+    padding-right: $spacing-sm;
+    line-height: 1.4;
+  }
+
+  &-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: $font-size-lg;
+    cursor: pointer;
+    opacity: 0.8;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: opacity $transition-base;
+    
+    &:hover {
+      opacity: 1;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  // Types de toast avec différents backgrounds
+  &-success {
+    background-color: #10b981;
+  }
+
+  &-error {
+    background-color: #ef4444;
+  }
+
+  &-warning {
+    background-color: #f59e0b;
+  }
+
+  &-info {
+    background-color: #3b82f6;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
