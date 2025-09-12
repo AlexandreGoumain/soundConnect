@@ -14,7 +14,7 @@ yarn-error.log*
 !README.md
 
 # Database && test files (for testing)
-# *.sql
+*.sql
 *.http
 
 
