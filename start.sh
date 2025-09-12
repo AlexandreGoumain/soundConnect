@@ -19,4 +19,5 @@ fi
 echo "[start.sh] Serving '$BUILD_DIR' on ${HOST}:${PORT}"
 # -s enables SPA fallback to index.html
 # -n disables clipboard on containerized environments
-exec npx -y serve -s "$BUILD_DIR" -n -l "${HOST}:${PORT}"
+# serve expects tcp://HOST:PORT when specifying host + port
+exec npx -y serve -s "$BUILD_DIR" -n -l "tcp://${HOST}:${PORT}"
