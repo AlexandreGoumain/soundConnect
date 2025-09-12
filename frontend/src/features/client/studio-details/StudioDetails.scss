@@ -1,0 +1,526 @@
+@use "../../../styles/utils/variables" as *;
+@use "../../../styles/utils/mixins" as *;
+@use "sass:color";
+
+.studio-details {
+    // Mobile First - Base styles
+    padding: 0;
+    background: $light-beige;
+    min-height: 100vh;
+
+    &.loading,
+    &.error {
+        min-height: 50vh;
+        @include flex-center;
+
+        .loading-spinner,
+        .error-message {
+            text-align: center;
+            padding: $spacing-xl;
+
+            h2 {
+                color: $text-dark;
+                margin-bottom: $spacing-md;
+                font-size: $font-size-xl;
+            }
+
+            p {
+                color: $text-light;
+                margin-bottom: $spacing-lg;
+            }
+        }
+    }
+
+    .container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0;
+    }
+
+    // Image Gallery with Carousel - Mobile First
+    .studio-gallery {
+        position: relative;
+        margin-bottom: $spacing-lg;
+
+        .main-image {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+
+            .image-placeholder {
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    135deg,
+                    $primary-blue 0%,
+                    $primary-blue-light 100%
+                );
+                @include flex-center;
+                color: $white;
+                font-size: $font-size-lg;
+                font-weight: 500;
+            }
+
+            .carousel-btn {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(255, 255, 255, 0.8);
+                border: none;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                font-size: $font-size-lg;
+                font-weight: bold;
+                cursor: pointer;
+                @include flex-center;
+                transition: background $transition-base;
+
+                &:hover {
+                    background: rgba(255, 255, 255, 1);
+                }
+
+                &.prev {
+                    left: $spacing-md;
+                }
+
+                &.next {
+                    right: $spacing-md;
+                }
+            }
+        }
+
+        .carousel-indicators {
+            @include flex-center;
+            gap: $spacing-sm;
+            margin-top: $spacing-md;
+            padding: 0 $spacing-md;
+
+            .indicator {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: $border-light;
+                cursor: pointer;
+                transition: background $transition-base;
+
+                &.active {
+                    background: $primary-blue;
+                }
+            }
+        }
+    }
+
+    // Studio Overview - Mobile First
+    .studio-overview {
+        padding: 0 $spacing-md $spacing-lg;
+
+        .studio-name {
+            font-size: $font-size-xxl;
+            font-weight: bold;
+            color: $text-dark;
+            margin-bottom: $spacing-sm;
+            line-height: 1.2;
+        }
+
+        .studio-meta {
+            @include flex-column;
+            gap: $spacing-xs;
+            margin-bottom: $spacing-md;
+
+            .studio-location {
+                color: $text-light;
+                font-size: $font-size-base;
+            }
+
+            .studio-rating {
+                color: $text-light;
+                font-size: $font-size-sm;
+            }
+        }
+
+        .studio-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: $spacing-sm;
+
+            .badge {
+                background: $primary-blue;
+                color: $white;
+                padding: $spacing-xs $spacing-md;
+                border-radius: 20px;
+                font-size: $font-size-sm;
+                font-weight: 500;
+            }
+        }
+    }
+
+    // Equipment Section - Mobile First
+    .studio-equipment {
+        background: $white;
+        padding: $spacing-lg $spacing-md;
+        margin-bottom: $spacing-lg;
+
+        h2 {
+            color: $text-dark;
+            margin-bottom: $spacing-md;
+            font-size: $font-size-lg;
+            font-weight: 600;
+        }
+
+        .equipment-list {
+            @include flex-column;
+            gap: $spacing-md;
+
+            .equipment-item {
+                @include flex-center;
+                justify-content: flex-start;
+                gap: $spacing-md;
+
+                .equipment-icon {
+                    color: $primary-blue;
+                    font-size: $font-size-md;
+                    font-weight: bold;
+                }
+
+                .equipment-name {
+                    color: $text-dark;
+                    font-size: $font-size-base;
+                }
+            }
+        }
+    }
+
+    // Description Section - Mobile First
+    .studio-description {
+        background: $white;
+        padding: $spacing-lg $spacing-md;
+        margin-bottom: $spacing-lg;
+
+        h2 {
+            color: $text-dark;
+            margin-bottom: $spacing-md;
+            font-size: $font-size-lg;
+            font-weight: 600;
+        }
+
+        p {
+            color: $text-light;
+            line-height: 1.6;
+            margin: 0;
+            font-size: $font-size-base;
+        }
+    }
+
+    // Booking Section - Mobile First
+    .studio-booking {
+        background: $white;
+        padding: $spacing-lg $spacing-md;
+        margin-bottom: $spacing-lg;
+
+        .booking-price {
+            margin-bottom: $spacing-lg;
+
+            .price-info {
+                display: flex;
+                flex-direction: column;
+                gap: $spacing-sm;
+
+                .hourly-rate {
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                    color: $text-light;
+                }
+
+                .total-price {
+                    font-size: 2rem;
+                    font-weight: bold;
+                    color: $primary-blue;
+                    padding: $spacing-sm;
+                    background: $light-beige;
+                    border-radius: $border-radius;
+                    text-align: center;
+                }
+            }
+        }
+
+        .booking-form {
+            .date-selection {
+                margin-bottom: $spacing-lg;
+
+                label {
+                    display: block;
+                    color: $text-light;
+                    font-size: $font-size-sm;
+                    margin-bottom: $spacing-sm;
+                }
+
+                .date-input {
+                    @include input-base;
+                    width: 100%;
+                }
+            }
+
+            .duration-selection {
+                margin-bottom: $spacing-lg;
+
+                label {
+                    display: block;
+                    color: $text-light;
+                    font-size: $font-size-sm;
+                    margin-bottom: $spacing-sm;
+                }
+
+                .duration-select {
+                    @include input-base;
+                    width: 100%;
+                    background: $white;
+                    cursor: pointer;
+                }
+            }
+
+            .special-requests {
+                margin-bottom: $spacing-lg;
+
+                label {
+                    display: block;
+                    color: $text-light;
+                    font-size: $font-size-sm;
+                    margin-bottom: $spacing-sm;
+                }
+
+                .special-requests-input {
+                    @include input-base;
+                    width: 100%;
+                    min-height: 80px;
+                    resize: vertical;
+                    font-family: inherit;
+                    line-height: 1.5;
+                    &::placeholder {
+                        color: $text-light;
+                    }
+                }
+
+                .character-count {
+                    text-align: right;
+                    font-size: $font-size-xs;
+                    color: $text-light;
+                    margin-top: $spacing-xs;
+                }
+            }
+
+            .time-slots {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: $spacing-sm;
+                margin-bottom: $spacing-lg;
+
+                .time-slot {
+                    @include button-base;
+                    background: $light-beige;
+                    color: $text-dark;
+                    border: 1px solid $border-light;
+                    padding: $spacing-md;
+                    font-size: $font-size-sm;
+                    transition: all $transition-base;
+
+                    .time-slot-content {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        gap: 2px;
+
+                        .start-time {
+                            font-weight: 600;
+                            font-size: $font-size-sm;
+                        }
+
+                        .end-time {
+                            font-size: $font-size-xs;
+                            opacity: 0.8;
+                        }
+                    }
+
+                    &:hover {
+                        background: $primary-blue;
+                        color: $white;
+                        transform: translateY(-1px);
+
+                        .time-slot-content .end-time {
+                            opacity: 1;
+                        }
+                    }
+
+                    &.selected {
+                        background: $primary-blue;
+                        color: $white;
+                        border-color: $primary-blue;
+                        box-shadow: 0 2px 4px rgba($primary-blue, 0.3);
+
+                        .time-slot-content .end-time {
+                            opacity: 1;
+                        }
+                    }
+
+                    &:disabled {
+                        background: $border-light;
+                        color: $text-light;
+                        cursor: not-allowed;
+                        opacity: 0.6;
+                    }
+                }
+
+                .loading-slots {
+                    grid-column: 1 / -1;
+                    text-align: center;
+                    color: $text-light;
+                    font-style: italic;
+                    padding: $spacing-lg;
+                }
+
+                .no-slots {
+                    grid-column: 1 / -1;
+                    text-align: center;
+                    color: $text-light;
+                    font-style: italic;
+                    padding: $spacing-lg;
+                    background: $light-beige;
+                    border-radius: $border-radius;
+                    border: 1px solid $border-light;
+                }
+            }
+
+            .booking-actions {
+                @include flex-column;
+                gap: $spacing-md;
+
+                .btn {
+                    @include button-base;
+                    padding: $spacing-md $spacing-lg;
+                    font-size: $font-size-base;
+                    font-weight: 600;
+                    border-radius: $border-radius;
+
+                    &.btn-primary {
+                        background: $primary-blue;
+                        color: $white;
+
+                        &:hover {
+                            background: color.adjust(
+                                $primary-blue,
+                                $lightness: -10%
+                            );
+                        }
+                    }
+
+                    &.btn-secondary {
+                        background: $white;
+                        color: $primary-blue;
+                        border: 1px solid $primary-blue;
+
+                        &:hover {
+                            background: $primary-blue;
+                            color: $white;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Tablet Styles
+    @include tablet {
+        .container {
+            max-width: 768px;
+            padding: 0 $spacing-lg;
+        }
+
+        .studio-gallery {
+            .main-image {
+                height: 300px;
+            }
+        }
+
+        .studio-overview {
+            padding: 0 0 $spacing-lg;
+
+            .studio-meta {
+                @include flex-center;
+                justify-content: space-between;
+                flex-direction: row;
+            }
+        }
+
+        .studio-equipment {
+            .equipment-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: $spacing-md;
+            }
+        }
+
+        .studio-booking {
+            .booking-form {
+                .time-slots {
+                    grid-template-columns: repeat(6, 1fr);
+                }
+
+                .booking-actions {
+                    @include flex-center;
+                    justify-content: space-between;
+                    flex-direction: row;
+                }
+            }
+        }
+    }
+
+    // Desktop Styles
+    @include desktop {
+        .container {
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: $spacing-xxl;
+            padding: $spacing-lg;
+        }
+
+        .studio-gallery {
+            grid-column: 1 / -1;
+            margin-bottom: $spacing-xl;
+
+            .main-image {
+                height: 400px;
+            }
+        }
+
+        .studio-overview {
+            grid-column: 1;
+            padding: 0 0 $spacing-lg;
+        }
+
+        .studio-equipment {
+            grid-column: 1;
+            margin-bottom: $spacing-lg;
+
+            .equipment-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: $spacing-md;
+            }
+        }
+
+        .studio-description {
+            grid-column: 1;
+            margin-bottom: $spacing-lg;
+        }
+
+        .studio-booking {
+            grid-column: 2;
+            grid-row: 2 / 5;
+            position: sticky;
+            top: $spacing-lg;
+            height: fit-content;
+        }
+    }
+}

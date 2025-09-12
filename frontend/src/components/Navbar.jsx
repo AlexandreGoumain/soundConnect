@@ -2,10 +2,12 @@ import { useState } from "react";
 import { FiChevronDown, FiMenu, FiUser } from "react-icons/fi";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
 
 export default function Navbar({ links }) {
     const location = useLocation();
     const { user, status, logout } = useAuth();
+    const { showError } = useToast();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -13,24 +15,21 @@ export default function Navbar({ links }) {
         try {
             await logout();
             setIsDropdownOpen(false);
-        } catch (error) {
-            console.error("Erreur lors de la déconnexion:", error);
+        } catch (err) {
+            showError(
+                err?.response?.data?.message || "Erreur lors de la déconnexion"
+            );
         }
     };
 
-    const toggleDropdown = () => {
-        setIsDropdownOpen(!isDropdownOpen);
-    };
-
-    const toggleMobileMenu = () => {
-        setIsMobileMenuOpen(!isMobileMenuOpen);
-    };
-
-    const closeMobileMenu = () => {
-        setIsMobileMenuOpen(false);
-    };
+    const toggleDropdown = () => setIsDropdownOpen((v) => !v);
+    const toggleMobileMenu = () => setIsMobileMenuOpen((v) => !v);
+    const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
     const isAuthenticated = status === "authenticated" && user;
+    const role = user?.role_name;
+    const isStudio = role === "studio";
+    const isArtist = role === "artist";
 
     return (
         <nav className="navbar">
@@ -85,24 +84,68 @@ export default function Navbar({ links }) {
                                 </button>
                                 {isDropdownOpen && (
                                     <div className="dropdown-menu">
-                                        <Link
-                                            to="/profile"
-                                            className="dropdown-item"
-                                            onClick={() =>
-                                                setIsDropdownOpen(false)
-                                            }
-                                        >
-                                            Profil
-                                        </Link>
-                                        <Link
-                                            to="/reservations"
-                                            className="dropdown-item"
-                                            onClick={() =>
-                                                setIsDropdownOpen(false)
-                                            }
-                                        >
-                                            Mes réservations
-                                        </Link>
+                                        {isStudio ? (
+                                            <>
+                                                <Link
+                                                    to="/studio"
+                                                    className="dropdown-item"
+                                                    onClick={() =>
+                                                        setIsDropdownOpen(false)
+                                                    }
+                                                >
+                                                    Dashboard studio
+                                                </Link>
+                                                <Link
+                                                    to="/studio/studios"
+                                                    className="dropdown-item"
+                                                    onClick={() =>
+                                                        setIsDropdownOpen(false)
+                                                    }
+                                                >
+                                                    Mes studios
+                                                </Link>
+                                                <Link
+                                                    to="/studio/reservations"
+                                                    className="dropdown-item"
+                                                    onClick={() =>
+                                                        setIsDropdownOpen(false)
+                                                    }
+                                                >
+                                                    Réservations
+                                                </Link>
+                                                <hr className="dropdown-divider" />
+                                                <Link
+                                                    to="/profile"
+                                                    className="dropdown-item"
+                                                    onClick={() =>
+                                                        setIsDropdownOpen(false)
+                                                    }
+                                                >
+                                                    Profil personnel
+                                                </Link>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Link
+                                                    to="/profile"
+                                                    className="dropdown-item"
+                                                    onClick={() =>
+                                                        setIsDropdownOpen(false)
+                                                    }
+                                                >
+                                                    Profil
+                                                </Link>
+                                                <Link
+                                                    to="/reservations"
+                                                    className="dropdown-item"
+                                                    onClick={() =>
+                                                        setIsDropdownOpen(false)
+                                                    }
+                                                >
+                                                    Mes réservations
+                                                </Link>
+                                            </>
+                                        )}
                                         <hr className="dropdown-divider" />
                                         <button
                                             className="dropdown-item logout-btn"
@@ -123,7 +166,6 @@ export default function Navbar({ links }) {
                     </button>
                 </div>
 
-                {/* Mobile Menu */}
                 {isMobileMenuOpen && (
                     <div className="mobile-menu">
                         <div className="mobile-menu-content">
@@ -164,23 +206,59 @@ export default function Navbar({ links }) {
                             ) : (
                                 <>
                                     <div className="mobile-user-info">
-                                        <FiUser className="mobile-user-icon" />
+                                        <FiUser className="mobile-user-icon" />{" "}
                                         Mon compte
                                     </div>
-                                    <Link
-                                        to="/profile"
-                                        className="mobile-menu-item"
-                                        onClick={closeMobileMenu}
-                                    >
-                                        Profil
-                                    </Link>
-                                    <Link
-                                        to="/reservations"
-                                        className="mobile-menu-item"
-                                        onClick={closeMobileMenu}
-                                    >
-                                        Mes réservations
-                                    </Link>
+                                    {isStudio ? (
+                                        <>
+                                            <Link
+                                                to="/studio"
+                                                className="mobile-menu-item"
+                                                onClick={closeMobileMenu}
+                                            >
+                                                Dashboard studio
+                                            </Link>
+                                            <Link
+                                                to="/studio/studios"
+                                                className="mobile-menu-item"
+                                                onClick={closeMobileMenu}
+                                            >
+                                                Mes studios
+                                            </Link>
+                                            <Link
+                                                to="/studio/reservations"
+                                                className="mobile-menu-item"
+                                                onClick={closeMobileMenu}
+                                            >
+                                                Réservations
+                                            </Link>
+                                            <hr className="mobile-menu-divider" />
+                                            <Link
+                                                to="/profile"
+                                                className="mobile-menu-item"
+                                                onClick={closeMobileMenu}
+                                            >
+                                                Profil
+                                            </Link>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Link
+                                                to="/profile"
+                                                className="mobile-menu-item"
+                                                onClick={closeMobileMenu}
+                                            >
+                                                Profil
+                                            </Link>
+                                            <Link
+                                                to="/reservations"
+                                                className="mobile-menu-item"
+                                                onClick={closeMobileMenu}
+                                            >
+                                                Mes réservations
+                                            </Link>
+                                        </>
+                                    )}
                                     <button
                                         className="mobile-menu-item logout-btn"
                                         onClick={() => {

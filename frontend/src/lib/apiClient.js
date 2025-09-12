@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_URL || "";
+const baseURL = import.meta.env.VITE_API_URL || "/api";
 
 export const apiClient = axios.create({
     baseURL: baseURL,
@@ -8,6 +8,42 @@ export const apiClient = axios.create({
     headers: {
         "Content-Type": "application/json",
     },
+});
+
+// CSRF token management
+let csrfToken = null;
+let csrfFetching = null;
+
+async function ensureCsrfToken() {
+    if (csrfToken) return csrfToken;
+
+    if (!csrfFetching) {
+        csrfFetching = apiClient
+            .get("/csrf-token")
+            .then((res) => {
+                csrfToken = res?.data?.data?.csrfToken || null;
+                return csrfToken;
+            })
+            .finally(() => {
+                csrfFetching = null;
+            });
+    }
+
+    return csrfFetching;
+}
+
+// Attach CSRF token automatically for mutating requests
+apiClient.interceptors.request.use(async (config) => {
+    const method = (config.method || "get").toLowerCase();
+    const needsCsrf = ["post", "put", "patch", "delete"].includes(method);
+
+    if (needsCsrf && !config.headers["X-CSRF-Token"]) {
+        const token = await ensureCsrfToken();
+        if (token) {
+            config.headers["X-CSRF-Token"] = token;
+        }
+    }
+    return config;
 });
 
 export const authApi = {

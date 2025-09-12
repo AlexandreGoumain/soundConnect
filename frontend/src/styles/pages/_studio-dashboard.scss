@@ -1,0 +1,208 @@
+@use "../utils/variables" as *;
+@use "../utils/mixins" as *;
+
+.studio-dashboard {
+    // Page header
+    .dashboard-header {
+        @include flex-between;
+        align-items: center;
+        margin-bottom: $spacing-lg;
+        flex-wrap: wrap;
+
+        .title {
+            font-size: $font-size-xxl;
+            font-weight: 700;
+            margin: 0 0 $spacing-sm 0;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: $font-size-sm;
+        }
+    }
+
+    // Sticky sidebar card (left)
+    .dashboard-sidebar {
+        @include card;
+        position: sticky;
+        top: $spacing-lg;
+        padding: $spacing-lg;
+
+        .sidebar-header {
+            margin-bottom: $spacing-md;
+            padding-bottom: $spacing-md;
+            border-bottom: 1px solid var(--border-color);
+
+            .studio-title {
+                font-weight: 700;
+                font-size: $font-size-lg;
+                color: var(--text-primary);
+            }
+
+            .studio-subtitle {
+                color: var(--text-muted);
+                font-size: $font-size-sm;
+            }
+        }
+
+        .sidebar-nav {
+            display: grid;
+            gap: 6px;
+
+            .sidebar-link {
+                display: block;
+                padding: 10px 12px;
+                border-radius: $border-radius;
+                color: var(--text-primary);
+                text-decoration: none;
+                transition: background $transition-base, color $transition-base;
+
+                &:hover {
+                    background: var(--bg-secondary);
+                }
+
+                &.active {
+                    background: #eef2ff;
+                    color: var(--primary-light);
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: $spacing-md;
+        margin-bottom: $spacing-xl;
+
+        @include tablet {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .stat-card {
+            @include card;
+            padding: $spacing-md;
+            display: grid;
+            gap: $spacing-xs;
+
+            .label {
+                font-size: $font-size-xs;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+            }
+
+            .value {
+                font-size: $font-size-xxl;
+                font-weight: 700;
+                color: var(--text-primary);
+            }
+
+            .hint {
+                font-size: $font-size-xs;
+                color: var(--text-muted);
+            }
+        }
+    }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: $spacing-lg;
+
+        @include tablet {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .card {
+            padding: $spacing-lg;
+        }
+
+        .list {
+            display: grid;
+            gap: $spacing-sm;
+
+            .item {
+                display: grid;
+                gap: $spacing-xs;
+                padding: $spacing-sm;
+                border: 1px solid var(--border-color);
+                border-radius: $border-radius;
+
+                @include tablet {
+                    grid-template-columns: 1fr auto;
+                    align-items: center;
+                }
+
+                .primary {
+                    font-weight: 600;
+                    color: var(--text-primary);
+                }
+
+                .secondary {
+                    color: var(--text-muted);
+                    font-size: $font-size-sm;
+                }
+
+                .badge {
+                    padding: 2px 8px;
+                    border-radius: 999px;
+                    font-size: $font-size-xs;
+                    background: var(--bg-secondary);
+                    color: var(--text-secondary);
+                }
+            }
+        }
+    }
+
+    // Generic badge statuses usable anywhere in the dashboard
+    .badge.pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    .badge.confirmed {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    .badge.cancelled {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    .badge.completed {
+        background: #e0e7ff;
+        color: #3730a3;
+    }
+
+    // Two-up grid for simple cards lists (e.g., reservations)
+    .cards-grid {
+        display: grid;
+        gap: $spacing-md;
+        grid-template-columns: 1fr;
+        @include tablet {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .chip-group {
+        display: flex;
+        gap: $spacing-sm;
+        align-items: center;
+
+        .chip {
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+
+            &.active {
+                background: #3b82f6;
+                color: #fff;
+                border-color: #3b82f6;
+            }
+        }
+    }
+}

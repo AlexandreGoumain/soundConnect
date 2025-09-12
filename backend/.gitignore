@@ -10,10 +10,13 @@ yarn-error.log*
 # IDE files
 .vscode/
 .idea/
+*.md
+!README.md
 
 # Database && test files (for testing)
-*.sql
+# *.sql
 *.http
+
 
 
 

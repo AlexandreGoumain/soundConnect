@@ -1,33 +1,40 @@
-@use '../utils/variables' as *;
+@use "../utils/variables" as *;
 
 // CSS Custom Properties for theming - SoundConnect
 :root {
-  // Backgrounds
-  --bg-primary: #{$white};
-  --bg-hero: #{$secondary-beige};
-  --bg-studios: #{$light-beige};
-  --bg-footer: #{$primary-blue};
-  --bg-card: #{$white};
-  
-  // Text colors
-  --text-primary: #{$text-dark};
-  --text-secondary: #{$text-light};
-  --text-white: #{$text-white};
-  
-  // Brand colors
-  --primary: #{$primary-blue};
-  --primary-light: #{$primary-blue-light};
-  --secondary: #{$secondary-beige};
-  
-  // Borders & shadows
-  --border-color: #{$border-light};
-  --shadow: #{$shadow};
-  --shadow-sm: #{$shadow-sm};
-  --shadow-lg: #{$shadow-lg};
-  
-  // Status colors
-  --success: #10b981;
-  --warning: #f59e0b;
-  --error: #ef4444;
-}
+    // Backgrounds
+    --bg-primary: #{$white};
+    --bg-hero: #{$secondary-beige};
+    --bg-studios: #{$light-beige};
+    --bg-footer: #{$primary-blue};
+    --bg-card: #{$white};
+    // Legacy/compat background tokens used across pages
+    --bg-secondary: #f3f4f6; // Light gray page background
+    --card-bg: var(--bg-card);
+    --input-bg: #{$white};
 
+    // Text colors
+    --text-primary: #{$text-dark};
+    --text-secondary: #{$text-light};
+    --text-white: #{$text-white};
+    // Legacy/compat text tokens
+    --text-color: var(--text-primary);
+    --text-muted: var(--text-secondary);
+
+    // Brand colors
+    --primary: #{$primary-blue};
+    --primary-light: #{$primary-blue-light};
+    --primary-color: #{$primary-blue-light};
+    --secondary: #{$secondary-beige};
+
+    // Borders & shadows
+    --border-color: #{$border-light};
+    --shadow: #{$shadow};
+    --shadow-sm: #{$shadow-sm};
+    --shadow-lg: #{$shadow-lg};
+
+    // Status colors
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+}

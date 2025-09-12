@@ -2,10 +2,10 @@ import Studio from "../models/Studio.js";
 
 export const createStudio = async (req, res) => {
     try {
-        if (req.user.role_name !== "studio" && req.user.role_name !== "admin") {
+        if (req.user.role_name !== "studio") {
             return res.status(403).json({
                 success: false,
-                message: "Only studio accounts or admins can create studios",
+                message: "Only studio accounts can create studios",
             });
         }
 
@@ -40,7 +40,63 @@ export const createStudio = async (req, res) => {
 
 export const getAllStudios = async (req, res) => {
     try {
-        const studios = await Studio.findAll();
+        const {
+            city,
+            postal_code,
+            min_rate,
+            max_rate,
+            tags,
+            equipment,
+            sort,
+            available_on,
+            duration,
+        } = req.query;
+        const hasFilters =
+            city ||
+            postal_code ||
+            min_rate ||
+            max_rate ||
+            tags ||
+            equipment ||
+            sort ||
+            available_on ||
+            duration;
+
+        // Validate available_on if present (no past dates)
+        if (available_on) {
+            const date = new Date(available_on);
+            if (isNaN(date.getTime())) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        "Invalid date format for available_on. Use YYYY-MM-DD",
+                });
+            }
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const target = new Date(date);
+            target.setHours(0, 0, 0, 0);
+            if (target < today) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Cannot search availability for past dates",
+                });
+            }
+        }
+
+        const studios = hasFilters
+            ? await Studio.findFiltered({
+                  city,
+                  postal_code,
+                  min_rate,
+                  max_rate,
+                  tags,
+                  equipment,
+                  sort,
+                  available_on,
+                  duration,
+              })
+            : await Studio.findAll();
 
         res.json({
             success: true,
@@ -113,11 +169,9 @@ export const updateStudio = async (req, res) => {
             });
         }
 
-        // Check permissions: owner can update their studio OR admin can update any
+        // Check permissions: owner can update their studio
         const isOwner = req.user.id === studio.owner_id;
-        const isAdmin = req.user.role_name === "admin";
-
-        if (!isOwner && !isAdmin) {
+        if (!isOwner) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized: You can only update your own studios",
@@ -175,11 +229,9 @@ export const deleteStudio = async (req, res) => {
             });
         }
 
-        // Check permissions: owner can delete their studio OR admin can delete any
+        // Check permissions: owner can delete their studio
         const isOwner = req.user.id === studio.owner_id;
-        const isAdmin = req.user.role_name === "admin";
-
-        if (!isOwner && !isAdmin) {
+        if (!isOwner) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized: You can only delete your own studios",

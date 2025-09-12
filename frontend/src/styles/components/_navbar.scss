@@ -64,6 +64,19 @@
         }
     }
 
+    // Normalize ghost buttons on dark navbar for consistent contrast
+    .btn-ghost {
+        color: var(--text-white);
+        background: transparent;
+        border-color: rgba(255, 255, 255, 0.35);
+
+        &:hover:not(:disabled) {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-white);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+    }
+
     &-actions {
         display: flex;
         align-items: center;
@@ -73,10 +86,7 @@
             gap: $spacing-md;
         }
 
-        .login-btn {
-            color: var(--text-white);
-            border-color: var(--text-white);
-        }
+        // Buttons inside navbar use ghost styling above
     }
 
     // Desktop navigation
@@ -103,9 +113,6 @@
         position: relative;
 
         .user-menu-btn {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: var(--text-white);
             font-size: $font-size-sm;
             font-weight: 500;
             transition: all $transition-base;
@@ -120,11 +127,6 @@
             .dropdown-icon {
                 font-size: $font-size-sm;
                 transition: transform $transition-base;
-            }
-
-            &:hover {
-                background-color: rgba(255, 255, 255, 0.1);
-                border-color: rgba(255, 255, 255, 0.5);
             }
         }
 
@@ -180,7 +182,6 @@
     &-toggle {
         display: block;
         background: none;
-        border: none;
         font-size: $font-size-lg;
         color: var(--text-white);
         cursor: pointer;

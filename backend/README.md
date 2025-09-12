@@ -16,19 +16,21 @@ npm install
 -   Créez la base de données en exécutant le fichier SQL :
 
 ```bash
-mysql -u root -p < soundconnect_mysql_sans_index.sql
+mysql -u root -p < soundconnect_db.sql
 ```
+
+Note: ce script recrée le schéma complet (DROP puis CREATE) et est destiné aux environnements de développement.
 
 ### 3. Variables d'environnement
 
 Créez un fichier `.env` à la racine du projet backend avec :
 
 ```
+DB_HOST=votre_url
 DB_PORT=votre_port
 DB_USER=votre_utilisateur
 DB_PASSWORD=votre_mot_de_passe
 DB_NAME=votre_nom_de_base_de_donnees
-PORT=votre_port
 NODE_ENV=development
 JWT_SECRET=votre_cle_secrete_jwt
 JWT_EXPIRES_IN=7d

@@ -1,31 +1,6 @@
 import User from "../models/User.js";
 import { comparePassword } from "../utils/auth.js";
 
-export const getAllUsers = async (req, res) => {
-    try {
-        // Only admin can access all users
-        if (req.user.role_name !== "admin") {
-            return res.status(403).json({
-                success: false,
-                message: "Unauthorized: Admin access required",
-            });
-        }
-
-        const users = await User.findAll();
-
-        res.json({
-            success: true,
-            data: { users },
-        });
-    } catch (error) {
-        console.error("Error retrieving users:", error);
-        res.status(500).json({
-            success: false,
-            message: "Error retrieving users",
-        });
-    }
-};
-
 export const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -38,8 +13,8 @@ export const getUserById = async (req, res) => {
             });
         }
 
-        // check if user has permission to access this user (admin or owner)
-        if (req.user.role_name !== "admin" && req.user.id !== id) {
+        // check if user has permission to access this user (owner)
+        if (req.user.id !== id) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized: You can only access your own profile",
@@ -64,8 +39,8 @@ export const updateProfile = async (req, res) => {
         const { id } = req.params;
         const updateData = req.body;
 
-        // check if user has permission to update this user (admin or owner)
-        if (req.user.role_name !== "admin" && req.user.id !== id) {
+        // check if user has permission to update this user (owner)
+        if (req.user.id !== id) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized: You can only update your own profile",
@@ -108,8 +83,8 @@ export const changePassword = async (req, res) => {
         const { id } = req.params;
         const { currentPassword, newPassword } = req.body;
 
-        // check if user has permission to change password (admin or owner)
-        if (req.user.role_name !== "admin" && req.user.id !== id) {
+        // check if user has permission to change password (owner)
+        if (req.user.id !== id) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized: You can only change your own password",
@@ -126,19 +101,17 @@ export const changePassword = async (req, res) => {
             });
         }
 
-        // check if current password is valid (except for admin)
-        if (req.user.role_name !== "admin") {
-            const isCurrentPasswordValid = await comparePassword(
-                currentPassword,
-                user.password
-            );
+        // check if current password is valid
+        const isCurrentPasswordValid = await comparePassword(
+            currentPassword,
+            user.password
+        );
 
-            if (!isCurrentPasswordValid) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Current password is incorrect",
-                });
-            }
+        if (!isCurrentPasswordValid) {
+            return res.status(400).json({
+                success: false,
+                message: "Current password is incorrect",
+            });
         }
 
         // update password
@@ -161,11 +134,9 @@ export const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Check permissions: user can delete own account OR admin can delete any account
+        // Check permissions: user can delete own account
         const isOwner = req.user.id === id;
-        const isAdmin = req.user.role_name === "admin";
-
-        if (!isOwner && !isAdmin) {
+        if (!isOwner) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized: You can only delete your own account",

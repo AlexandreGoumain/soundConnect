@@ -1,3 +1,4 @@
+import { pool } from "../config/database.js";
 import User from "../models/User.js";
 import { comparePassword, generateToken } from "../utils/auth.js";
 
@@ -22,6 +23,21 @@ export const register = async (req, res) => {
             city,
             postal_code,
         } = req.body;
+
+        // Validate role_id against allowed roles in DB (artist, studio)
+        const [roleRows] = await pool.execute(
+            "SELECT id, name FROM roles WHERE id = ?",
+            [role_id]
+        );
+        if (
+            roleRows.length === 0 ||
+            !["artist", "studio"].includes(roleRows[0].name)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid role selection",
+            });
+        }
 
         const [emailExists, usernameExists, phoneExists] = await Promise.all([
             User.emailExists(email),
@@ -48,7 +64,6 @@ export const register = async (req, res) => {
             default:
                 break;
         }
-
 
         const user = await User.create({
             username,

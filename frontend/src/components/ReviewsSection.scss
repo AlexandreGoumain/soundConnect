@@ -1,0 +1,201 @@
+@use "../styles/utils/variables" as *;
+@use "../styles/utils/mixins" as *;
+
+.reviews-section {
+    @include card;
+    margin-top: $spacing-lg;
+
+    &.loading {
+        text-align: center;
+        padding: $spacing-xl;
+        color: $text-light;
+    }
+
+    // Mobile First - Header Layout
+    .reviews-header {
+        @include flex-column;
+        gap: $spacing-md;
+        margin-bottom: $spacing-lg;
+        padding-bottom: $spacing-md;
+        border-bottom: 1px solid $border-light;
+
+        h3 {
+            margin: 0;
+            color: $text-dark;
+            font-size: $font-size-lg;
+        }
+
+        .review-stats {
+            .average-rating {
+                @include flex-center;
+                justify-content: flex-start;
+                gap: $spacing-sm;
+
+                .rating-number {
+                    font-size: $font-size-lg;
+                    font-weight: bold;
+                    color: #f39c12;
+                }
+
+                .total-reviews {
+                    color: $text-light;
+                    font-size: $font-size-sm;
+                }
+            }
+        }
+    }
+
+    .add-review-section {
+        margin-bottom: $spacing-lg;
+        padding: $spacing-md;
+        background: $white;
+        border-radius: $border-radius;
+        border: 1px solid $border-light;
+
+        .btn {
+            margin-bottom: $spacing-md;
+        }
+
+        .review-form {
+            .form-group {
+                margin-bottom: $spacing-md;
+
+                label {
+                    display: block;
+                    margin-bottom: $spacing-sm;
+                    font-weight: 500;
+                    color: $text-dark;
+                    font-size: $font-size-sm;
+                }
+
+                select,
+                textarea {
+                    @include input-base;
+                    width: 100%;
+                    resize: vertical;
+                }
+            }
+        }
+    }
+
+    .login-prompt,
+    .review-info {
+        text-align: center;
+        padding: $spacing-md;
+        background: $white;
+        border-radius: $border-radius;
+        color: $text-light;
+        margin-bottom: $spacing-lg;
+        border: 1px solid $border-light;
+
+        a {
+            color: $primary-blue;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .reviews-list {
+        .no-reviews {
+            text-align: center;
+            color: $text-light;
+            font-style: italic;
+            padding: $spacing-xl;
+        }
+
+        .review-item {
+            padding: $spacing-md 0;
+            border-bottom: 1px solid $border-light;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            // Mobile First - Review Header
+            .review-header {
+                @include flex-column;
+                align-items: flex-start;
+                gap: $spacing-sm;
+                margin-bottom: $spacing-sm;
+
+                .reviewer-info {
+                    .reviewer-name {
+                        font-weight: 500;
+                        color: $text-dark;
+                        font-size: $font-size-base;
+                    }
+
+                    .review-date {
+                        color: $text-light;
+                        font-size: $font-size-sm;
+                        display: block;
+                        margin-top: $spacing-xs;
+                    }
+
+                    .reservation-date {
+                        color: $primary-blue;
+                        font-size: $font-size-xs;
+                        font-weight: 500;
+                        display: block;
+                        margin-top: $spacing-xs;
+                    }
+                }
+            }
+
+            .review-comment {
+                color: $text-light;
+                line-height: 1.5;
+                margin: 0;
+                font-size: $font-size-base;
+            }
+        }
+    }
+
+    // Tablet and up
+    @include tablet {
+        .reviews-header {
+            @include flex-center;
+            justify-content: space-between;
+            flex-direction: row;
+
+            h3 {
+                font-size: $font-size-xl;
+            }
+        }
+
+        .review-item {
+            .review-header {
+                @include flex-center;
+                justify-content: space-between;
+                flex-direction: row;
+            }
+        }
+    }
+}
+
+.stars {
+    display: flex;
+    gap: 2px;
+
+    .star {
+        font-size: $font-size-md;
+        color: $border-light;
+        cursor: default;
+        transition: color $transition-fast;
+
+        &.filled {
+            color: #f39c12;
+        }
+
+        &.interactive {
+            cursor: pointer;
+
+            &:hover {
+                color: #f39c12;
+            }
+        }
+    }
+}

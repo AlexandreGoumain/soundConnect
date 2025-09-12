@@ -3,8 +3,8 @@ import Studio from "../models/Studio.js";
 
 export const createReservation = async (req, res) => {
     try {
-        // Only artists and admins can create reservations
-        if (req.user.role_name !== "artist" && req.user.role_name !== "admin") {
+        // Only artists can create reservations
+        if (req.user.role_name !== "artist") {
             return res.status(403).json({
                 success: false,
                 message: "Only artists can create reservations",
@@ -34,12 +34,73 @@ export const createReservation = async (req, res) => {
             });
         }
 
+        // Same-day minimum advance booking: at least 1 hour ahead
+        const sameDay =
+            startTime.getFullYear() === now.getFullYear() &&
+            startTime.getMonth() === now.getMonth() &&
+            startTime.getDate() === now.getDate();
+        if (sameDay) {
+            const minAdvance = new Date(now.getTime() + 60 * 60 * 1000);
+            if (startTime < minAdvance) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Start time must be at least 1 hour in advance",
+                });
+            }
+        }
+
         // Check if studio exists
         const studio = await Studio.findById(studio_id);
         if (!studio) {
             return res.status(404).json({
                 success: false,
                 message: "Studio not found",
+            });
+        }
+
+        // Validate schedule: studio must be open and booking within opening hours
+        try {
+            const scheduleRaw = studio.schedule;
+            const schedule =
+                typeof scheduleRaw === "string"
+                    ? JSON.parse(scheduleRaw)
+                    : scheduleRaw || {};
+
+            const dayNames = [
+                "sunday",
+                "monday",
+                "tuesday",
+                "wednesday",
+                "thursday",
+                "friday",
+                "saturday",
+            ];
+            const dayName = dayNames[startTime.getDay()];
+            const daySchedule = schedule?.[dayName];
+
+            if (!daySchedule || !daySchedule.is_open) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Studio is closed on the selected date",
+                });
+            }
+
+            const dateStr = start_datetime.split("T")[0];
+            const openTime = new Date(`${dateStr}T${daySchedule.open_time}:00`);
+            const closeTime = new Date(
+                `${dateStr}T${daySchedule.close_time}:00`
+            );
+
+            if (startTime < openTime || endTime > closeTime) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Reservation must be within opening hours (${daySchedule.open_time}-${daySchedule.close_time})`,
+                });
+            }
+        } catch (e) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid studio schedule configuration",
             });
         }
 
@@ -85,11 +146,7 @@ export const createReservation = async (req, res) => {
 export const getAllReservations = async (req, res) => {
     try {
         let reservations;
-
-        if (req.user.role_name === "admin") {
-            // Admin can see all reservations
-            reservations = await Reservation.findAll();
-        } else if (req.user.role_name === "studio") {
+        if (req.user.role_name === "studio") {
             // Studio owner can see reservations for their studios
             reservations = await Reservation.findByStudioOwner(req.user.id);
         } else {
@@ -125,9 +182,8 @@ export const getReservationById = async (req, res) => {
         // Check permissions
         const isOwner = req.user.id === reservation.user_id;
         const isStudioOwner = req.user.id === reservation.studio_owner_id;
-        const isAdmin = req.user.role_name === "admin";
 
-        if (!isOwner && !isStudioOwner && !isAdmin) {
+        if (!isOwner && !isStudioOwner) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized access to this reservation",
@@ -163,9 +219,8 @@ export const updateReservation = async (req, res) => {
         // Check permissions and allowed status changes
         const isOwner = req.user.id === reservation.user_id;
         const isStudioOwner = req.user.id === reservation.studio_owner_id;
-        const isAdmin = req.user.role_name === "admin";
 
-        if (!isOwner && !isStudioOwner && !isAdmin) {
+        if (!isOwner && !isStudioOwner) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized",
@@ -176,30 +231,25 @@ export const updateReservation = async (req, res) => {
         if (status) {
             const allowedTransitions = {
                 pending: {
-                    admin: ["confirmed", "cancelled"],
                     studio: ["confirmed", "cancelled"],
                     artist: ["cancelled"],
                 },
                 confirmed: {
-                    admin: ["completed", "cancelled"],
                     studio: ["completed", "cancelled"],
-                    artist: [], // Users cannot change confirmed reservations
+                    artist: [],
                 },
                 cancelled: {
-                    admin: ["pending"], // Only admin can reactivate
                     studio: [],
                     artist: [],
                 },
                 completed: {
-                    admin: [], // Completed reservations cannot be changed
                     studio: [],
                     artist: [],
                 },
             };
 
             let userType;
-            if (isAdmin) userType = "admin";
-            else if (isStudioOwner) userType = "studio";
+            if (isStudioOwner) userType = "studio";
             else userType = "artist";
 
             const allowedStatuses =
@@ -257,9 +307,8 @@ export const deleteReservation = async (req, res) => {
         // Check permissions
         const isOwner = req.user.id === reservation.user_id;
         const isStudioOwner = req.user.id === reservation.studio_owner_id;
-        const isAdmin = req.user.role_name === "admin";
 
-        if (!isOwner && !isStudioOwner && !isAdmin) {
+        if (!isOwner && !isStudioOwner) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized",
@@ -267,7 +316,7 @@ export const deleteReservation = async (req, res) => {
         }
 
         // Users can only delete pending reservations
-        if (!isAdmin && !isStudioOwner && reservation.status !== "pending") {
+        if (!isStudioOwner && reservation.status !== "pending") {
             return res.status(400).json({
                 success: false,
                 message: "Unauthorized",
@@ -300,8 +349,8 @@ export const getReservationsByUser = async (req, res) => {
     try {
         const { user_id } = req.params;
 
-        // Check permissions: admin can see any user's reservations, users can only see their own
-        if (req.user.role_name !== "admin" && req.user.id !== user_id) {
+        // Check permissions: users can only see their own reservations
+        if (req.user.id !== user_id) {
             return res.status(403).json({
                 success: false,
                 message: "Unauthorized",
@@ -340,12 +389,11 @@ export const getReservationsByStudio = async (req, res) => {
         const isAuthenticated = !!req.user;
         const isStudioOwner =
             isAuthenticated && req.user.id === studio.owner_id;
-        const isAdmin = isAuthenticated && req.user.role_name === "admin";
 
         const reservations = await Reservation.findByStudio(studio_id);
 
-        // If not owner/admin, return only time slots (no personal details)
-        if (!isStudioOwner && !isAdmin) {
+        // If not owner, return only time slots (no personal details)
+        if (!isStudioOwner) {
             const slots = reservations.map((r) => ({
                 id: r.id,
                 start_datetime: r.start_datetime,
@@ -359,7 +407,7 @@ export const getReservationsByStudio = async (req, res) => {
             });
         }
 
-        // Owner/admin: full details
+        // Owner: full details
         return res.json({
             success: true,
             data: { reservations },
@@ -372,43 +420,3 @@ export const getReservationsByStudio = async (req, res) => {
         });
     }
 };
-
-// export const getStudioStats = async (req, res) => {
-//     try {
-//         const { studio_id } = req.params;
-
-//         // Check if studio exists and get studio owner
-//         const studio = await Studio.findById(studio_id);
-//         if (!studio) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: "Studio not found",
-//             });
-//         }
-
-//         // Check permissions: admin or studio owner can see studio stats
-//         const isStudioOwner = req.user.id === studio.owner_id;
-//         const isAdmin = req.user.role_name === "admin";
-
-//         if (!isStudioOwner && !isAdmin) {
-//             return res.status(403).json({
-//                 success: false,
-//                 message:
-//                     "Unauthorized: You can only view stats for your own studios",
-//             });
-//         }
-
-//         const stats = await Reservation.getReservationStats(studio_id);
-
-//         res.json({
-//             success: true,
-//             data: { stats },
-//         });
-//     } catch (error) {
-//         console.error("Error retrieving studio stats:", error);
-//         res.status(500).json({
-//             success: false,
-//             message: "Error retrieving studio stats",
-//         });
-//     }
-// };

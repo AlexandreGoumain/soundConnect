@@ -6,7 +6,7 @@ export default function Footer() {
             <div className="container">
                 <div className="footer-content">
                     <div className="footer-brand">
-                        <h3 className="footer-logo">SoundConnect</h3>
+                        <h1 className="footer-logo">SoundConnect</h1>
                         <p className="footer-tagline">
                             La meilleure façon de trouver et réserver votre
                             studio d'enregistrement
@@ -21,7 +21,7 @@ export default function Footer() {
                                     <a href="/">Rechercher</a>
                                 </li>
                                 <li>
-                                    <a href="/studios">Comment ça marche</a>
+                                    <a href="/">Comment ça marche</a>
                                 </li>
                             </ul>
                         </div>

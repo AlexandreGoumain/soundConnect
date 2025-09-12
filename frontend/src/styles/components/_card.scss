@@ -1,53 +1,160 @@
-@use '../utils/variables' as *;
-@use '../utils/mixins' as *;
+@use "../utils/variables" as *;
+@use "../utils/mixins" as *;
 
 .card {
-  @include card;
+    @include card;
 
-  &-header {
-    margin-bottom: $spacing-md;
-    padding-bottom: $spacing-md;
-    border-bottom: 1px solid var(--border-color);
+    &-header {
+        margin-bottom: $spacing-md;
+        padding-bottom: $spacing-md;
+        border-bottom: 1px solid var(--border-color);
+        text-align: center;
 
-    .card-title {
-      margin-bottom: $spacing-xs;
+        .card-title {
+            text-align: center;
+        }
+
+        .card-subtitle {
+            color: var(--text-muted);
+            font-size: $font-size-sm;
+            margin-bottom: 0;
+        }
     }
 
-    .card-subtitle {
-      color: var(--text-muted);
-      font-size: $font-size-sm;
-      margin-bottom: 0;
+    &-body {
+        margin-bottom: $spacing-md;
     }
-  }
 
-  &-body {
-    margin-bottom: $spacing-md;
-  }
+    &-footer {
+        margin-top: $spacing-md;
+        padding-top: $spacing-md;
+        border-top: 1px solid var(--border-color);
+        @include flex-between;
+        gap: $spacing-md;
+        flex-direction: column;
 
-  &-footer {
-    margin-top: $spacing-md;
-    padding-top: $spacing-md;
-    border-top: 1px solid var(--border-color);
-    @include flex-between;
-    gap: $spacing-md;
-    flex-direction: column;
-
-    @include tablet {
-      flex-direction: row;
+        @include tablet {
+            flex-direction: row;
+        }
     }
-  }
 
-  &-compact {
-    padding: $spacing-md;
-  }
+    &-compact {
+        padding: $spacing-md;
+    }
 
-  &-hover {
+    &-hover {
+        transition: all $transition-base;
+        cursor: pointer;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: $shadow-lg;
+        }
+    }
+}
+
+.studio-card {
+    @include card;
+    @include card-hover;
+    text-decoration: none;
+    color: inherit;
+    display: block;
     transition: all $transition-base;
-    cursor: pointer;
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: $shadow-lg;
+        text-decoration: none;
+        color: inherit;
+        transform: translateY(-2px);
+        box-shadow: $shadow-lg;
     }
-  }
+
+    .studio-image {
+        width: 100%;
+        height: 200px;
+        border-radius: 8px 8px 0 0;
+        overflow: hidden;
+        margin-bottom: $spacing-md;
+
+        .image-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+        }
+    }
+
+    .studio-info {
+        padding: 0 $spacing-md $spacing-md;
+
+        .studio-name {
+            font-size: $font-size-lg;
+            font-weight: 600;
+            margin-bottom: $spacing-sm;
+            color: var(--text-primary);
+        }
+
+        .studio-location {
+            color: var(--text-muted);
+            font-size: $font-size-sm;
+            margin-bottom: $spacing-sm;
+        }
+
+        .studio-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: $spacing-sm;
+
+            .price {
+                font-weight: 600;
+                color: var(--primary-color);
+                font-size: $font-size-lg;
+            }
+
+            .rating {
+                display: flex;
+                align-items: center;
+                gap: $spacing-xs;
+
+                .review-count {
+                    font-size: $font-size-xs;
+                    color: var(--text-muted);
+                }
+            }
+        }
+
+        .studio-description {
+            color: var(--text-secondary);
+            font-size: $font-size-sm;
+            line-height: 1.4;
+            margin-bottom: $spacing-md;
+        }
+
+        .studio-badges {
+            display: flex;
+            gap: $spacing-xs;
+            flex-wrap: wrap;
+
+            .badge {
+                padding: 0.25rem 0.5rem;
+                border-radius: 12px;
+                font-size: $font-size-xs;
+                font-weight: 500;
+
+                &.badge-pro {
+                    background: var(--success-color);
+                    color: white;
+                }
+
+                &.badge-trending {
+                    background: var(--warning-color);
+                    color: white;
+                }
+            }
+        }
+    }
 }

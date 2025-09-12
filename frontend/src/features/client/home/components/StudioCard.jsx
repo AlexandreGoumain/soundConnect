@@ -1,4 +1,6 @@
-import { HOME_CONSTANTS, BADGES } from "../constants/homeConstants.js";
+import { Link } from "react-router-dom";
+import StarRating from "../../../../components/StarRating.jsx";
+import { BADGES, HOME_CONSTANTS } from "../constants/homeConstants.js";
 
 export default function StudioCard({ studio }) {
     const truncatedDescription = studio.description?.slice(
@@ -7,7 +9,7 @@ export default function StudioCard({ studio }) {
     );
 
     return (
-        <div className="studio-card">
+        <Link to={`/studios/${studio.id}`} className="studio-card">
             <div className="studio-image">
                 <div className="image-placeholder"></div>
             </div>
@@ -18,10 +20,16 @@ export default function StudioCard({ studio }) {
                 </p>
                 <p className="studio-price">
                     <span className="price">{studio.hourly_rate}€/h</span>
-                    <span className="rating">
-                        {HOME_CONSTANTS.DEFAULT_RATING} (
-                        {HOME_CONSTANTS.DEFAULT_REVIEWS_COUNT})
-                    </span>
+                    <div className="rating">
+                        <StarRating
+                            rating={studio.review_stats?.average_rating || 0}
+                            showNumber={true}
+                            size="small"
+                        />
+                        <span className="review-count">
+                            ({studio.review_stats?.total_reviews || 0} avis)
+                        </span>
+                    </div>
                 </p>
                 <p className="studio-description">
                     {truncatedDescription}
@@ -34,6 +42,6 @@ export default function StudioCard({ studio }) {
                     </span>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }

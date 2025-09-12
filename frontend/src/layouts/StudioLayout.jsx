@@ -1,15 +1,31 @@
+import { Outlet } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
+import { StudioFilterProvider } from "../context/StudioFilterContext.jsx";
 
-export default function StudioLayout({ children }) {
+export default function StudioLayout() {
     return (
-        <ProtectedRoute roles={["studio", "admin"]}>
-            <div>
-                <header style={{ padding: 12, borderBottom: "1px solid #eee" }}>
-                    <Navbar links={[{ to: "/studios", label: "Studios" }]} />
+        <ProtectedRoute roles={["studio"]}>
+            <div className="main-layout">
+                <header>
+                    <Navbar
+                        links={[
+                            { to: "/studio", label: "Dashboard" },
+                            { to: "/studio/studios", label: "Mes studios" },
+                            {
+                                to: "/studio/reservations",
+                                label: "Réservations",
+                            },
+                        ]}
+                    />
                 </header>
-                <main style={{ padding: 16 }}>{children}</main>
+                <main className="main-layout-content">
+                    <StudioFilterProvider>
+                        <Outlet />
+                    </StudioFilterProvider>
+                </main>
             </div>
         </ProtectedRoute>
     );
 }
+

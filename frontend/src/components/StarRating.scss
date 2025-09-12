@@ -1,0 +1,72 @@
+@use "../styles/utils/variables" as *;
+@use "../styles/utils/mixins" as *;
+
+.star-rating {
+    @include flex-center;
+    justify-content: flex-start;
+    gap: $spacing-sm;
+
+    .stars {
+        display: flex;
+        gap: 2px;
+
+        .star {
+            font-size: $font-size-base;
+            color: $border-light;
+            cursor: default;
+            transition: color $transition-fast;
+
+            &.filled {
+                color: #f39c12;
+            }
+
+            &.interactive {
+                cursor: pointer;
+
+                &:hover {
+                    color: #f39c12;
+                }
+            }
+
+            // Mobile First - Base sizes
+            &.small {
+                font-size: $font-size-sm;
+            }
+
+            &.medium {
+                font-size: $font-size-base;
+            }
+
+            &.large {
+                font-size: $font-size-md;
+            }
+        }
+    }
+
+    .rating-number {
+        font-size: $font-size-sm;
+        font-weight: 500;
+        color: $text-light;
+    }
+
+    // Tablet and up
+    @include tablet {
+        .stars .star {
+            &.small {
+                font-size: $font-size-base;
+            }
+
+            &.medium {
+                font-size: $font-size-md;
+            }
+
+            &.large {
+                font-size: $font-size-lg;
+            }
+        }
+
+        .rating-number {
+            font-size: $font-size-base;
+        }
+    }
+}

@@ -24,9 +24,7 @@ export function AuthProvider({ children }) {
 
             setUser(res?.data?.user ?? null);
             setStatus(res?.data?.user ? "authenticated" : "unauthenticated");
-        } catch (e) {
-            console.error(e);
-
+        } catch {
             setUser(null);
             setStatus("unauthenticated");
         }
@@ -52,9 +50,7 @@ export function AuthProvider({ children }) {
 
                 return res;
             } catch (error) {
-                const message =
-                    error.response?.data?.message ||
-                    "Erreur lors de la connexion";
+                const message = "Erreur lors de la connexion";
                 showError(message);
                 throw error;
             }

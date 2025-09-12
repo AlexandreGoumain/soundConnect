@@ -246,6 +246,10 @@ export const createStudioSchema = Joi.object({
     images: Joi.string().max(2000).optional().allow("").messages({
         "string.max": "Images URLs cannot exceed 2000 characters",
     }),
+
+    schedule: Joi.object().optional().messages({
+        "object.base": "Schedule must be an object",
+    }),
 });
 
 export const updateStudioSchema = Joi.object({
@@ -365,4 +369,248 @@ export const updateReservationSchema = Joi.object({
     special_requests: Joi.string().max(1000).optional().allow("").messages({
         "string.max": "Special requests cannot exceed 1000 characters",
     }),
+});
+
+// =====================
+// SCHEDULE VALIDATION SCHEMAS
+// =====================
+
+export const updateScheduleSchema = Joi.object({
+    schedule: Joi.object({
+        monday: Joi.object({
+            is_open: Joi.boolean().required().messages({
+                "boolean.base": "Monday is_open must be a boolean",
+                "any.required": "Monday is_open is required",
+            }),
+            open_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Monday open_time must be in HH:MM format",
+                        "any.required":
+                            "Monday open_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+            close_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Monday close_time must be in HH:MM format",
+                        "any.required":
+                            "Monday close_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+        }).optional(),
+
+        tuesday: Joi.object({
+            is_open: Joi.boolean().required().messages({
+                "boolean.base": "Tuesday is_open must be a boolean",
+                "any.required": "Tuesday is_open is required",
+            }),
+            open_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Tuesday open_time must be in HH:MM format",
+                        "any.required":
+                            "Tuesday open_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+            close_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Tuesday close_time must be in HH:MM format",
+                        "any.required":
+                            "Tuesday close_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+        }).optional(),
+
+        wednesday: Joi.object({
+            is_open: Joi.boolean().required().messages({
+                "boolean.base": "Wednesday is_open must be a boolean",
+                "any.required": "Wednesday is_open is required",
+            }),
+            open_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Wednesday open_time must be in HH:MM format",
+                        "any.required":
+                            "Wednesday open_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+            close_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Wednesday close_time must be in HH:MM format",
+                        "any.required":
+                            "Wednesday close_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+        }).optional(),
+
+        thursday: Joi.object({
+            is_open: Joi.boolean().required().messages({
+                "boolean.base": "Thursday is_open must be a boolean",
+                "any.required": "Thursday is_open is required",
+            }),
+            open_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Thursday open_time must be in HH:MM format",
+                        "any.required":
+                            "Thursday open_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+            close_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Thursday close_time must be in HH:MM format",
+                        "any.required":
+                            "Thursday close_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+        }).optional(),
+
+        friday: Joi.object({
+            is_open: Joi.boolean().required().messages({
+                "boolean.base": "Friday is_open must be a boolean",
+                "any.required": "Friday is_open is required",
+            }),
+            open_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Friday open_time must be in HH:MM format",
+                        "any.required":
+                            "Friday open_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+            close_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Friday close_time must be in HH:MM format",
+                        "any.required":
+                            "Friday close_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+        }).optional(),
+
+        saturday: Joi.object({
+            is_open: Joi.boolean().required().messages({
+                "boolean.base": "Saturday is_open must be a boolean",
+                "any.required": "Saturday is_open is required",
+            }),
+            open_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Saturday open_time must be in HH:MM format",
+                        "any.required":
+                            "Saturday open_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+            close_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Saturday close_time must be in HH:MM format",
+                        "any.required":
+                            "Saturday close_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+        }).optional(),
+
+        sunday: Joi.object({
+            is_open: Joi.boolean().required().messages({
+                "boolean.base": "Sunday is_open must be a boolean",
+                "any.required": "Sunday is_open is required",
+            }),
+            open_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Sunday open_time must be in HH:MM format",
+                        "any.required":
+                            "Sunday open_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+            close_time: Joi.when("is_open", {
+                is: true,
+                then: Joi.string()
+                    .pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+                    .required()
+                    .messages({
+                        "string.pattern.base":
+                            "Sunday close_time must be in HH:MM format",
+                        "any.required":
+                            "Sunday close_time is required when studio is open",
+                    }),
+                otherwise: Joi.any().forbidden(),
+            }),
+        }).optional(),
+    })
+        .required()
+        .messages({
+            "object.base": "Schedule must be an object",
+            "any.required": "Schedule is required",
+        }),
 });

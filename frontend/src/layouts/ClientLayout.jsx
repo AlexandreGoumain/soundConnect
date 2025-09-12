@@ -9,11 +9,11 @@ export default function ClientLayout() {
     const navigationLinks = user
         ? [
               { to: "/", label: "Accueil" },
-              { to: "/studios", label: "Studios" },
+              { to: "/studios", label: "Rechercher" },
           ]
         : [
               { to: "/", label: "Accueil" },
-              { to: "/studios", label: "Studios" },
+              { to: "/studios", label: "Rechercher" },
           ];
 
     return (
