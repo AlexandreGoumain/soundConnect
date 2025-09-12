@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # Simple static server for the Vite build in frontend/dist
-# Works with Railpack fallback to Shell by running: bash start.sh
+# Compatible with POSIX sh environments used by some builders.
 
-set -euo pipefail
+set -eu
 
 BUILD_DIR="${BUILD_DIR:-frontend/dist}"
 PORT="${PORT:-3000}"
@@ -20,4 +20,3 @@ echo "[start.sh] Serving '$BUILD_DIR' on ${HOST}:${PORT}"
 # -s enables SPA fallback to index.html
 # -n disables clipboard on containerized environments
 exec npx -y serve -s "$BUILD_DIR" -n -l "${HOST}:${PORT}"
-
