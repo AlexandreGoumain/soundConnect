@@ -12,8 +12,10 @@ export PUPPETEER_SKIP_DOWNLOAD=true
 cd backend
 
 echo "[backend-start.sh] Installing production dependencies (omit dev)…"
-npm ci --omit=dev
+npm install --omit=dev --no-audit --no-fund
+
+# Ensure uploads directory exists (for mounted volume or local)
+mkdir -p uploads
 
 echo "[backend-start.sh] Starting API…"
 exec npm start
-
