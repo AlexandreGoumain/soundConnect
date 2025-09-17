@@ -1,6 +1,7 @@
 import { pool } from "../config/database.js";
 import User from "../models/User.js";
 import { comparePassword, generateToken } from "../utils/auth.js";
+import { findProfileById, updateProfileById } from "../services/userService.js";
 
 const getCookieOptions = () => ({
     httpOnly: true,
@@ -8,21 +9,6 @@ const getCookieOptions = () => ({
     sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
     path: "/",
-});
-
-const formatUserProfile = (user) => ({
-    id: user.id,
-    username: user.username,
-    email: user.email,
-    first_name: user.first_name,
-    last_name: user.last_name,
-    phone: user.phone,
-    city: user.city,
-    postal_code: user.postal_code,
-    role_name: user.role_name,
-    role_description: user.role_description,
-    created_at: user.created_at,
-    updated_at: user.updated_at,
 });
 
 export const register = async (req, res) => {
@@ -194,9 +180,9 @@ export const logout = async (req, res) => {
 
 export const getProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id);
+        const profile = await findProfileById(req.user.id);
 
-        if (!user) {
+        if (!profile) {
             return res.status(404).json({
                 success: false,
                 message: "User not found",
@@ -206,7 +192,7 @@ export const getProfile = async (req, res) => {
         res.json({
             success: true,
             data: {
-                user: formatUserProfile(user),
+                user: profile,
             },
         });
     } catch (error) {
@@ -217,34 +203,15 @@ export const getProfile = async (req, res) => {
         });
     }
 };
-
 export const updateProfile = async (req, res) => {
     try {
-        const allowedFields = [
-            "first_name",
-            "last_name",
-            "email",
-            "username",
-            "phone",
-            "city",
-            "postal_code",
-        ];
-
-        const updateData = {};
-
-        for (const field of allowedFields) {
-            if (Object.prototype.hasOwnProperty.call(req.body, field)) {
-                updateData[field] = req.body[field];
-            }
-        }
-
-        const updatedUser = await User.update(req.user.id, updateData);
+        const updatedUser = await updateProfileById(req.user.id, req.body);
 
         res.json({
             success: true,
             message: "Profile updated successfully",
             data: {
-                user: formatUserProfile(updatedUser),
+                user: updatedUser,
             },
         });
     } catch (error) {
