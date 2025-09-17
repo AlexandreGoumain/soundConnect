@@ -28,6 +28,13 @@ export default function StudiosSection({ studios, loading, error }) {
                             displayedStudios.map((studio) => (
                                 <StudioCard key={studio.id} studio={studio} />
                             ))}
+                        {!loading &&
+                            !error &&
+                            studios.length === 0 && (
+                                <p className="no-studios-message">
+                                    Il n'y a encore aucun studio.
+                                </p>
+                            )}
                     </div>
                     <button className="carousel-nav carousel-next">
                         <FaChevronRight />
