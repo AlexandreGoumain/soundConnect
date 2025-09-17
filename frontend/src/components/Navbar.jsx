@@ -123,6 +123,15 @@ export default function Navbar({ links }) {
                                                 >
                                                     Profil personnel
                                                 </Link>
+                                                <Link
+                                                    to="/profile/password"
+                                                    className="dropdown-item"
+                                                    onClick={() =>
+                                                        setIsDropdownOpen(false)
+                                                    }
+                                                >
+                                                    Modifier mon mot de passe
+                                                </Link>
                                             </>
                                         ) : (
                                             <>
@@ -134,6 +143,15 @@ export default function Navbar({ links }) {
                                                     }
                                                 >
                                                     Profil
+                                                </Link>
+                                                <Link
+                                                    to="/profile/password"
+                                                    className="dropdown-item"
+                                                    onClick={() =>
+                                                        setIsDropdownOpen(false)
+                                                    }
+                                                >
+                                                    Modifier mon mot de passe
                                                 </Link>
                                                 <Link
                                                     to="/reservations"
@@ -240,6 +258,13 @@ export default function Navbar({ links }) {
                                             >
                                                 Profil
                                             </Link>
+                                            <Link
+                                                to="/profile/password"
+                                                className="mobile-menu-item"
+                                                onClick={closeMobileMenu}
+                                            >
+                                                Modifier mon mot de passe
+                                            </Link>
                                         </>
                                     ) : (
                                         <>
@@ -249,6 +274,13 @@ export default function Navbar({ links }) {
                                                 onClick={closeMobileMenu}
                                             >
                                                 Profil
+                                            </Link>
+                                            <Link
+                                                to="/profile/password"
+                                                className="mobile-menu-item"
+                                                onClick={closeMobileMenu}
+                                            >
+                                                Modifier mon mot de passe
                                             </Link>
                                             <Link
                                                 to="/reservations"

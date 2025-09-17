@@ -85,6 +85,11 @@ export const updateUserSchema = Joi.object({
         "string.max": "First name cannot exceed 50 characters",
     }),
 
+    last_name: Joi.string().min(2).max(50).optional().messages({
+        "string.min": "Last name must contain at least 2 characters",
+        "string.max": "Last name cannot exceed 50 characters",
+    }),
+
     username: Joi.string()
         .pattern(/^[a-zA-Z0-9\u00C0-\u017F_\-]+$/)
         .min(3)
@@ -101,11 +106,6 @@ export const updateUserSchema = Joi.object({
         "string.max": "Email cannot exceed 100 characters",
     }),
 
-    last_name: Joi.string().min(2).max(50).optional().messages({
-        "string.min": "Last name must contain at least 2 characters",
-        "string.max": "Last name cannot exceed 50 characters",
-    }),
-
     phone: Joi.string().max(20).optional().allow("").messages({
         "string.max": "Phone number cannot exceed 20 characters",
     }),
@@ -117,8 +117,9 @@ export const updateUserSchema = Joi.object({
     postal_code: Joi.string().max(10).optional().allow("").messages({
         "string.max": "Postal code cannot exceed 10 characters",
     }),
+}).min(1).messages({
+    "object.min": "At least one field must be provided",
 });
-
 export const changePasswordSchema = Joi.object({
     currentPassword: Joi.string().required().messages({
         "any.required": "Current password is required",

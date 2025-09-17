@@ -63,4 +63,12 @@ export const authApi = {
         const { data } = await apiClient.get("/auth/profile");
         return data;
     },
+    async updateProfile(payload) {
+        const { data } = await apiClient.put("/auth/profile", payload);
+        return data;
+    },
+    async changePassword(id, payload) {
+        const { data } = await apiClient.put(`/users/${id}/password`, payload);
+        return data;
+    },
 };

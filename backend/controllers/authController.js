@@ -10,6 +10,21 @@ const getCookieOptions = () => ({
     path: "/",
 });
 
+const formatUserProfile = (user) => ({
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    phone: user.phone,
+    city: user.city,
+    postal_code: user.postal_code,
+    role_name: user.role_name,
+    role_description: user.role_description,
+    created_at: user.created_at,
+    updated_at: user.updated_at,
+});
+
 export const register = async (req, res) => {
     try {
         const {
@@ -191,20 +206,7 @@ export const getProfile = async (req, res) => {
         res.json({
             success: true,
             data: {
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    email: user.email,
-                    first_name: user.first_name,
-                    last_name: user.last_name,
-                    phone: user.phone,
-                    city: user.city,
-                    postal_code: user.postal_code,
-                    role_name: user.role_name,
-                    role_description: user.role_description,
-                    created_at: user.created_at,
-                    updated_at: user.updated_at,
-                },
+                user: formatUserProfile(user),
             },
         });
     } catch (error) {
@@ -215,3 +217,57 @@ export const getProfile = async (req, res) => {
         });
     }
 };
+
+export const updateProfile = async (req, res) => {
+    try {
+        const allowedFields = [
+            "first_name",
+            "last_name",
+            "email",
+            "username",
+            "phone",
+            "city",
+            "postal_code",
+        ];
+
+        const updateData = {};
+
+        for (const field of allowedFields) {
+            if (Object.prototype.hasOwnProperty.call(req.body, field)) {
+                updateData[field] = req.body[field];
+            }
+        }
+
+        const updatedUser = await User.update(req.user.id, updateData);
+
+        res.json({
+            success: true,
+            message: "Profile updated successfully",
+            data: {
+                user: formatUserProfile(updatedUser),
+            },
+        });
+    } catch (error) {
+        console.error("Profile update error:", error);
+
+        if (
+            [
+                "No valid data to update",
+                "This email is already in use",
+                "This username is already in use",
+                "This phone number is already in use",
+            ].includes(error.message)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: error.message,
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            message: "Profile update failed",
+        });
+    }
+};
+
