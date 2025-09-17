@@ -30,12 +30,10 @@ export default function Footer() {
                             <h4 className="footer-title">Légal</h4>
                             <ul className="footer-menu">
                                 <li>
-                                    <a href="/cgu">CGU</a>
+                                    <a href="#">CGU</a>
                                 </li>
                                 <li>
-                                    <a href="/confidentialite">
-                                        Confidentialité
-                                    </a>
+                                    <a href="#">Confidentialité</a>
                                 </li>
                             </ul>
                         </div>

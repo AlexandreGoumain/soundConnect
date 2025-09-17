@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ReviewsSection from "../../../components/ReviewsSection.jsx";
 import { useAuth } from "../../../context/AuthContext";
@@ -471,17 +471,6 @@ const StudioDetails = () => {
                                     ? "Réservation en cours..."
                                     : "Réserver"}
                             </button>
-
-                            {/* Test button - à supprimer après test */}
-                            <button
-                                className="btn btn-secondary"
-                                onClick={() =>
-                                    showSuccess("Test de toast réussi !")
-                                }
-                                style={{ marginTop: "10px" }}
-                            >
-                                Test Toast
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -494,4 +483,3 @@ const StudioDetails = () => {
 };
 
 export default StudioDetails;
-
