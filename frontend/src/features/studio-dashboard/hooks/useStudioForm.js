@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { apiClient } from "../../../lib/apiClient.js";
+import { parseStudioImagesField } from "../lib/studioImages.js";
 
 const EMPTY_FORM = {
     name: "",
@@ -15,30 +16,6 @@ const EMPTY_FORM = {
     website: "",
     equipment_list: "",
     tags: "",
-};
-
-export const parseStudioImages = (raw) => {
-    if (!raw) return [];
-    if (Array.isArray(raw)) return raw;
-
-    if (typeof raw === "string") {
-        try {
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed)) {
-                return parsed;
-            }
-        } catch {
-            const fallback = raw
-                .split(",")
-                .map((value) => value.trim())
-                .filter(Boolean);
-            if (fallback.length > 0) return fallback;
-        }
-
-        return [raw];
-    }
-
-    return [];
 };
 
 export const normalizeStudioToForm = (studio) => {
@@ -91,7 +68,7 @@ export function useStudioForm({ id, isEdit, showToast, onSuccess }) {
                 const studio = response.data?.data?.studio;
                 if (studio) {
                     setForm(normalizeStudioToForm(studio));
-                    setImages(parseStudioImages(studio.images));
+                    setImages(parseStudioImagesField(studio.images));
                 }
             } catch (error) {
                 if (!active) return;
@@ -130,7 +107,7 @@ export function useStudioForm({ id, isEdit, showToast, onSuccess }) {
                     const studio = response.data?.data?.studio;
                     if (studio) {
                         setForm(normalizeStudioToForm(studio));
-                        setImages(parseStudioImages(studio.images));
+                        setImages(parseStudioImagesField(studio.images));
                     }
                     showToast?.("Studio mis a jour", "success");
                 } else {

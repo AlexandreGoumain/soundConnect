@@ -39,6 +39,7 @@ export const formatUserProfile = (user) => ({
     phone: user.phone,
     city: user.city,
     postal_code: user.postal_code,
+    avatar_url: user.avatar_url,
     role_name: user.role_name,
     role_description: user.role_description,
     created_at: user.created_at,
@@ -131,4 +132,3 @@ export async function deleteUserAccount(id, requester) {
 }
 
 export { UserError };
-
