@@ -2,8 +2,8 @@ import {
     UploadError,
     appendStudioImages,
     removeStudioImage,
-    reorderStudioImages,
-    replaceStudioImage,
+    reorderStudioImages as reorderStudioImagesService,
+    replaceStudioImage as replaceStudioImageService,
 } from "../services/uploadService.js";
 
 export const uploadStudioImages = async (req, res) => {
@@ -40,7 +40,7 @@ export const reorderStudioImages = async (req, res) => {
     try {
         const { id } = req.params;
         const { images } = req.body || {};
-        const normalized = await reorderStudioImages(id, req.user, images);
+        const normalized = await reorderStudioImagesService(id, req.user, images);
 
         res.json({
             success: true,
@@ -55,7 +55,7 @@ export const reorderStudioImages = async (req, res) => {
 export const replaceStudioImage = async (req, res) => {
     try {
         const { id, filename } = req.params;
-        const images = await replaceStudioImage(id, req.user, filename, req.file);
+        const images = await replaceStudioImageService(id, req.user, filename, req.file);
 
         res.json({
             success: true,
@@ -81,4 +81,5 @@ function handleUploadError(res, error, fallbackMessage) {
         message: fallbackMessage,
     });
 }
+
 
