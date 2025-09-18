@@ -1,69 +1,7 @@
-import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../../context/ToastContext.jsx";
-import { apiClient } from "../../lib/apiClient.js";
 import StudioImagesManager from "./components/StudioImagesManager.jsx";
-
-const EMPTY_FORM = {
-    name: "",
-    description: "",
-    street_number: "",
-    street_name: "",
-    postal_code: "",
-    city: "",
-    country: "France",
-    hourly_rate: "",
-    phone: "",
-    email: "",
-    website: "",
-    equipment_list: "",
-    tags: "",
-};
-
-const parseImages = (raw) => {
-    if (!raw) return [];
-    if (Array.isArray(raw)) return raw;
-
-    if (typeof raw === "string") {
-        try {
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed)) return parsed;
-        } catch {
-            const splitted = raw
-                .split(",")
-                .map((value) => value.trim())
-                .filter(Boolean);
-            if (splitted.length > 0) return splitted;
-        }
-
-        return [raw];
-    }
-
-    return [];
-};
-
-const normalizeStudioToForm = (studio) => {
-    if (!studio) return { ...EMPTY_FORM };
-
-    return {
-        name: studio.name ?? "",
-        description: studio.description ?? "",
-        street_number: studio.street_number ?? "",
-        street_name: studio.street_name ?? "",
-        postal_code: studio.postal_code ?? "",
-        city: studio.city ?? "",
-        country: studio.country ?? "France",
-        hourly_rate:
-            studio.hourly_rate !== undefined && studio.hourly_rate !== null
-                ? String(studio.hourly_rate)
-                : "",
-        phone: studio.phone ?? "",
-        email: studio.email ?? "",
-        website: studio.website ?? "",
-        equipment_list: studio.equipment_list ?? "",
-        tags: studio.tags ?? "",
-    };
-};
+import { useStudioForm } from "./hooks/useStudioForm.js";
 
 export default function StudioForm() {
     const { id } = useParams();
@@ -71,86 +9,21 @@ export default function StudioForm() {
     const navigate = useNavigate();
     const { showToast } = useToast();
 
-    const [form, setForm] = useState({ ...EMPTY_FORM });
-    const [images, setImages] = useState([]);
-    const [isFetching, setIsFetching] = useState(isEdit);
-    const [isSaving, setIsSaving] = useState(false);
-
-    useEffect(() => {
-        if (!isEdit) {
-            setImages([]);
-            setForm({ ...EMPTY_FORM });
-            setIsFetching(false);
-            return;
-        }
-
-        let active = true;
-
-        const loadStudio = async () => {
-            try {
-                setIsFetching(true);
-                const res = await apiClient.get(`/dashboard/studios/${id}`);
-                if (!active) return;
-
-                const studio = res.data?.data?.studio;
-                if (studio) {
-                    setForm(normalizeStudioToForm(studio));
-                    setImages(parseImages(studio.images));
-                }
-            } catch (error) {
-                if (!active) return;
-                const message =
-                    error.response?.data?.message ||
-                    "Erreur de chargement du studio";
-                showToast(message, "error");
-            } finally {
-                if (active) setIsFetching(false);
-            }
-        };
-
-        loadStudio();
-
-        return () => {
-            active = false;
-        };
-    }, [id, isEdit, showToast]);
-
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setForm((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            setIsSaving(true);
-            if (isEdit) {
-                const response = await apiClient.put(
-                    `/dashboard/studios/${id}`,
-                    form
-                );
-                const studio = response.data?.data?.studio;
-                if (studio) {
-                    setForm(normalizeStudioToForm(studio));
-                    setImages(parseImages(studio.images));
-                }
-                showToast("Studio mis à jour", "success");
-            } else {
-                await apiClient.post(`/dashboard/studios`, form);
-                showToast("Studio créé", "success");
-            }
-            navigate("/studio/studios");
-        } catch (err) {
-            const msg =
-                err.response?.data?.message ||
-                "Erreur lors de l'enregistrement";
-            showToast(msg, "error");
-        } finally {
-            setIsSaving(false);
-        }
-    };
-
-    const disableForm = isFetching || isSaving;
+    const {
+        form,
+        images,
+        setImages,
+        isFetching,
+        isSaving,
+        disableForm,
+        handleChange,
+        handleSubmit,
+    } = useStudioForm({
+        id,
+        isEdit,
+        showToast,
+        onSuccess: () => navigate("/studio/studios"),
+    });
 
     return (
         <div style={{ maxWidth: 720 }}>

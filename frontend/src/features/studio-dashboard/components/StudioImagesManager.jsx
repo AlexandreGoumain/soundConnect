@@ -1,133 +1,23 @@
-import { useMemo, useRef, useState } from "react";
-import { useToast } from "../../../context/ToastContext.jsx";
-import { uploadsApi } from "../../../lib/apiClient.js";
-
-const MAX_IMAGES = 5;
-const API_URL = import.meta.env.VITE_API_URL || "";
-let assetsOrigin = "";
-if (typeof window !== "undefined") {
-    try {
-        const parsed = new URL(API_URL, window.location.origin);
-        assetsOrigin = parsed.origin;
-    } catch {
-        assetsOrigin = window.location.origin;
-    }
-}
-
-const getFilename = (url) => {
-    if (!url) return "";
-    const parts = url.split("/");
-    return parts[parts.length - 1];
-};
-
-const resolveImageSrc = (url) => {
-    if (!url) return "";
-    if (/^https?:/i.test(url)) return url;
-    const normalized = url.startsWith("/") ? url : `/${url}`;
-    return assetsOrigin ? `${assetsOrigin}${normalized}` : normalized;
-};
+import { useStudioImagesManager } from "../hooks/useStudioImagesManager.js";
+import { MAX_STUDIO_IMAGES } from "../lib/studioImages.js";
 
 export default function StudioImagesManager({
     studioId,
     images = [],
     onImagesChange = () => {},
 }) {
-    const { showToast } = useToast();
-    const fileInputRef = useRef(null);
-
-    const [isUploading, setIsUploading] = useState(false);
-    const [deletingFilename, setDeletingFilename] = useState(null);
-    const [isReordering, setIsReordering] = useState(false);
-
-    const remainingSlots = useMemo(
-        () => Math.max(0, MAX_IMAGES - (images?.length ?? 0)),
-        [images]
-    );
-
-    const handleFileChange = async (event) => {
-        const fileList = Array.from(event.target.files || []);
-        if (!fileList.length || !studioId) return;
-
-        const allowedFiles = remainingSlots
-            ? fileList.slice(0, remainingSlots)
-            : [];
-
-        if (!allowedFiles.length) {
-            showToast("Nombre maximum d'images atteint", "info");
-            event.target.value = "";
-            return;
-        }
-
-        try {
-            setIsUploading(true);
-            const response = await uploadsApi.uploadStudioImages(
-                studioId,
-                allowedFiles
-            );
-            const nextImages = response?.data?.images ?? [];
-            onImagesChange(nextImages);
-            showToast("Images ajout�es", "success");
-        } catch (error) {
-            const message =
-                error.response?.data?.message || "�chec de l'upload des images";
-            showToast(message, "error");
-        } finally {
-            setIsUploading(false);
-            event.target.value = "";
-        }
-    };
-
-    const handleDelete = async (imageUrl) => {
-        if (!studioId || !imageUrl) return;
-        const filename = getFilename(imageUrl);
-        if (!filename) return;
-
-        try {
-            setDeletingFilename(filename);
-            const response = await uploadsApi.deleteStudioImage(
-                studioId,
-                filename
-            );
-            const nextImages = response?.data?.images ?? [];
-            onImagesChange(nextImages);
-            showToast("Image supprim�e", "success");
-        } catch (error) {
-            const message =
-                error.response?.data?.message || "La suppression a �chou�";
-            showToast(message, "error");
-        } finally {
-            setDeletingFilename(null);
-        }
-    };
-
-    const handleMove = async (index, direction) => {
-        if (!studioId || !images?.length) return;
-        const targetIndex = index + direction;
-        if (targetIndex < 0 || targetIndex >= images.length) return;
-
-        const reordered = [...images];
-        const temp = reordered[index];
-        reordered[index] = reordered[targetIndex];
-        reordered[targetIndex] = temp;
-
-        try {
-            setIsReordering(true);
-            const response = await uploadsApi.reorderStudioImages(
-                studioId,
-                reordered
-            );
-            const nextImages = response?.data?.images ?? reordered;
-            onImagesChange(nextImages);
-            showToast("Ordre des images mis � jour", "success");
-        } catch (error) {
-            const message =
-                error.response?.data?.message ||
-                "Impossible de r�ordonner les images";
-            showToast(message, "error");
-        } finally {
-            setIsReordering(false);
-        }
-    };
+    const {
+        fileInputRef,
+        isUploading,
+        deletingFilename,
+        isReordering,
+        remainingSlots,
+        handleFileChange,
+        handleDelete,
+        handleMove,
+        getFilename,
+        resolveImageSrc,
+    } = useStudioImagesManager({ studioId, images, onImagesChange });
 
     return (
         <div className="studio-images-manager card">
@@ -135,8 +25,8 @@ export default function StudioImagesManager({
                 <div>
                     <h3>Images du studio</h3>
                     <p>
-                        Jusqu'� {MAX_IMAGES} images. Formats accept�s : JPG,
-                        PNG, WEBP, GIF.
+                        Jusqu'à {MAX_STUDIO_IMAGES} images. Formats acceptés :
+                        JPG, PNG, WEBP, GIF.
                     </p>
                 </div>
                 <div>
@@ -179,7 +69,7 @@ export default function StudioImagesManager({
                                         />
                                     ) : (
                                         <div className="studio-image-card__placeholder">
-                                            Aper�u indisponible
+                                            Aperçu indisponible
                                         </div>
                                     )}
                                 </div>
