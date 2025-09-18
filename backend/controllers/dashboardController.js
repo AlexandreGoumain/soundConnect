@@ -277,3 +277,18 @@ export const listReservationsForOwnedStudio = async (req, res) => {
         });
     }
 };
+
+function handleDashboardError(res, error, fallbackMessage) {
+    if (error instanceof DashboardError || typeof error?.statusCode === "number") {
+        return res.status(error.statusCode).json({
+            success: false,
+            message: error.message,
+        });
+    }
+
+    console.error(fallbackMessage, error);
+    return res.status(500).json({
+        success: false,
+        message: fallbackMessage,
+    });
+}

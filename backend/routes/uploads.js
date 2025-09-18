@@ -1,17 +1,17 @@
 import express from "express";
 import { authenticateToken } from "../middleware/auth.js";
-import { studioImagesUpload } from "../middleware/upload.js";
+import { studioImagesUpload, userAvatarUpload } from "../middleware/upload.js";
 import {
     uploadStudioImages,
     deleteStudioImage,
     reorderStudioImages,
     replaceStudioImage,
+    uploadUserAvatar,
 } from "../controllers/uploadController.js";
 
 const router = express.Router();
 
 // Upload images for a studio (owner only)
-// Field name: images (multiple files supported)
 router.post(
     "/studios/:id/images",
     authenticateToken,
@@ -39,6 +39,14 @@ router.put(
     authenticateToken,
     studioImagesUpload.single("image"),
     replaceStudioImage
+);
+
+// Upload or replace user avatar
+router.post(
+    "/users/:id/avatar",
+    authenticateToken,
+    userAvatarUpload.single("avatar"),
+    uploadUserAvatar
 );
 
 export default router;

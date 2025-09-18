@@ -48,8 +48,35 @@ const fileFilter = (req, file, cb) => {
     cb(null, true);
 };
 
+// Storage for user avatars => uploads/users/:id
+const userAvatarStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const userId = req.params.id;
+        const base = path.join(__dirname, "..", "uploads", "users", userId);
+        try {
+            ensureDirSync(base);
+            cb(null, base);
+        } catch (error) {
+            cb(error);
+        }
+    },
+    filename: (req, file, cb) => {
+        const timestamp = Date.now();
+        const safeOriginal = file.originalname
+            .replace(/[^a-zA-Z0-9_.-]+/g, "-")
+            .replace(/-+/g, "-")
+            .toLowerCase();
+        cb(null, `${timestamp}-${safeOriginal}`);
+    },
+});
 export const studioImagesUpload = multer({
     storage: studioImagesStorage,
     fileFilter,
     limits: { fileSize: 5 * 1024 * 1024, files: 5 }, // 5MB per file, max 5 files
+});
+
+export const userAvatarUpload = multer({
+    storage: userAvatarStorage,
+    fileFilter,
+    limits: { fileSize: 2 * 1024 * 1024, files: 1 },
 });
