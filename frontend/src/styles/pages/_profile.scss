@@ -37,6 +37,14 @@
         display: flex;
         align-items: center;
         gap: $spacing-md;
+        flex-wrap: wrap;
+    }
+
+    .profile-summary-avatar-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-xs;
     }
 
     .profile-summary-avatar {
@@ -48,6 +56,28 @@
         font-weight: 600;
         font-size: $font-size-lg;
         @include flex-center;
+        overflow: hidden;
+
+        span {
+            line-height: 1;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        &.profile-summary-avatar--image {
+            background: transparent;
+            color: var(--text-primary);
+        }
+    }
+
+    .profile-summary-avatar-hint {
+        font-size: $font-size-xs;
+        color: var(--text-muted);
     }
 
     .profile-summary-details {

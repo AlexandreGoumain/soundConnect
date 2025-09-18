@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { useToast } from "../../../context/ToastContext.jsx";
@@ -40,6 +40,32 @@ const computeInitials = (profile) => {
     return usernameInitial.toUpperCase();
 };
 
+const API_URL = import.meta.env.VITE_API_URL || "";
+const assetsOrigin = (() => {
+    if (typeof window === "undefined") return "";
+    try {
+        return new URL(API_URL, window.location.origin).origin;
+    } catch {
+        return window.location.origin;
+    }
+})();
+
+const ACCEPTED_AVATAR_TYPES = new Set([
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+]);
+
+const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
+
+const resolveAssetUrl = (value) => {
+    if (!value) return "";
+    if (/^https?:/i.test(value)) return value;
+    const normalized = value.startsWith("/") ? value : `/${value}`;
+    return assetsOrigin ? `${assetsOrigin}${normalized}` : normalized;
+};
+
 export default function Profile() {
     const { refresh, user } = useAuth();
     const { showError, showSuccess, showInfo } = useToast();
@@ -49,8 +75,15 @@ export default function Profile() {
     const [profileInfo, setProfileInfo] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isAvatarUploading, setIsAvatarUploading] = useState(false);
     const [fetchError, setFetchError] = useState(null);
 
+    const avatarInputRef = useRef(null);
+    const avatarUrl = useMemo(
+        () => resolveAssetUrl(profileInfo?.avatar_url),
+        [profileInfo?.avatar_url]
+    );
+    const profileId = profileInfo?.id ?? user?.id ?? null;
     useEffect(() => {
         if (!user) return;
 
@@ -99,6 +132,58 @@ export default function Profile() {
         };
     }, []);
 
+    const handleAvatarUpload = useCallback(
+        async (event) => {
+            const file = event.target?.files?.[0];
+            if (!file) return;
+
+            if (!ACCEPTED_AVATAR_TYPES.has(file.type)) {
+                showError(
+                    "Format de fichier non support� (jpg, png, webp, gif)."
+                );
+                event.target.value = "";
+                return;
+            }
+
+            if (file.size > MAX_AVATAR_SIZE) {
+                showError("L'image doit faire moins de 2 Mo.");
+                event.target.value = "";
+                return;
+            }
+
+            if (!profileId) {
+                showError("Profil utilisateur introuvable.");
+                event.target.value = "";
+                return;
+            }
+
+            try {
+                setIsAvatarUploading(true);
+                const response = await authApi.uploadAvatar(profileId, file);
+                const newAvatar = response?.data?.avatar_url ?? null;
+                if (newAvatar) {
+                    setProfileInfo((prev) => {
+                        const base = prev ?? profileInfo ?? {};
+                        return {
+                            ...base,
+                            avatar_url: newAvatar,
+                        };
+                    });
+                }
+                await refresh();
+                showSuccess(response?.message || "Avatar mis � jour");
+            } catch (error) {
+                const message =
+                    error.response?.data?.message ||
+                    "�chec de la mise � jour de l'avatar.";
+                showError(message);
+            } finally {
+                setIsAvatarUploading(false);
+                if (event.target) event.target.value = "";
+            }
+        },
+        [profileId, profileInfo, refresh, showError, showSuccess]
+    );
     const hasChanges = useMemo(() => {
         if (!initialData) return false;
 
@@ -222,11 +307,52 @@ export default function Profile() {
                     <div className="profile-content">
                         {profileInfo && (
                             <div className="profile-summary card">
-                                <div
-                                    className="profile-summary-avatar"
-                                    aria-hidden="true"
-                                >
-                                    {initials || "?"}
+                                <div className="profile-summary-avatar-wrapper">
+                                    <div
+                                        className={`profile-summary-avatar${
+                                            avatarUrl
+                                                ? " profile-summary-avatar--image"
+                                                : ""
+                                        }`}
+                                    >
+                                        {avatarUrl ? (
+                                            <img
+                                                src={avatarUrl}
+                                                alt={`Avatar de ${
+                                                    displayName ||
+                                                    profileInfo?.username ||
+                                                    "votre compte"
+                                                }`}
+                                                loading="lazy"
+                                            />
+                                        ) : (
+                                            <span aria-hidden="true">
+                                                {initials || "?"}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary btn-sm"
+                                        onClick={() =>
+                                            avatarInputRef.current?.click()
+                                        }
+                                        disabled={isAvatarUploading}
+                                    >
+                                        {isAvatarUploading
+                                            ? "Envoi..."
+                                            : "Changer la photo"}
+                                    </button>
+                                    <input
+                                        ref={avatarInputRef}
+                                        type="file"
+                                        accept="image/png,image/jpeg,image/webp,image/gif"
+                                        style={{ display: "none" }}
+                                        onChange={handleAvatarUpload}
+                                    />
+                                    <span className="profile-summary-avatar-hint">
+                                        PNG, JPG, WEBP ou GIF - 2 Mo max.
+                                    </span>
                                 </div>
                                 <div className="profile-summary-details">
                                     <h2>
@@ -235,9 +361,9 @@ export default function Profile() {
                                                 "Mon compte")}
                                     </h2>
                                     <p>{roleLabel}</p>
-                                    {profileInfo.username && (
+                                    {profileInfo?.username && (
                                         <p className="profile-summary-username">
-                                            @{profileInfo.username}
+                                            @{profileInfo?.username}
                                         </p>
                                     )}
                                 </div>
