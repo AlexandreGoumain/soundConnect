@@ -2,14 +2,16 @@ import { pool } from "../config/database.js";
 import User from "../models/User.js";
 import { comparePassword, generateToken } from "../utils/auth.js";
 import { findProfileById, updateProfileById } from "../services/userService.js";
-
-const getCookieOptions = () => ({
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
-    path: "/",
-});
+const getCookieOptions = () => {
+    const isProduction = process.env.NODE_ENV === "production";
+    return {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+        path: "/",
+    };
+};
 
 export const register = async (req, res) => {
     try {
@@ -237,4 +239,7 @@ export const updateProfile = async (req, res) => {
         });
     }
 };
+
+
+
 

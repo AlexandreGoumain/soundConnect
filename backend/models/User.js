@@ -101,6 +101,7 @@ class User {
             "phone",
             "city",
             "postal_code",
+            "avatar_url",
         ];
         const updates = [];
         const values = [];
