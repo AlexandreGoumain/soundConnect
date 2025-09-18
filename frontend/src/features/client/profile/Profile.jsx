@@ -1,208 +1,30 @@
-import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { useToast } from "../../../context/ToastContext.jsx";
-import { authApi } from "../../../lib/apiClient.js";
-
-const DEFAULT_PROFILE = {
-    first_name: "",
-    last_name: "",
-    username: "",
-    email: "",
-    phone: "",
-    city: "",
-    postal_code: "",
-};
-
-const FIELDS = Object.keys(DEFAULT_PROFILE);
-
-const normalizeProfile = (user) => {
-    const normalized = { ...DEFAULT_PROFILE };
-    if (!user) {
-        return normalized;
-    }
-
-    for (const field of FIELDS) {
-        const value = user[field];
-        normalized[field] = value ?? "";
-    }
-
-    return normalized;
-};
-
-const computeInitials = (profile) => {
-    if (!profile) return "";
-    const letters = `${profile.first_name?.charAt(0) ?? ""}${
-        profile.last_name?.charAt(0) ?? ""
-    }`.trim();
-    if (letters) return letters.toUpperCase();
-    const usernameInitial = profile.username?.charAt(0) ?? "";
-    return usernameInitial.toUpperCase();
-};
+import { useProfile } from "./hooks/useProfile.js";
 
 export default function Profile() {
     const { refresh, user } = useAuth();
     const { showError, showSuccess, showInfo } = useToast();
 
-    const [formData, setFormData] = useState(DEFAULT_PROFILE);
-    const [initialData, setInitialData] = useState(null);
-    const [profileInfo, setProfileInfo] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [fetchError, setFetchError] = useState(null);
-
-    useEffect(() => {
-        if (!user) return;
-
-        const normalized = normalizeProfile(user);
-        setFormData(normalized);
-        setInitialData({ ...normalized });
-        setProfileInfo((prev) => prev ?? user);
-    }, [user]);
-
-    useEffect(() => {
-        let active = true;
-
-        async function loadProfile() {
-            try {
-                setFetchError(null);
-                setIsLoading(true);
-
-                const response = await authApi.profile();
-
-                if (!active) return;
-
-                const profile = response?.data?.user ?? null;
-                setProfileInfo(profile);
-
-                const normalized = normalizeProfile(profile);
-
-                setFormData(normalized);
-                setInitialData({ ...normalized });
-            } catch (error) {
-                if (!active) return;
-
-                const message =
-                    error.response?.data?.message ||
-                    "Impossible de charger votre profil.";
-
-                setFetchError(message);
-            } finally {
-                if (active) setIsLoading(false);
-            }
-        }
-
-        loadProfile();
-
-        return () => {
-            active = false;
-        };
-    }, []);
-
-    const hasChanges = useMemo(() => {
-        if (!initialData) return false;
-
-        return FIELDS.some((field) => {
-            const currentValue = formData[field] ?? "";
-            const initialValue = initialData[field] ?? "";
-            return currentValue !== initialValue;
-        });
-    }, [formData, initialData]);
-
-    const initials = useMemo(() => computeInitials(profileInfo), [profileInfo]);
-
-    const roleLabel = useMemo(() => {
-        const role = profileInfo?.role_name;
-
-        if (role === "studio") return "Compte studio";
-        if (role === "artist") return "Compte artiste";
-
-        return "Compte utilisateur";
-    }, [profileInfo]);
-
-    const displayName = useMemo(() => {
-        if (!profileInfo) return "";
-
-        const fullname = `${profileInfo.first_name ?? ""} ${
-            profileInfo.last_name ?? ""
-        }`.trim();
-
-        if (fullname) return fullname;
-
-        return profileInfo.username ?? "";
-    }, [profileInfo]);
-
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-
-        if (!FIELDS.includes(name)) return;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    const handleReset = () => {
-        if (!initialData) return;
-        setFormData({ ...initialData });
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        if (!initialData) return;
-
-        const payload = {};
-        const sanitizedForm = { ...formData };
-
-        for (const field of FIELDS) {
-            const rawValue = formData[field] ?? "";
-
-            const sanitized =
-                typeof rawValue === "string" ? rawValue.trim() : rawValue;
-            sanitizedForm[field] = sanitized;
-
-            const baseline = initialData[field] ?? "";
-
-            if (sanitized !== baseline) {
-                payload[field] = sanitized;
-            }
-        }
-
-        if (Object.keys(payload).length === 0) {
-            setFormData(sanitizedForm);
-            showInfo("Aucune modification à enregistrer.");
-            return;
-        }
-
-        try {
-            setIsSubmitting(true);
-            setFormData(sanitizedForm);
-            const response = await authApi.updateProfile(payload);
-            const updatedProfile = response?.data?.user ?? null;
-            if (updatedProfile) {
-                const normalized = normalizeProfile(updatedProfile);
-                setFormData(normalized);
-                setInitialData({ ...normalized });
-                setProfileInfo(updatedProfile);
-            } else {
-                const normalizedFallback = normalizeProfile(sanitizedForm);
-                setInitialData({ ...normalizedFallback });
-            }
-            await refresh();
-            showSuccess("Profil mis a jour");
-        } catch (error) {
-            const validationErrors = error.response?.data?.errors;
-            const message =
-                (Array.isArray(validationErrors) && validationErrors.length > 0
-                    ? validationErrors[0]?.message
-                    : error.response?.data?.message) ||
-                "La mise a jour du profil a echoue.";
-            showError(message);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
+    const {
+        avatarInputRef,
+        avatarUrl,
+        displayName,
+        fetchError,
+        formData,
+        handleAvatarUpload,
+        handleChange,
+        handleReset,
+        handleSubmit,
+        hasChanges,
+        initials,
+        isAvatarUploading,
+        isLoading,
+        isSubmitting,
+        profileInfo,
+        roleLabel,
+    } = useProfile({ user, refresh, showError, showSuccess, showInfo });
 
     return (
         <div className="profile-page">
@@ -222,11 +44,52 @@ export default function Profile() {
                     <div className="profile-content">
                         {profileInfo && (
                             <div className="profile-summary card">
-                                <div
-                                    className="profile-summary-avatar"
-                                    aria-hidden="true"
-                                >
-                                    {initials || "?"}
+                                <div className="profile-summary-avatar-wrapper">
+                                    <div
+                                        className={`profile-summary-avatar${
+                                            avatarUrl
+                                                ? " profile-summary-avatar--image"
+                                                : ""
+                                        }`}
+                                    >
+                                        {avatarUrl ? (
+                                            <img
+                                                src={avatarUrl}
+                                                alt={`Avatar de ${
+                                                    displayName ||
+                                                    profileInfo?.username ||
+                                                    "votre compte"
+                                                }`}
+                                                loading="lazy"
+                                            />
+                                        ) : (
+                                            <span aria-hidden="true">
+                                                {initials || "?"}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary btn-sm"
+                                        onClick={() =>
+                                            avatarInputRef.current?.click()
+                                        }
+                                        disabled={isAvatarUploading}
+                                    >
+                                        {isAvatarUploading
+                                            ? "Envoi..."
+                                            : "Changer la photo"}
+                                    </button>
+                                    <input
+                                        ref={avatarInputRef}
+                                        type="file"
+                                        accept="image/png,image/jpeg,image/webp,image/gif"
+                                        style={{ display: "none" }}
+                                        onChange={handleAvatarUpload}
+                                    />
+                                    <span className="profile-summary-avatar-hint">
+                                        PNG, JPG, WEBP ou GIF - 2 Mo max.
+                                    </span>
                                 </div>
                                 <div className="profile-summary-details">
                                     <h2>
@@ -235,9 +98,9 @@ export default function Profile() {
                                                 "Mon compte")}
                                     </h2>
                                     <p>{roleLabel}</p>
-                                    {profileInfo.username && (
+                                    {profileInfo?.username && (
                                         <p className="profile-summary-username">
-                                            @{profileInfo.username}
+                                            @{profileInfo?.username}
                                         </p>
                                     )}
                                 </div>
