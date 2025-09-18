@@ -1,14 +1,17 @@
-import { pool } from '../config/database.js';
+import { getRegistrationRoles } from '../services/roleService.js';
 
 // Return available roles for registration (e.g., artist, studio)
 export const getRoles = async (req, res) => {
   try {
-    const [rows] = await pool.execute(
-      'SELECT id, name, description FROM roles WHERE name IN (?, ?) ORDER BY name',
-      ['artist', 'studio'],
-    );
+    const roles = await getRegistrationRoles();
 
-    res.json({ success: true, data: { roles: rows } });
+    res.json({ success: true, data: { roles } });
+  } catch (error) {
+    console.error("getRoles error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch roles" });
+  }
+};
+ });
   } catch (error) {
     console.error('getRoles error:', error);
     res.status(500).json({ success: false, message: 'Failed to fetch roles' });
