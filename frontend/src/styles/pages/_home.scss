@@ -1,322 +1,322 @@
-@use '../utils/variables' as *;
-@use '../utils/mixins' as *;
+@use "../utils/variables" as *;
+@use "../utils/mixins" as *;
 
 // Hero Section
 .hero-section {
-  background-color: var(--bg-hero);
-  padding: $spacing-xxl 0;
-  text-align: center;
+    background-color: var(--bg-hero);
+    padding: $spacing-xxl 0;
+    text-align: center;
 
-  @include tablet {
-    padding: $spacing-xxl * 2 0;
-  }
+    @include tablet {
+        padding: $spacing-xxl * 2 0;
+    }
 }
 
 .hero-content {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 $spacing-md;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 $spacing-md;
 }
 
 .hero-title {
-  font-size: $font-size-xxl;
-  font-weight: 600;
-  color: var(--text-white);
-  margin-bottom: $spacing-lg;
-  line-height: 1.2;
+    font-size: $font-size-xxl;
+    font-weight: 600;
+    color: var(--text-white);
+    margin-bottom: $spacing-lg;
+    line-height: 1.2;
 
-  @include tablet {
-    font-size: $font-size-xxxl;
-  }
+    @include tablet {
+        font-size: $font-size-xxxl;
+    }
 }
 
 .hero-subtitle {
-  font-size: $font-size-base;
-  color: var(--text-white);
-  margin-bottom: $spacing-xl;
-  opacity: 0.9;
+    font-size: $font-size-base;
+    color: var(--text-white);
+    margin-bottom: $spacing-xl;
+    opacity: 0.9;
 
-  @include tablet {
-    font-size: $font-size-lg;
-    margin-bottom: $spacing-xxl;
-  }
+    @include tablet {
+        font-size: $font-size-lg;
+        margin-bottom: $spacing-xxl;
+    }
 }
 
 .search-form {
-  margin-top: $spacing-xl;
+    margin-top: $spacing-xl;
 }
 
 .search-input-group {
-  display: flex;
-  flex-direction: column;
-  max-width: 500px;
-  margin: 0 auto;
-  gap: $spacing-sm;
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    margin: 0 auto;
+    gap: $spacing-sm;
 
-  @include tablet {
-    flex-direction: row;
-    gap: $spacing-md;
-  }
+    @include tablet {
+        flex-direction: row;
+        gap: $spacing-md;
+    }
 }
 
 .search-input {
-  flex: 1;
-  @include input-base;
-  padding: $spacing-md;
-  font-size: $font-size-base;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
+    flex: 1;
+    @include input-base;
+    padding: $spacing-md;
+    font-size: $font-size-base;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
 
-  &::placeholder {
-    color: var(--text-secondary);
-  }
+    &::placeholder {
+        color: var(--text-secondary);
+    }
 }
 
 .search-btn {
-  white-space: nowrap;
-  padding: $spacing-md $spacing-xl;
-  font-weight: 600;
-  width: 100%;
+    white-space: nowrap;
+    padding: $spacing-md $spacing-xl;
+    font-weight: 600;
+    width: 100%;
 
-  @include tablet {
-    width: auto;
-  }
+    @include tablet {
+        width: auto;
+    }
 }
 
 // Studios Section
 .studios-section {
-  background-color: var(--bg-studios);
-  padding: $spacing-xxl 0;
+    background-color: var(--bg-studios);
+    padding: $spacing-xxl 0;
 
-  @include tablet {
-    padding: $spacing-xxl * 2 0;
-  }
+    @include tablet {
+        padding: $spacing-xxl * 2 0;
+    }
 }
 
 .section-header {
-  text-align: center;
-  margin-bottom: $spacing-xxl;
+    text-align: center;
+    margin-bottom: $spacing-xxl;
 }
 
 .section-title {
-  font-size: $font-size-xxl;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: $spacing-md;
+    font-size: $font-size-xxl;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: $spacing-md;
 }
 
 .studios-carousel {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: $spacing-md;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-md;
 
-  @include tablet {
-    flex-direction: row;
-    gap: $spacing-lg;
-  }
+    @include tablet {
+        flex-direction: row;
+        gap: $spacing-lg;
+    }
 }
 
 .carousel-nav {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-size-xl;
-  cursor: pointer;
-  transition: all $transition-base;
-  color: var(--text-primary);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-xl;
+    cursor: pointer;
+    transition: all $transition-base;
+    color: var(--text-primary);
 
-  &:hover {
-    background: var(--primary);
-    color: var(--text-white);
-    border-color: var(--primary);
-  }
+    &:hover {
+        background: var(--primary);
+        color: var(--text-white);
+        border-color: var(--primary);
+    }
 
-  @include tablet {
-    display: flex;
-  }
+    @include tablet {
+        display: flex;
+    }
 }
 
 .studios-grid {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $spacing-md;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-md;
 
-  @include tablet {
-    grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-lg;
-  }
+    @include tablet {
+        grid-template-columns: repeat(2, 1fr);
+        gap: $spacing-lg;
+    }
 
-  @include desktop {
-    grid-template-columns: repeat(3, 1fr);
-  }
+    @include desktop {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 .studio-card {
-  background: var(--bg-card);
-  border-radius: $border-radius-lg;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: transform $transition-base;
+    background: var(--bg-card);
+    border-radius: $border-radius-lg;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform $transition-base;
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-  }
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+    }
 }
 
 .studio-image {
-  height: 150px;
-  position: relative;
+    height: 150px;
+    position: relative;
 
-  @include tablet {
-    height: 200px;
-  }
+    @include tablet {
+        height: 200px;
+    }
 }
 
 .image-placeholder {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
 }
 
 .studio-info {
-  padding: $spacing-lg;
+    padding: $spacing-lg;
 }
 
 .studio-name {
-  font-size: $font-size-lg;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: $spacing-xs;
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: $spacing-xs;
 }
 
 .studio-location {
-  color: var(--text-secondary);
-  font-size: $font-size-sm;
-  margin-bottom: $spacing-sm;
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+    margin-bottom: $spacing-sm;
 }
 
 .studio-price {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-md;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
 
-  .price {
-    font-size: $font-size-lg;
-    font-weight: 600;
-    color: var(--primary-light);
-  }
+    .price {
+        font-size: $font-size-lg;
+        font-weight: 600;
+        color: var(--primary-light);
+    }
 
-  .rating {
-    font-size: $font-size-sm;
-    color: var(--text-secondary);
-  }
+    .rating {
+        font-size: $font-size-sm;
+        color: var(--text-secondary);
+    }
 }
 
 .studio-description {
-  color: var(--text-secondary);
-  font-size: $font-size-sm;
-  line-height: 1.5;
-  margin-bottom: $spacing-md;
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+    line-height: 1.5;
+    margin-bottom: $spacing-md;
 }
 
 .studio-badges {
-  display: flex;
-  gap: $spacing-sm;
+    display: flex;
+    gap: $spacing-sm;
 }
 
 .badge {
-  display: inline-block;
-  padding: $spacing-xs $spacing-sm;
-  border-radius: $border-radius;
-  font-size: $font-size-sm;
-  font-weight: 500;
+    display: inline-block;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius;
+    font-size: $font-size-sm;
+    font-weight: 500;
 
-  &-pro {
-    background: var(--primary);
-    color: var(--text-white);
-  }
+    &-pro {
+        background: var(--primary);
+        color: var(--text-white);
+    }
 
-  &-trending {
-    background: var(--primary-light);
-    color: var(--text-white);
-  }
+    &-trending {
+        background: var(--primary-light);
+        color: var(--text-white);
+    }
 }
 
 // How it works Section
 .how-it-works-section {
-  background: var(--bg-primary);
-  padding: $spacing-xxl 0;
-  text-align: center;
+    background: var(--bg-primary);
+    padding: $spacing-xxl 0;
+    text-align: center;
 
-  @include tablet {
-    padding: $spacing-xxl * 2 0;
-  }
+    @include tablet {
+        padding: $spacing-xxl * 2 0;
+    }
 }
 
 .steps-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $spacing-xl;
-  margin-top: $spacing-xxl;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+    margin-top: $spacing-xxl;
 
-  @include desktop {
-    grid-template-columns: repeat(3, 1fr);
-    gap: $spacing-xxl;
-  }
+    @include desktop {
+        grid-template-columns: repeat(3, 1fr);
+        gap: $spacing-xxl;
+    }
 }
 
 .step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .step-number {
-  width: 64px;
-  height: 64px;
-  background: var(--primary-light);
-  color: var(--text-white);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: $font-size-xl;
-  font-weight: 600;
-  margin-bottom: $spacing-lg;
+    width: 64px;
+    height: 64px;
+    background: var(--primary-light);
+    color: var(--text-white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-xl;
+    font-weight: 600;
+    margin-bottom: $spacing-lg;
 }
 
 .step-title {
-  font-size: $font-size-xl;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: $spacing-md;
+    font-size: $font-size-xl;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: $spacing-md;
 }
 
 .step-description {
-  color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 280px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 280px;
 }
 
 // Loading & Error States
 .loading-state,
 .error-state {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: $spacing-xxl;
-  color: var(--text-secondary);
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: $spacing-xxl;
+    color: var(--text-secondary);
 }

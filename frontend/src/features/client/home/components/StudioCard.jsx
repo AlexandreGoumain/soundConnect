@@ -1,5 +1,7 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import StarRating from "../../../../components/StarRating.jsx";
+import { resolveStudioImages } from "../../../studio-dashboard/lib/studioImages.js";
 import { BADGES, HOME_CONSTANTS } from "../constants/homeConstants.js";
 
 export default function StudioCard({ studio }) {
@@ -8,10 +10,27 @@ export default function StudioCard({ studio }) {
         HOME_CONSTANTS.DESCRIPTION_TRUNCATE_LENGTH
     );
 
+    const studioImages = useMemo(
+        () => resolveStudioImages(studio?.images),
+        [studio?.images]
+    );
+
+    const coverImage = studioImages[0] || "";
+
     return (
         <Link to={`/studios/${studio.id}`} className="studio-card">
             <div className="studio-image">
-                <div className="image-placeholder"></div>
+                {coverImage ? (
+                    <img
+                        src={coverImage}
+                        alt={`Photo du studio ${studio.name}`}
+                        loading="lazy"
+                    />
+                ) : (
+                    <div className="image-placeholder">
+                        <span>Image indisponible</span>
+                    </div>
+                )}
             </div>
             <div className="studio-info">
                 <h3 className="studio-name">{studio.name}</h3>

@@ -1,9 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ReviewsSection from "../../../components/ReviewsSection.jsx";
 import { useAuth } from "../../../context/AuthContext";
 import { useToast } from "../../../context/ToastContext";
 import { apiClient } from "../../../lib/apiClient";
+import {
+    parseStudioImagesField,
+    resolveStudioImageSrc,
+} from "../../studio-dashboard/lib/studioImages.js";
 import { useAvailability } from "./hooks/useAvailability";
 import "./StudioDetails.scss";
 
@@ -13,6 +17,7 @@ const StudioDetails = () => {
     const { user } = useAuth();
     const { showSuccess, showError } = useToast();
     const [studio, setStudio] = useState(null);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedDate, setSelectedDate] = useState("");
@@ -49,6 +54,39 @@ const StudioDetails = () => {
         fetchStudioDetails();
         fetchWeeklySchedule();
     }, [fetchStudioDetails, fetchWeeklySchedule]);
+
+    const carouselImages = useMemo(() => {
+        if (!studio) return [];
+        const parsed = parseStudioImagesField(studio.images);
+        return parsed.map((image) => resolveStudioImageSrc(image));
+    }, [studio]);
+
+    useEffect(() => {
+        if (carouselImages.length === 0) {
+            setCurrentImageIndex(0);
+            return;
+        }
+        setCurrentImageIndex((previous) =>
+            previous >= carouselImages.length ? 0 : previous
+        );
+    }, [carouselImages.length]);
+
+    const activeImage = carouselImages[currentImageIndex] || "";
+    const hasMultipleImages = carouselImages.length > 1;
+
+    const showPrevImage = useCallback(() => {
+        if (carouselImages.length <= 1) return;
+        setCurrentImageIndex((prev) =>
+            prev === 0 ? carouselImages.length - 1 : prev - 1
+        );
+    }, [carouselImages.length]);
+
+    const showNextImage = useCallback(() => {
+        if (carouselImages.length <= 1) return;
+        setCurrentImageIndex((prev) =>
+            prev === carouselImages.length - 1 ? 0 : prev + 1
+        );
+    }, [carouselImages.length]);
 
     // Fetch available slots when date or duration changes
     useEffect(() => {
@@ -247,17 +285,64 @@ const StudioDetails = () => {
                 {/* Image Gallery with Carousel */}
                 <div className="studio-gallery">
                     <div className="main-image">
-                        <div className="image-placeholder">
-                            <span>Image du studio</span>
-                        </div>
-                        <button className="carousel-btn prev">‹</button>
-                        <button className="carousel-btn next">›</button>
+                        {activeImage ? (
+                            <img
+                                src={activeImage}
+                                alt={`Photo ${
+                                    currentImageIndex + 1
+                                } du studio ${studio.name}`}
+                                loading="lazy"
+                            />
+                        ) : (
+                            <div className="image-placeholder">
+                                <span>Image du studio</span>
+                            </div>
+                        )}
+                        {hasMultipleImages && (
+                            <Fragment>
+                                <button
+                                    type="button"
+                                    className="carousel-btn prev"
+                                    onClick={showPrevImage}
+                                >
+                                    {"\u2039"}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="carousel-btn next"
+                                    onClick={showNextImage}
+                                >
+                                    {"\u203a"}
+                                </button>
+                            </Fragment>
+                        )}
                     </div>
                     <div className="carousel-indicators">
-                        <span className="indicator active"></span>
-                        <span className="indicator"></span>
-                        <span className="indicator"></span>
-                        <span className="indicator"></span>
+                        {carouselImages.length > 0 ? (
+                            carouselImages.map((_, index) => (
+                                <span
+                                    key={index}
+                                    className={`indicator ${
+                                        index === currentImageIndex
+                                            ? "active"
+                                            : ""
+                                    }`}
+                                    onClick={() => setCurrentImageIndex(index)}
+                                    onKeyDown={(event) => {
+                                        if (
+                                            event.key === "Enter" ||
+                                            event.key === " "
+                                        ) {
+                                            setCurrentImageIndex(index);
+                                        }
+                                    }}
+                                    role="button"
+                                    tabIndex={0}
+                                ></span>
+                            ))
+                        ) : (
+                            <span className="indicator active"></span>
+                        )}
                     </div>
                 </div>
 
