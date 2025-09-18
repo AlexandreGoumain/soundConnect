@@ -45,10 +45,10 @@ const parseDuration = (duration) => {
     return durationHours;
 };
 
-const parseDateParam = (value, {
-    fieldName = "date",
-    requiredMessage = "Date parameter is required",
-} = {}) => {
+const parseDateParam = (
+    value,
+    { fieldName = "date", requiredMessage = "Date parameter is required" } = {}
+) => {
     if (!value) {
         throw new AvailabilityError(400, requiredMessage);
     }
@@ -187,6 +187,7 @@ export async function getAvailableSlotsForStudio({
     }
 
     const reservations = await fetchReservationsForDate(studioId, date);
+
     const slots = computeAvailableSlots({
         date,
         daySchedule,
