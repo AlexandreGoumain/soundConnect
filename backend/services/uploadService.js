@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import Studio from "../models/Studio.js";
+import User from "../models/User.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,6 +16,12 @@ class UploadError extends Error {
     }
 }
 
+const ensureDirSync = (dirPath) => {
+    if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+    }
+};
+
 const toArray = (imagesField) => {
     if (!imagesField) return [];
     if (Array.isArray(imagesField)) return imagesField;
@@ -25,7 +32,7 @@ const toArray = (imagesField) => {
             if (Array.isArray(parsed)) {
                 return parsed;
             }
-        } catch (e) {
+        } catch (error) {
             return imagesField
                 .split(",")
                 .map((value) => value.trim())
@@ -71,7 +78,7 @@ async function getOwnedStudioOrThrow(studioId, user) {
 }
 
 export async function appendStudioImages(studioId, user, files = []) {
-    if (!files.length) {
+    if (!files?.length) {
         throw new UploadError(400, "No images uploaded");
     }
 
@@ -115,14 +122,8 @@ export async function removeStudioImage(studioId, user, filename) {
 
     await Studio.update(studioId, { images: JSON.stringify(normalized) });
 
-    const absolute = path.join(
-        __dirname,
-        "..",
-        "uploads",
-        "studios",
-        studioId,
-        safeName
-    );
+    const relative = path.join("uploads", "studios", studioId, safeName);
+    const absolute = path.join(__dirname, "..", relative);
 
     try {
         if (fs.existsSync(absolute)) {
@@ -189,14 +190,8 @@ export async function replaceStudioImage(
         "/"
     );
 
-    const absolute = path.join(
-        __dirname,
-        "..",
-        "uploads",
-        "studios",
-        studioId,
-        safeName
-    );
+    const relative = path.join("uploads", "studios", studioId, safeName);
+    const absolute = path.join(__dirname, "..", relative);
 
     try {
         if (fs.existsSync(absolute)) {
@@ -216,4 +211,56 @@ export async function replaceStudioImage(
     return normalized;
 }
 
+export async function uploadUserAvatar(userId, requester, file) {
+    if (!file) {
+        throw new UploadError(400, "No image uploaded");
+    }
+
+    if (requester?.id !== userId) {
+        cleanupFiles([file]);
+        throw new UploadError(
+            403,
+            "Unauthorized: You can only update your own avatar"
+        );
+    }
+
+    const dbUser = await User.findById(userId);
+
+    if (!dbUser) {
+        cleanupFiles([file]);
+        throw new UploadError(404, "User not found");
+    }
+
+    const base = path.join(__dirname, "..", "uploads", "users", userId);
+    ensureDirSync(base);
+
+    const safeName = path.basename(file.filename || file.path);
+    const destinationPath = path.join(base, safeName);
+
+    if (file.path !== destinationPath) {
+        fs.renameSync(file.path, destinationPath);
+    }
+
+    if (dbUser.avatar_url) {
+        const oldRelative = dbUser.avatar_url.startsWith("/")
+            ? dbUser.avatar_url.slice(1)
+            : dbUser.avatar_url;
+        const oldAbsolute = path.join(__dirname, "..", oldRelative);
+        try {
+            if (fs.existsSync(oldAbsolute) && oldAbsolute !== destinationPath) {
+                fs.unlinkSync(oldAbsolute);
+            }
+        } catch (error) {
+            console.warn("Failed to delete old avatar", error.message);
+        }
+    }
+
+    const relative = `/uploads/users/${userId}/${safeName}`.replace(/\\/g, "/");
+
+    await User.update(userId, { avatar_url: relative });
+
+    return relative;
+}
+
 export { UploadError };
+

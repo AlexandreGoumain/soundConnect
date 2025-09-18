@@ -4,6 +4,7 @@ import {
     removeStudioImage,
     reorderStudioImages as reorderStudioImagesService,
     replaceStudioImage as replaceStudioImageService,
+    uploadUserAvatar as uploadUserAvatarService,
 } from "../services/uploadService.js";
 
 export const uploadStudioImages = async (req, res) => {
@@ -66,7 +67,20 @@ export const replaceStudioImage = async (req, res) => {
         handleUploadError(res, error, "Error replacing image");
     }
 };
+export const uploadUserAvatar = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const avatarUrl = await uploadUserAvatarService(id, req.user, req.file);
 
+        res.status(201).json({
+            success: true,
+            message: "Avatar uploaded successfully",
+            data: { avatar_url: avatarUrl },
+        });
+    } catch (error) {
+        handleUploadError(res, error, "Error uploading avatar");
+    }
+};
 function handleUploadError(res, error, fallbackMessage) {
     if (error instanceof UploadError || typeof error?.statusCode === "number") {
         return res.status(error.statusCode).json({
