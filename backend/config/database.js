@@ -21,7 +21,9 @@ const pool = mysql.createPool(dbConfig);
 const testConnection = async () => {
     try {
         const connection = await pool.getConnection();
-        console.log("MySQL database connection successful");
+        if (process.env.NODE_ENV === "development") {
+            console.log("MySQL database connection successful");
+        }
         connection.release();
         return true;
     } catch (error) {

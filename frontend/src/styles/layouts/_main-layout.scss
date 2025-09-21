@@ -51,40 +51,7 @@
     }
 }
 
-.page-header {
-    margin-bottom: $spacing-xl;
-
-    .page-title {
-        margin-bottom: $spacing-sm;
-    }
-
-    .page-subtitle {
-        color: var(--text-muted);
-        margin-bottom: 0;
-    }
-}
-
 .content-grid {
     display: grid;
     gap: $spacing-lg;
-
-    &-2 {
-        grid-template-columns: 1fr;
-
-        @include tablet {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    &-3 {
-        grid-template-columns: 1fr;
-
-        @include tablet {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        @include desktop {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
 }

@@ -137,9 +137,11 @@ app.use((err, req, res, next) => {
 
 // Start server and test DB connection
 app.listen(PORT, async () => {
-    console.log(`SoundConnect server started on port ${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-    console.log(`API Test: http://localhost:${PORT}/api/test`);
+    if (process.env.NODE_ENV === "development") {
+        console.log(`SoundConnect server started on port ${PORT}`);
+        console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+        console.log(`API Test: http://localhost:${PORT}/api/test`);
+    }
 
     await testConnection();
 });

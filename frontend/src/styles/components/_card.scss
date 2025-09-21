@@ -38,19 +38,6 @@
         }
     }
 
-    &-compact {
-        padding: $spacing-md;
-    }
-
-    &-hover {
-        transition: all $transition-base;
-        cursor: pointer;
-
-        &:hover {
-            transform: translateY(-2px);
-            box-shadow: $shadow-lg;
-        }
-    }
 }
 
 .studio-card {
