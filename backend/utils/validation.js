@@ -321,6 +321,10 @@ export const updateStudioSchema = Joi.object({
     images: Joi.string().max(2000).optional().allow("").messages({
         "string.max": "Images URLs cannot exceed 2000 characters",
     }),
+
+    schedule: Joi.object().optional().messages({
+        "object.base": "Schedule must be an object",
+    }),
 });
 
 // =====================

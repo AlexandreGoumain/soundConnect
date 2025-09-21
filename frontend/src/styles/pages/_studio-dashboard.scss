@@ -288,5 +288,189 @@
         }
     }
 
-}
+    .schedule-card {
+        &.has-error {
+            border: 1px solid var(--error);
+            box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.08);
+        }
 
+        > .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: $spacing-sm;
+
+            .error-message {
+                margin: 0;
+                font-size: $font-size-sm;
+            }
+        }
+
+        .card-body {
+            padding: $spacing-md;
+        }
+
+        .schedule-grid {
+            display: grid;
+            gap: $spacing-sm;
+        }
+
+        .schedule-row {
+            display: grid;
+            gap: $spacing-sm;
+            border: 1px solid var(--border-color);
+            border-radius: $border-radius;
+            background: var(--bg-primary);
+            padding: $spacing-sm $spacing-md;
+
+            @include tablet {
+                grid-template-columns: 220px 1fr;
+                align-items: center;
+            }
+
+            &.schedule-row-error {
+                border-color: var(--error);
+                box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.06);
+            }
+        }
+
+        .schedule-day {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-xs;
+
+            .schedule-day-label {
+                font-weight: 600;
+                color: var(--text-primary);
+            }
+
+            .schedule-toggle {
+                display: inline-flex;
+                align-items: center;
+                gap: $spacing-xs;
+                color: var(--text-muted);
+
+                input {
+                    accent-color: var(--primary);
+                }
+            }
+        }
+
+        .schedule-times {
+            display: flex;
+            flex-wrap: wrap;
+            gap: $spacing-sm;
+
+            .schedule-time {
+                display: inline-flex;
+                align-items: center;
+                gap: $spacing-xs;
+                font-size: $font-size-sm;
+
+                span {
+                    font-weight: 500;
+                    color: var(--text-muted);
+                }
+
+                .input {
+                    width: 140px;
+                    padding: 0.6rem 0.75rem;
+                }
+            }
+        }
+
+        .schedule-closed {
+            font-size: $font-size-sm;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .schedule-row-error-message {
+            margin: 0;
+        }
+    }
+
+    .token-input {
+        display: grid;
+        gap: $spacing-sm;
+
+        .token-input-box {
+            display: flex;
+            gap: $spacing-sm;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .token-input-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: $spacing-xs;
+            min-height: 44px;
+            padding: $spacing-xs;
+            border: 1px solid var(--border-color);
+            border-radius: $border-radius;
+            background: var(--bg-primary);
+            flex: 1 1 auto;
+            transition: border-color $transition-base;
+        }
+
+        .token-input-list-error {
+            border-color: var(--error);
+        }
+
+        .token-input-field {
+            border: none;
+            outline: none;
+            min-width: 160px;
+            padding: 0.35rem 0.5rem;
+            font: inherit;
+            background: transparent;
+            color: inherit;
+        }
+
+        .token-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #eef2ff;
+            color: #312e81;
+            font-size: $font-size-sm;
+            font-weight: 500;
+        }
+
+        .token-chip-remove {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .token-input-add {
+            flex: 0 0 auto;
+        }
+
+        &--limit {
+            .token-input-field {
+                opacity: 0.6;
+            }
+
+            .token-input-add {
+                opacity: 0.6;
+            }
+        }
+    }
+
+    .help-text-strong {
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    .help-text-warning {
+        color: var(--error);
+    }
+}

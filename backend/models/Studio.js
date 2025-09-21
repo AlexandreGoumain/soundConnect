@@ -151,7 +151,9 @@ class Studio {
                     let effectiveOpen = new Date(openTime);
                     if (sameDay) {
                         const now = new Date();
-                        const minAdvance = new Date(now.getTime() + 60 * 60 * 1000);
+                        const minAdvance = new Date(
+                            now.getTime() + 60 * 60 * 1000
+                        );
                         const nextHour = new Date(minAdvance);
                         nextHour.setMinutes(0, 0, 0);
                         while (nextHour < minAdvance) {
@@ -176,9 +178,15 @@ class Studio {
                             start: new Date(r.start_datetime),
                             end: new Date(r.end_datetime),
                         }))
-                        .filter((iv) => iv.end > effectiveOpen && iv.start < closeTime)
+                        .filter(
+                            (iv) =>
+                                iv.end > effectiveOpen && iv.start < closeTime
+                        )
                         .map((iv) => ({
-                            start: iv.start < effectiveOpen ? effectiveOpen : iv.start,
+                            start:
+                                iv.start < effectiveOpen
+                                    ? effectiveOpen
+                                    : iv.start,
                             end: iv.end > closeTime ? closeTime : iv.end,
                         }))
                         .sort((a, b) => a.start - b.start);
@@ -186,7 +194,10 @@ class Studio {
                     // Merge overlaps
                     const merged = [];
                     for (const iv of inWindow) {
-                        if (!merged.length || iv.start > merged[merged.length - 1].end) {
+                        if (
+                            !merged.length ||
+                            iv.start > merged[merged.length - 1].end
+                        ) {
                             merged.push({ ...iv });
                         } else {
                             merged[merged.length - 1].end = new Date(
@@ -212,7 +223,10 @@ class Studio {
                             }
                             if (iv.end > prev) prev = iv.end;
                         }
-                        if (!ok && closeTime.getTime() - prev.getTime() >= needMs) {
+                        if (
+                            !ok &&
+                            closeTime.getTime() - prev.getTime() >= needMs
+                        ) {
                             ok = true;
                         }
                     }
@@ -395,7 +409,12 @@ class Studio {
         for (const [key, value] of Object.entries(updateData)) {
             if (allowedFields.includes(key) && value !== undefined) {
                 fields.push(`${key} = ?`);
-                values.push(value);
+                // Handle JSON fields that need stringification
+                if (key === "schedule" && typeof value === "object") {
+                    values.push(JSON.stringify(value));
+                } else {
+                    values.push(value);
+                }
             }
         }
 

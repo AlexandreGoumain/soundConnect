@@ -156,14 +156,11 @@ const StudioDetails = () => {
                 special_requests: specialRequests.trim() || "",
             });
 
-            console.log("Reservation response:", response.data);
-
             if (response.data.success) {
                 const confirmationMessage = specialRequests.trim()
                     ? `Réservation confirmée pour le ${selectedDate} de ${selectedTimeSlot} à ${endTime} (${selectedDuration}h). Vos demandes spéciales ont été transmises.`
                     : `Réservation confirmée pour le ${selectedDate} de ${selectedTimeSlot} à ${endTime} (${selectedDuration}h)`;
 
-                console.log("Showing success toast:", confirmationMessage);
                 showSuccess(confirmationMessage);
 
                 // Reset form
@@ -183,13 +180,8 @@ const StudioDetails = () => {
 
             // Handle specific error messages
             if (error.response?.data?.message) {
-                console.log(
-                    "Showing error toast:",
-                    error.response.data.message
-                );
                 showError(error.response.data.message);
             } else {
-                console.log("Showing generic error toast");
                 showError("Erreur lors de la création de la réservation");
             }
         } finally {

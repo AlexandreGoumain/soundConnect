@@ -67,30 +67,6 @@ class User {
         return users.length > 0 ? users[0] : null;
     }
 
-    static async findByUsername(username) {
-        const [users] = await pool.execute(
-            `SELECT u.*, r.name as role_name, r.description as role_description
-             FROM users u 
-             JOIN roles r ON u.role_id = r.id 
-             WHERE u.username = ?`,
-            [username]
-        );
-
-        return users.length > 0 ? users[0] : null;
-    }
-
-    static async findAll() {
-        const [users] = await pool.execute(
-            `SELECT u.id, u.username, u.email, u.first_name, u.last_name, 
-                    u.phone, u.city, u.postal_code, u.avatar_url, u.created_at, u.updated_at,
-                    r.name as role_name, r.id as role_id, r.description as role_description
-             FROM users u 
-             JOIN roles r ON u.role_id = r.id 
-             ORDER BY u.created_at DESC`
-        );
-
-        return users;
-    }
 
     static async update(id, updateData) {
         const allowedFields = [

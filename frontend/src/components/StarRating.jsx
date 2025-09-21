@@ -1,4 +1,3 @@
-import React from "react";
 import "./StarRating.scss";
 
 const StarRating = ({
