@@ -50,7 +50,7 @@ export const authenticateToken = async (req, res, next) => {
             });
         }
 
-        console.error("Authentication middleware error:", error);
+        error("Authentication middleware error:", error);
         return res.status(500).json({
             success: false,
             message: "Internal server error",

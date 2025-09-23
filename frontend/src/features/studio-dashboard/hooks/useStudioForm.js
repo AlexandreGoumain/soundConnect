@@ -160,6 +160,8 @@ export function useStudioForm({ id, isEdit, showToast, onSuccess }) {
         (event) => {
             const { name, value } = event.target;
             setForm((previous) => ({ ...previous, [name]: value }));
+
+            // Effacer l'erreur du champ quand l'utilisateur tape
             clearFieldError(name);
         },
         [clearFieldError]
@@ -214,7 +216,10 @@ export function useStudioForm({ id, isEdit, showToast, onSuccess }) {
         async (event) => {
             event.preventDefault();
 
+            // D'abord, nettoyer les données
             const sanitizedForm = sanitizeStudioForm(form);
+
+            // Validation frontend - si elle échoue, on arrête tout
             const { isValid, errors: validationErrors } =
                 validateStudioForm(sanitizedForm);
             const scheduleError = validateSchedule(schedule);
@@ -238,7 +243,9 @@ export function useStudioForm({ id, isEdit, showToast, onSuccess }) {
                 return;
             }
 
+            // Si on arrive ici, la validation frontend a réussi
             setErrors({});
+
             setForm(sanitizedForm);
 
             const schedulePayload = buildSchedulePayload(schedule);
@@ -275,10 +282,22 @@ export function useStudioForm({ id, isEdit, showToast, onSuccess }) {
 
                 onSuccess?.();
             } catch (error) {
-                const message =
-                    error.response?.data?.message ||
-                    "Erreur lors de l'enregistrement";
-                showToast?.(message, "error");
+                const errorMessage = error?.response?.data?.message;
+                const validationErrors = error?.response?.data?.errors;
+
+                if (validationErrors && Array.isArray(validationErrors)) {
+                    // Transformer le tableau d'erreurs en objet fieldErrors
+                    const errors = {};
+                    validationErrors.forEach((error) => {
+                        errors[error.field] = error.message;
+                    });
+                    setErrors(errors);
+                } else {
+                    // Sinon, afficher l'erreur générale
+                    const message =
+                        errorMessage || "Erreur lors de l'enregistrement";
+                    showToast?.(message, "error");
+                }
             } finally {
                 setIsSaving(false);
             }

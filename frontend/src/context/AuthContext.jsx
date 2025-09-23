@@ -1,19 +1,11 @@
-import {
-    createContext,
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { authApi } from "../lib/apiClient.js";
-import { useToast } from "./ToastContext.jsx";
-
-const AuthContext = createContext(null);
+import { useToast } from "../hooks/useToast.js";
+import { AuthContext } from "../contexts/AuthContext.js";
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
-    const [status, setStatus] = useState("idle"); // idle | loading | authenticated | unauthenticated
+    const [status, setStatus] = useState("idle");
     const { showError, showSuccess } = useToast();
 
     const fetchProfile = useCallback(async () => {
@@ -114,10 +106,4 @@ export function AuthProvider({ children }) {
     return (
         <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
     );
-}
-
-export function useAuth() {
-    const ctx = useContext(AuthContext);
-    if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-    return ctx;
 }

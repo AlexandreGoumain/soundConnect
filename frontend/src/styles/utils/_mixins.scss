@@ -13,12 +13,6 @@
     }
 }
 
-@mixin large-desktop {
-    @media (min-width: #{$desktop}) {
-        @content;
-    }
-}
-
 // Flexbox utilities
 @mixin flex-center {
     display: flex;

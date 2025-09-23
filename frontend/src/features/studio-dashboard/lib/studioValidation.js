@@ -1,3 +1,17 @@
+import {
+    validateCity,
+    validateCountry,
+    validateDescription,
+    validateEmail,
+    validateHourlyRate,
+    validatePhone,
+    validatePostalCode,
+    validateStreetName,
+    validateStreetNumber,
+    validateStudioName,
+    validateWebsite,
+} from "../../../lib/validation.js";
+
 const DEFAULT_COUNTRY = "France";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
 const PHONE_REGEX = /^[0-9+()\s.-]{6,20}$/;
@@ -86,96 +100,39 @@ export function sanitizeStudioForm(form = {}) {
 export function validateStudioForm(form = {}) {
     const errors = {};
 
-    if (!form.name) {
-        errors.name = "Le nom du studio est requis.";
-    } else if (form.name.length < 2) {
-        errors.name = "Le nom doit contenir au moins 2 caractères.";
-    } else if (form.name.length > 100) {
-        errors.name = "Le nom ne peut pas depasser 100 caractères.";
-    }
+    // Utilisation des utilitaires de validation partagés
+    const nameError = validateStudioName(form.name);
+    if (nameError) errors.name = nameError;
 
-    if (!form.description) {
-        errors.description = "La description est requise.";
-    } else if (form.description.length < 10) {
-        errors.description =
-            "La description doit contenir au moins 10 caractères.";
-    } else if (form.description.length > 2000) {
-        errors.description =
-            "La description ne peut pas depasser 2000 caractères.";
-    }
+    const descriptionError = validateDescription(form.description);
+    if (descriptionError) errors.description = descriptionError;
 
-    if (!form.street_number) {
-        errors.street_number = "Le numéro de rue est requis.";
-    } else if (form.street_number.length > 10) {
-        errors.street_number =
-            "Le numéro de rue ne peut pas depasser 10 caractères.";
-    }
+    const streetNumberError = validateStreetNumber(form.street_number);
+    if (streetNumberError) errors.street_number = streetNumberError;
 
-    if (!form.street_name) {
-        errors.street_name = "La rue est requise.";
-    } else if (form.street_name.length < 2) {
-        errors.street_name =
-            "Le nom de rue doit contenir au moins 2 caractères.";
-    } else if (form.street_name.length > 255) {
-        errors.street_name =
-            "Le nom de rue ne peut pas dépasser 255 caractères.";
-    }
+    const streetNameError = validateStreetName(form.street_name);
+    if (streetNameError) errors.street_name = streetNameError;
 
-    if (!form.postal_code) {
-        errors.postal_code = "Le code postal est requis.";
-    } else if (!POSTAL_CODE_REGEX.test(form.postal_code)) {
-        errors.postal_code = "Le code postal n'est pas valide.";
-    }
+    const postalCodeError = validatePostalCode(form.postal_code);
+    if (postalCodeError) errors.postal_code = postalCodeError;
 
-    if (!form.city) {
-        errors.city = "La ville est requise.";
-    } else if (form.city.length < 2) {
-        errors.city = "Le nom de la ville doit contenir au moins 2 caractères.";
-    } else if (form.city.length > 100) {
-        errors.city = "Le nom de la ville ne peut pas dépasser 100 caractères.";
-    }
+    const cityError = validateCity(form.city);
+    if (cityError) errors.city = cityError;
 
-    if (form.country && form.country.length > 100) {
-        errors.country = "Le pays ne peut pas dépasser 100 caractères.";
-    }
+    const countryError = validateCountry(form.country);
+    if (countryError) errors.country = countryError;
 
-    if (!form.hourly_rate) {
-        errors.hourly_rate = "Le tarif horaire est requis.";
-    } else {
-        const rate = Number(form.hourly_rate);
-        if (Number.isNaN(rate)) {
-            errors.hourly_rate = "Le tarif horaire doit être un nombre.";
-        } else if (rate < 1) {
-            errors.hourly_rate = "Le tarif horaire doit être d'au moins 1 EUR.";
-        } else if (rate > 999.99) {
-            errors.hourly_rate =
-                "Le tarif horaire ne peut pas dépasser 999,99 EUR.";
-        }
-    }
+    const hourlyRateError = validateHourlyRate(form.hourly_rate);
+    if (hourlyRateError) errors.hourly_rate = hourlyRateError;
 
-    if (!form.phone) {
-        errors.phone = "Le numéro de téléphone est requis.";
-    } else if (!PHONE_REGEX.test(form.phone)) {
-        errors.phone = "Le numéro de téléphone n'est pas valide.";
-    }
+    const phoneError = validatePhone(form.phone);
+    if (phoneError) errors.phone = phoneError;
 
-    if (!form.email) {
-        errors.email = "L'adresse email est requise.";
-    } else if (!EMAIL_REGEX.test(form.email)) {
-        errors.email = "L'adresse email n'est pas valide.";
-    }
+    const emailError = validateEmail(form.email);
+    if (emailError) errors.email = emailError;
 
-    if (form.website) {
-        const candidate = form.website.includes("://")
-            ? form.website
-            : `https://${form.website}`;
-        try {
-            new URL(candidate);
-        } catch {
-            errors.website =
-                "L'URL du site web n'est pas valide (ajoutez par exemple https://).";
-        }
-    }
+    const websiteError = validateWebsite(form.website);
+    if (websiteError) errors.website = websiteError;
 
     if (form.equipment_list && form.equipment_list.length > 5000) {
         errors.equipment_list =
@@ -194,5 +151,7 @@ export function validateStudioForm(form = {}) {
             `La liste de tags ne peut pas dépasser ${MAX_TAGS_LENGTH} caractères.`;
     }
 
-    return { isValid: Object.keys(errors).length === 0, errors };
+    const isValid = Object.keys(errors).length === 0;
+
+    return { isValid, errors };
 }

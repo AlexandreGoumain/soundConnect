@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { useToast } from "../context/ToastContext";
+import { useCallback, useEffect, useState } from "react";
+import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../hooks/useToast";
 import { apiClient } from "../lib/apiClient";
 import "./ReviewsSection.scss";
 
@@ -18,17 +18,9 @@ const ReviewsSection = ({ studioId, studioName }) => {
         comment: "",
         reservation_id: "",
     });
+    const [setReviewErrors] = useState({});
 
-    useEffect(() => {
-        fetchReviews();
-        fetchStats();
-        if (user) {
-            checkCanReview();
-            fetchAvailableReservations();
-        }
-    }, [studioId, user]);
-
-    const fetchReviews = async () => {
+    const fetchReviews = useCallback(async () => {
         try {
             const response = await apiClient.get(
                 `/reviews?studio_id=${studioId}`
@@ -39,9 +31,9 @@ const ReviewsSection = ({ studioId, studioName }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [studioId, showToast]);
 
-    const fetchStats = async () => {
+    const fetchStats = useCallback(async () => {
         try {
             const response = await apiClient.get(
                 `/reviews/studio/${studioId}/stats`
@@ -50,9 +42,9 @@ const ReviewsSection = ({ studioId, studioName }) => {
         } catch {
             showToast("Erreur lors du chargement des stats", "error");
         }
-    };
+    }, [studioId, showToast]);
 
-    const checkCanReview = async () => {
+    const checkCanReview = useCallback(async () => {
         try {
             const response = await apiClient.get(
                 `/reviews/studio/${studioId}/can-review`
@@ -64,9 +56,9 @@ const ReviewsSection = ({ studioId, studioName }) => {
                 "error"
             );
         }
-    };
+    }, [studioId, showToast]);
 
-    const fetchAvailableReservations = async () => {
+    const fetchAvailableReservations = useCallback(async () => {
         try {
             const response = await apiClient.get(
                 `/reviews/studio/${studioId}/reservations`
@@ -78,20 +70,52 @@ const ReviewsSection = ({ studioId, studioName }) => {
                 "error"
             );
         }
+    }, [studioId, showToast]);
+
+    useEffect(() => {
+        fetchReviews();
+        fetchStats();
+        if (user) {
+            checkCanReview();
+            fetchAvailableReservations();
+        }
+    }, [
+        studioId,
+        user,
+        fetchReviews,
+        fetchStats,
+        checkCanReview,
+        fetchAvailableReservations,
+    ]);
+
+    const validateReview = () => {
+        const errors = {};
+
+        if (!newReview.rating) {
+            errors.rating = "Veuillez sélectionner une note";
+        }
+
+        if (!newReview.reservation_id) {
+            errors.reservation_id = "Veuillez sélectionner une réservation";
+        }
+
+        if (newReview.comment && newReview.comment.length > 1000) {
+            errors.comment =
+                "Le commentaire ne peut pas dépasser 1000 caractères";
+        }
+
+        setReviewErrors(errors);
+        return Object.keys(errors).length === 0;
     };
 
     const handleSubmitReview = async (e) => {
         e.preventDefault();
 
-        if (!newReview.rating) {
-            showToast("Veuillez sélectionner une note", "error");
+        if (!validateReview()) {
             return;
         }
 
-        if (!newReview.reservation_id) {
-            showToast("Veuillez sélectionner une réservation", "error");
-            return;
-        }
+        setReviewErrors({});
 
         try {
             await apiClient.post("/reviews", {
@@ -109,11 +133,20 @@ const ReviewsSection = ({ studioId, studioName }) => {
             checkCanReview();
             fetchAvailableReservations();
         } catch (error) {
-            console.error("Error submitting review:", error);
-            showToast(
-                "Erreur lors de l'ajout de l'avis, veuillez réessayer plus tard",
-                "error"
-            );
+            const validationErrors = error.response?.data?.errors;
+
+            if (validationErrors && Array.isArray(validationErrors)) {
+                const errors = {};
+                validationErrors.forEach((error) => {
+                    errors[error.field] = error.message;
+                });
+                setReviewErrors(errors);
+            } else {
+                showToast(
+                    "Erreur lors de l'ajout de l'avis, veuillez réessayer plus tard",
+                    "error"
+                );
+            }
         }
     };
 

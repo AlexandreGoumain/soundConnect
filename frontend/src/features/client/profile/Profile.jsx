@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext.jsx";
-import { useToast } from "../../../context/ToastContext.jsx";
-import { useProfile } from "./hooks/useProfile.js";
+import { useAuth } from "../../../hooks/useAuth.js";
+import { useToast } from "../../../hooks/useToast.js";
 import "../../../styles/components/_profile.scss";
+import { useProfile } from "./hooks/useProfile.js";
+
+function FieldError({ error }) {
+    if (!error) return null;
+    return <span className="field-error">{error}</span>;
+}
 
 export default function Profile() {
     const { refresh, user } = useAuth();
@@ -13,6 +18,7 @@ export default function Profile() {
         avatarUrl,
         displayName,
         fetchError,
+        fieldErrors,
         formData,
         handleAvatarUpload,
         handleChange,
@@ -130,13 +136,13 @@ export default function Profile() {
                                         <input
                                             id="first_name"
                                             name="first_name"
-                                            className="input"
+                                            className={`input ${fieldErrors.first_name ? 'input-error' : ''}`}
                                             type="text"
                                             value={formData.first_name}
                                             onChange={handleChange}
-                                            required
                                             disabled={isSubmitting}
                                         />
+                                        <FieldError error={fieldErrors.first_name} />
                                     </div>
 
                                     <div className="form-group">
@@ -149,13 +155,13 @@ export default function Profile() {
                                         <input
                                             id="last_name"
                                             name="last_name"
-                                            className="input"
+                                            className={`input ${fieldErrors.last_name ? 'input-error' : ''}`}
                                             type="text"
                                             value={formData.last_name}
                                             onChange={handleChange}
-                                            required
                                             disabled={isSubmitting}
                                         />
+                                        <FieldError error={fieldErrors.last_name} />
                                     </div>
 
                                     <div className="form-group">
@@ -168,13 +174,13 @@ export default function Profile() {
                                         <input
                                             id="username"
                                             name="username"
-                                            className="input"
+                                            className={`input ${fieldErrors.username ? 'input-error' : ''}`}
                                             type="text"
                                             value={formData.username}
                                             onChange={handleChange}
-                                            required
                                             disabled={isSubmitting}
                                         />
+                                        <FieldError error={fieldErrors.username} />
                                     </div>
 
                                     <div className="form-group">
@@ -187,13 +193,13 @@ export default function Profile() {
                                         <input
                                             id="email"
                                             name="email"
-                                            className="input"
+                                            className={`input ${fieldErrors.email ? 'input-error' : ''}`}
                                             type="email"
                                             value={formData.email}
                                             onChange={handleChange}
-                                            required
                                             disabled={isSubmitting}
                                         />
+                                        <FieldError error={fieldErrors.email} />
                                     </div>
 
                                     <div className="form-group">
@@ -206,13 +212,14 @@ export default function Profile() {
                                         <input
                                             id="phone"
                                             name="phone"
-                                            className="input"
+                                            className={`input ${fieldErrors.phone ? 'input-error' : ''}`}
                                             type="tel"
                                             value={formData.phone}
                                             onChange={handleChange}
                                             placeholder="Ex. 06 12 34 56 78"
                                             disabled={isSubmitting}
                                         />
+                                        <FieldError error={fieldErrors.phone} />
                                     </div>
 
                                     <div className="form-group">
@@ -222,12 +229,13 @@ export default function Profile() {
                                         <input
                                             id="city"
                                             name="city"
-                                            className="input"
+                                            className={`input ${fieldErrors.city ? 'input-error' : ''}`}
                                             type="text"
                                             value={formData.city}
                                             onChange={handleChange}
                                             disabled={isSubmitting}
                                         />
+                                        <FieldError error={fieldErrors.city} />
                                     </div>
 
                                     <div className="form-group">
@@ -240,12 +248,13 @@ export default function Profile() {
                                         <input
                                             id="postal_code"
                                             name="postal_code"
-                                            className="input"
+                                            className={`input ${fieldErrors.postal_code ? 'input-error' : ''}`}
                                             type="text"
                                             value={formData.postal_code}
                                             onChange={handleChange}
                                             disabled={isSubmitting}
                                         />
+                                        <FieldError error={fieldErrors.postal_code} />
                                     </div>
                                 </div>
                             </div>

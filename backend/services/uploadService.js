@@ -55,7 +55,7 @@ const cleanupFiles = (files = []) => {
                 fs.unlinkSync(file.path);
             }
         } catch (error) {
-            console.warn("Failed to cleanup file", file?.path, error.message);
+            warn("Failed to cleanup file", file?.path, error.message);
         }
     }
 };
@@ -130,7 +130,7 @@ export async function removeStudioImage(studioId, user, filename) {
             fs.unlinkSync(absolute);
         }
     } catch (error) {
-        console.warn("Failed to delete file", absolute, error.message);
+        warn("Failed to delete file", absolute, error.message);
     }
 
     return normalized;
@@ -164,12 +164,7 @@ export async function reorderStudioImages(studioId, user, images = []) {
     return normalized;
 }
 
-export async function replaceStudioImage(
-    studioId,
-    user,
-    filename,
-    file
-) {
+export async function replaceStudioImage(studioId, user, filename, file) {
     if (!file) {
         throw new UploadError(400, "No replacement image uploaded");
     }
@@ -185,10 +180,9 @@ export async function replaceStudioImage(
         throw new UploadError(404, "Image not found on this studio");
     }
 
-    const newUrl = `/uploads/studios/${studioId}/${path.basename(file.path)}`.replace(
-        /\\/g,
-        "/"
-    );
+    const newUrl = `/uploads/studios/${studioId}/${path.basename(
+        file.path
+    )}`.replace(/\\/g, "/");
 
     const relative = path.join("uploads", "studios", studioId, safeName);
     const absolute = path.join(__dirname, "..", relative);
@@ -198,7 +192,7 @@ export async function replaceStudioImage(
             fs.unlinkSync(absolute);
         }
     } catch (error) {
-        console.warn("Failed to delete old file", absolute, error.message);
+        warn("Failed to delete old file", absolute, error.message);
     }
 
     const updated = [...existing];
@@ -251,7 +245,7 @@ export async function uploadUserAvatar(userId, requester, file) {
                 fs.unlinkSync(oldAbsolute);
             }
         } catch (error) {
-            console.warn("Failed to delete old avatar", error.message);
+            warn("Failed to delete old avatar", error.message);
         }
     }
 
@@ -263,4 +257,3 @@ export async function uploadUserAvatar(userId, requester, file) {
 }
 
 export { UploadError };
-

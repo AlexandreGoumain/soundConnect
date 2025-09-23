@@ -66,14 +66,17 @@ class ScheduleController {
     }
 
     static handleError(res, error, fallbackMessage) {
-        if (error instanceof ScheduleError || typeof error?.statusCode === "number") {
+        if (
+            error instanceof ScheduleError ||
+            typeof error?.statusCode === "number"
+        ) {
             return res.status(error.statusCode).json({
                 success: false,
                 message: error.message,
             });
         }
 
-        console.error(fallbackMessage, error);
+        error(fallbackMessage, error);
         return res.status(500).json({
             success: false,
             message: fallbackMessage,
@@ -82,4 +85,3 @@ class ScheduleController {
 }
 
 export default ScheduleController;
-

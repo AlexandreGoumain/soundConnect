@@ -26,7 +26,7 @@ export default function StudioImagesManager({
                 <div>
                     <h3>Images du studio</h3>
                     <p>
-                        Jusqu'à {MAX_STUDIO_IMAGES} images. Formats acceptés :
+                        Jusqu'à {MAX_STUDIO_IMAGES} images (5 Mo max chacune). Formats acceptés :
                         JPG, PNG, WEBP, GIF.
                     </p>
                 </div>

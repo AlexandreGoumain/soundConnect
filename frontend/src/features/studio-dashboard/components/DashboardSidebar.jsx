@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext.jsx";
-import { useStudioFilter } from "../../../context/StudioFilterContext.jsx";
+import { useAuth } from "../../../hooks/useAuth.js";
+import { useStudioFilter } from "../../../hooks/useStudioFilter.js";
 import "../../../styles/components/_studio-dashboard.scss";
 
 export default function DashboardSidebar() {

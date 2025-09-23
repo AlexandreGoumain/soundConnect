@@ -3,11 +3,17 @@ import { Link } from "react-router-dom";
 import "../../../styles/components/_auth-form.scss";
 import { useLoginForm } from "./hooks/useLoginForm.js";
 
+function FieldError({ error }) {
+    if (!error) return null;
+    return <span className="field-error">{error}</span>;
+}
+
 export default function LoginForm() {
     const {
         email,
         password,
         error,
+        fieldErrors,
         showPassword,
         status,
         user,
@@ -45,13 +51,13 @@ export default function LoginForm() {
                             </label>
                             <input
                                 id="email"
-                                className="input"
+                                className={`input ${fieldErrors.email ? 'input-error' : ''}`}
                                 value={email}
                                 onChange={handleEmailChange}
                                 type="email"
                                 placeholder="votre@email.com"
-                                required
                             />
+                            <FieldError error={fieldErrors.email} />
                         </div>
 
                         <div className="form-group">
@@ -61,12 +67,11 @@ export default function LoginForm() {
                             <div className="auth-form__password-field">
                                 <input
                                     id="password"
-                                    className="input auth-form__password-input"
+                                    className={`input auth-form__password-input ${fieldErrors.password ? 'input-error' : ''}`}
                                     value={password}
                                     onChange={handlePasswordChange}
                                     type={showPassword ? "text" : "password"}
                                     placeholder="********"
-                                    required
                                 />
                                 <button
                                     type="button"
@@ -81,6 +86,7 @@ export default function LoginForm() {
                                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                                 </button>
                             </div>
+                            <FieldError error={fieldErrors.password} />
                         </div>
                     </div>
 

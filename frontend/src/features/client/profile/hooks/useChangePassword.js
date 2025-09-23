@@ -1,7 +1,11 @@
 import { useState } from "react";
-import { useAuth } from "../../../../context/AuthContext.jsx";
-import { useToast } from "../../../../context/ToastContext.jsx";
+import { useAuth } from "../../../../hooks/useAuth.js";
+import { useToast } from "../../../../hooks/useToast.js";
 import { authApi } from "../../../../lib/apiClient.js";
+import {
+    validateConfirmPassword,
+    validatePassword,
+} from "../../../../lib/validation.js";
 
 const DEFAULT_FORM = {
     currentPassword: "",
@@ -16,6 +20,7 @@ export function useChangePassword() {
     // Form state
     const [formData, setFormData] = useState(DEFAULT_FORM);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [fieldErrors, setFieldErrors] = useState({});
 
     // Form handlers
     const handleChange = (event) => {
@@ -24,35 +29,49 @@ export function useChangePassword() {
             ...prev,
             [name]: value,
         }));
+
+        // Effacer l'erreur du champ quand l'utilisateur tape
+        if (fieldErrors[name]) {
+            setFieldErrors((prev) => {
+                const newErrors = { ...prev };
+                delete newErrors[name];
+                return newErrors;
+            });
+        }
     };
 
     // Form validation
     const validateForm = () => {
-        const currentPassword = formData.currentPassword.trim();
-        const newPassword = formData.newPassword.trim();
-        const confirmPassword = formData.confirmPassword.trim();
+        const errors = {};
 
-        if (!currentPassword || !newPassword || !confirmPassword) {
-            showError("Tous les champs sont obligatoires.");
-            return false;
+        // Validation mot de passe actuel
+        if (!formData.currentPassword?.trim()) {
+            errors.currentPassword = "Le mot de passe actuel est requis";
         }
 
-        if (newPassword.length < 6) {
-            showError("Le nouveau mot de passe doit faire au moins 6 caractères.");
-            return false;
+        // Validation nouveau mot de passe
+        const newPasswordError = validatePassword(formData.newPassword);
+        if (newPasswordError) errors.newPassword = newPasswordError;
+
+        // Validation confirmation mot de passe
+        const confirmPasswordError = validateConfirmPassword(
+            formData.newPassword,
+            formData.confirmPassword
+        );
+        if (confirmPasswordError) errors.confirmPassword = confirmPasswordError;
+
+        // Vérification que les mots de passe sont différents
+        if (
+            formData.currentPassword &&
+            formData.newPassword &&
+            formData.currentPassword === formData.newPassword
+        ) {
+            errors.newPassword =
+                "Le nouveau mot de passe doit être différent de l'ancien";
         }
 
-        if (newPassword !== confirmPassword) {
-            showError("La confirmation du mot de passe ne correspond pas.");
-            return false;
-        }
-
-        if (currentPassword === newPassword) {
-            showError("Le nouveau mot de passe doit être différent de l'ancien.");
-            return false;
-        }
-
-        return true;
+        setFieldErrors(errors);
+        return Object.keys(errors).length === 0;
     };
 
     // Form submission
@@ -63,6 +82,7 @@ export function useChangePassword() {
             return;
         }
 
+        setFieldErrors({});
         setIsSubmitting(true);
 
         try {
@@ -74,8 +94,20 @@ export function useChangePassword() {
             showSuccess("Mot de passe modifié avec succès.");
             setFormData(DEFAULT_FORM);
         } catch (error) {
-            const message = error?.response?.data?.message || "Erreur lors de la modification du mot de passe.";
-            showError(message);
+            const validationErrors = error.response?.data?.errors;
+
+            if (validationErrors && Array.isArray(validationErrors)) {
+                const errors = {};
+                validationErrors.forEach((error) => {
+                    errors[error.field] = error.message;
+                });
+                setFieldErrors(errors);
+            } else {
+                const message =
+                    error?.response?.data?.message ||
+                    "Erreur lors de la modification du mot de passe.";
+                showError(message);
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -87,6 +119,7 @@ export function useChangePassword() {
     return {
         // State
         formData,
+        fieldErrors,
         isSubmitting,
         isUserLoggedIn,
 

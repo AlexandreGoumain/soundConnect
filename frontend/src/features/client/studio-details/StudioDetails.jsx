@@ -1,8 +1,8 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ReviewsSection from "../../../components/ReviewsSection.jsx";
-import { useAuth } from "../../../context/AuthContext";
-import { useToast } from "../../../context/ToastContext";
+import { useAuth } from "../../../hooks/useAuth.js";
+import { useToast } from "../../../hooks/useToast.js";
 import { apiClient } from "../../../lib/apiClient";
 import {
     parseStudioImagesField,
@@ -42,7 +42,7 @@ const StudioDetails = () => {
             const response = await apiClient.get(`/studios/${id}`);
             setStudio(response.data.data.studio);
         } catch (error) {
-            console.error("Error fetching studio details:", error);
+            error("Error fetching studio details:", error);
             setError("Erreur lors du chargement des détails du studio");
             showError("Erreur lors du chargement des détails du studio");
         } finally {
@@ -175,8 +175,8 @@ const StudioDetails = () => {
                 showError("Erreur lors de la création de la réservation");
             }
         } catch (error) {
-            console.error("Error creating reservation:", error);
-            console.error("Error response:", error.response?.data);
+            error("Error creating reservation:", error);
+            error("Error response:", error.response?.data);
 
             // Handle specific error messages
             if (error.response?.data?.message) {

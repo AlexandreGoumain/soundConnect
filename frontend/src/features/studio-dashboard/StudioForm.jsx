@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useToast } from "../../context/ToastContext.jsx";
+import { useToast } from "../../hooks/useToast.js";
 import DashboardSidebar from "./components/DashboardSidebar.jsx";
 import StudioImagesManager from "./components/StudioImagesManager.jsx";
 import { useStudioForm } from "./hooks/useStudioForm.js";

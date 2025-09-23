@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../../../../context/AuthContext";
-import { useToast } from "../../../../context/ToastContext";
+import { useAuth } from "../../../../hooks/useAuth.js";
+import { useToast } from "../../../../hooks/useToast.js";
 import { apiClient } from "../../../../lib/apiClient";
 import {
     parseStudioImagesField,
@@ -15,7 +15,9 @@ function calculateEndTime(startTime, duration) {
     const totalMinutes = hours * 60 + minutes + duration * 60;
     const endHours = Math.floor(totalMinutes / 60);
     const endMinutes = totalMinutes % 60;
-    return `${endHours.toString().padStart(2, "0")}:${endMinutes.toString().padStart(2, "0")}`;
+    return `${endHours.toString().padStart(2, "0")}:${endMinutes
+        .toString()
+        .padStart(2, "0")}`;
 }
 
 export function useStudioDetails() {
@@ -57,8 +59,9 @@ export function useStudioDetails() {
             const response = await apiClient.get(`/studios/${id}`);
             setStudio(response.data.data.studio);
         } catch (error) {
-            console.error("Error fetching studio details:", error);
-            const errorMessage = "Erreur lors du chargement des détails du studio";
+            error("Error fetching studio details:", error);
+            const errorMessage =
+                "Erreur lors du chargement des détails du studio";
             setError(errorMessage);
             showError(errorMessage);
         } finally {
@@ -161,7 +164,10 @@ export function useStudioDetails() {
 
         try {
             setIsBooking(true);
-            const endTime = calculateEndTime(selectedTimeSlot, selectedDuration);
+            const endTime = calculateEndTime(
+                selectedTimeSlot,
+                selectedDuration
+            );
 
             // Create datetime strings for the reservation
             const startDateTime = `${selectedDate}T${selectedTimeSlot}:00`;
@@ -211,7 +217,7 @@ export function useStudioDetails() {
             // Optionally navigate to bookings page
             navigate("/profile");
         } catch (error) {
-            console.error("Error making reservation:", error);
+            error("Error making reservation:", error);
             const message =
                 error?.response?.data?.message ||
                 "Erreur lors de la réservation";

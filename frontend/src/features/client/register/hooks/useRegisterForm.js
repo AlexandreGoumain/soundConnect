@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../../context/AuthContext.jsx";
+import { useAuth } from "../../../../hooks/useAuth.js";
 import { apiClient } from "../../../../lib/apiClient.js";
+import {
+    validateCity,
+    validateConfirmPassword,
+    validateEmail,
+    validateHumanName,
+    validatePassword,
+    validatePhone,
+    validatePostalCode,
+    validateUsername,
+} from "../../../../lib/validation.js";
 
 // Map backend role names to UI labels/icons
 export const ROLE_DISPLAY = {
@@ -29,6 +39,7 @@ export function useRegisterForm() {
         postal_code: "",
     });
     const [error, setError] = useState(null);
+    const [fieldErrors, setFieldErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -66,6 +77,15 @@ export function useRegisterForm() {
             ...prev,
             [name]: value,
         }));
+
+        // Effacer l'erreur du champ quand l'utilisateur commence à taper
+        if (fieldErrors[name]) {
+            setFieldErrors((prev) => {
+                const newErrors = { ...prev };
+                delete newErrors[name];
+                return newErrors;
+            });
+        }
     };
 
     const handleAccountTypeSelect = (role) => {
@@ -77,6 +97,7 @@ export function useRegisterForm() {
     const handleBackToStep1 = () => {
         setStep(1);
         setError(null);
+        setFieldErrors({});
     };
 
     const togglePasswordVisibility = () => {
@@ -89,17 +110,43 @@ export function useRegisterForm() {
 
     // Form validation
     const validateForm = () => {
-        if (formData.password !== formData.confirmPassword) {
-            setError("Les mots de passe ne correspondent pas");
-            return false;
-        }
+        const errors = {};
 
-        if (formData.password.length < 6) {
-            setError("Le mot de passe doit contenir au moins 6 caractères");
-            return false;
-        }
+        // Utilisation des utilitaires de validation
+        const firstNameError = validateHumanName(formData.first_name, "prénom");
+        if (firstNameError) errors.first_name = firstNameError;
 
-        return true;
+        const lastNameError = validateHumanName(formData.last_name, "nom");
+        if (lastNameError) errors.last_name = lastNameError;
+
+        const usernameError = validateUsername(formData.username);
+        if (usernameError) errors.username = usernameError;
+
+        const emailError = validateEmail(formData.email);
+        if (emailError) errors.email = emailError;
+
+        const phoneError = validatePhone(formData.phone);
+        if (phoneError) errors.phone = phoneError;
+
+        const cityError = validateCity(formData.city);
+        if (cityError) errors.city = cityError;
+
+        const postalCodeError = validatePostalCode(formData.postal_code);
+        if (postalCodeError) errors.postal_code = postalCodeError;
+
+        const passwordError = validatePassword(formData.password);
+        if (passwordError) errors.password = passwordError;
+
+        const confirmPasswordError = validateConfirmPassword(
+            formData.password,
+            formData.confirmPassword
+        );
+        if (confirmPasswordError) errors.confirmPassword = confirmPasswordError;
+
+        setFieldErrors(errors);
+        const isValid = Object.keys(errors).length === 0;
+
+        return isValid;
     };
 
     // Form submission
@@ -107,9 +154,13 @@ export function useRegisterForm() {
         e.preventDefault();
         setError(null);
 
+        // Validation frontend - si elle échoue, on arrête tout
         if (!validateForm()) {
             return;
         }
+
+        // Si on arrive ici, la validation frontend a réussi
+        setFieldErrors({});
 
         try {
             const payload = {
@@ -127,7 +178,20 @@ export function useRegisterForm() {
             await register(payload);
             navigate("/");
         } catch (err) {
-            setError(err?.response?.data?.message || "Inscription échouée");
+            const errorMessage = err?.response?.data?.message;
+            const validationErrors = err?.response?.data?.errors;
+
+            if (validationErrors && Array.isArray(validationErrors)) {
+                // Transformer le tableau d'erreurs en objet fieldErrors
+                const errors = {};
+                validationErrors.forEach((error) => {
+                    errors[error.field] = error.message;
+                });
+                setFieldErrors(errors);
+            } else {
+                // Sinon, afficher l'erreur générale
+                setError(errorMessage || "Inscription échouée");
+            }
         }
     };
 
@@ -138,6 +202,7 @@ export function useRegisterForm() {
         roles,
         formData,
         error,
+        fieldErrors,
         showPassword,
         showConfirmPassword,
         status,

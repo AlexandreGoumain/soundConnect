@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import { useToast } from "../../../hooks/useToast.js";
 import { apiClient } from "../../../lib/apiClient.js";
-import { useToast } from "../../../context/ToastContext.jsx";
 
 export function useMyReservations(studioId) {
     const [reservations, setReservations] = useState([]);
@@ -8,15 +8,14 @@ export function useMyReservations(studioId) {
     const [error, setError] = useState(null);
     const { showToast } = useToast();
 
-    const endpoint = studioId
-        ? `/dashboard/studios/${studioId}/reservations`
-        : "/dashboard/reservations";
-
     const fetchReservations = async () => {
         try {
             setLoading(true);
             setError(null);
-            const res = await apiClient.get(endpoint);
+            const params = studioId ? { studio_id: studioId } : {};
+            const res = await apiClient.get("/dashboard/reservations", {
+                params,
+            });
             setReservations(res.data?.data?.reservations || []);
         } catch (err) {
             setError(err.message);
@@ -33,4 +32,3 @@ export function useMyReservations(studioId) {
 
     return { reservations, loading, error, refetch: fetchReservations };
 }
-

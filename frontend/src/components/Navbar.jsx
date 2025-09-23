@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FiChevronDown, FiMenu, FiUser } from "react-icons/fi";
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { useToast } from "../context/ToastContext";
+import { useAuth } from "../hooks/useAuth.js";
+import { useToast } from "../hooks/useToast.js";
 
 export default function Navbar({ links }) {
     const location = useLocation();
@@ -29,7 +29,6 @@ export default function Navbar({ links }) {
     const isAuthenticated = status === "authenticated" && user;
     const role = user?.role_name;
     const isStudio = role === "studio";
-    const isArtist = role === "artist";
 
     return (
         <nav className="navbar">
@@ -87,34 +86,6 @@ export default function Navbar({ links }) {
                                         {isStudio ? (
                                             <>
                                                 <Link
-                                                    to="/studio"
-                                                    className="dropdown-item"
-                                                    onClick={() =>
-                                                        setIsDropdownOpen(false)
-                                                    }
-                                                >
-                                                    Dashboard studio
-                                                </Link>
-                                                <Link
-                                                    to="/studio/studios"
-                                                    className="dropdown-item"
-                                                    onClick={() =>
-                                                        setIsDropdownOpen(false)
-                                                    }
-                                                >
-                                                    Mes studios
-                                                </Link>
-                                                <Link
-                                                    to="/studio/reservations"
-                                                    className="dropdown-item"
-                                                    onClick={() =>
-                                                        setIsDropdownOpen(false)
-                                                    }
-                                                >
-                                                    Réservations
-                                                </Link>
-                                                <hr className="dropdown-divider" />
-                                                <Link
                                                     to="/profile"
                                                     className="dropdown-item"
                                                     onClick={() =>
@@ -124,13 +95,13 @@ export default function Navbar({ links }) {
                                                     Profil personnel
                                                 </Link>
                                                 <Link
-                                                    to="/profile/password"
+                                                    to="/studio"
                                                     className="dropdown-item"
                                                     onClick={() =>
                                                         setIsDropdownOpen(false)
                                                     }
                                                 >
-                                                    Modifier mon mot de passe
+                                                    Tableau de bord
                                                 </Link>
                                             </>
                                         ) : (
@@ -143,15 +114,6 @@ export default function Navbar({ links }) {
                                                     }
                                                 >
                                                     Profil
-                                                </Link>
-                                                <Link
-                                                    to="/profile/password"
-                                                    className="dropdown-item"
-                                                    onClick={() =>
-                                                        setIsDropdownOpen(false)
-                                                    }
-                                                >
-                                                    Modifier mon mot de passe
                                                 </Link>
                                                 <Link
                                                     to="/reservations"
@@ -230,40 +192,18 @@ export default function Navbar({ links }) {
                                     {isStudio ? (
                                         <>
                                             <Link
-                                                to="/studio"
-                                                className="mobile-menu-item"
-                                                onClick={closeMobileMenu}
-                                            >
-                                                Dashboard studio
-                                            </Link>
-                                            <Link
-                                                to="/studio/studios"
-                                                className="mobile-menu-item"
-                                                onClick={closeMobileMenu}
-                                            >
-                                                Mes studios
-                                            </Link>
-                                            <Link
-                                                to="/studio/reservations"
-                                                className="mobile-menu-item"
-                                                onClick={closeMobileMenu}
-                                            >
-                                                Réservations
-                                            </Link>
-                                            <hr className="mobile-menu-divider" />
-                                            <Link
                                                 to="/profile"
                                                 className="mobile-menu-item"
                                                 onClick={closeMobileMenu}
                                             >
-                                                Profil
+                                                Profil personnel
                                             </Link>
                                             <Link
-                                                to="/profile/password"
+                                                to="/studio"
                                                 className="mobile-menu-item"
                                                 onClick={closeMobileMenu}
                                             >
-                                                Modifier mon mot de passe
+                                                Tableau de bord
                                             </Link>
                                         </>
                                     ) : (
@@ -274,13 +214,6 @@ export default function Navbar({ links }) {
                                                 onClick={closeMobileMenu}
                                             >
                                                 Profil
-                                            </Link>
-                                            <Link
-                                                to="/profile/password"
-                                                className="mobile-menu-item"
-                                                onClick={closeMobileMenu}
-                                            >
-                                                Modifier mon mot de passe
                                             </Link>
                                             <Link
                                                 to="/reservations"

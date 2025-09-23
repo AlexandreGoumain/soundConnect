@@ -18,7 +18,11 @@ export const uploadStudioImages = async (req, res) => {
             data: { images },
         });
     } catch (error) {
-        handleUploadError(res, error, "Error uploading images. Please try again.");
+        handleUploadError(
+            res,
+            error,
+            "Error uploading images. Please try again."
+        );
     }
 };
 
@@ -41,7 +45,11 @@ export const reorderStudioImages = async (req, res) => {
     try {
         const { id } = req.params;
         const { images } = req.body || {};
-        const normalized = await reorderStudioImagesService(id, req.user, images);
+        const normalized = await reorderStudioImagesService(
+            id,
+            req.user,
+            images
+        );
 
         res.json({
             success: true,
@@ -56,7 +64,12 @@ export const reorderStudioImages = async (req, res) => {
 export const replaceStudioImage = async (req, res) => {
     try {
         const { id, filename } = req.params;
-        const images = await replaceStudioImageService(id, req.user, filename, req.file);
+        const images = await replaceStudioImageService(
+            id,
+            req.user,
+            filename,
+            req.file
+        );
 
         res.json({
             success: true,
@@ -89,11 +102,9 @@ function handleUploadError(res, error, fallbackMessage) {
         });
     }
 
-    console.error(fallbackMessage, error);
+    error(fallbackMessage, error);
     return res.status(500).json({
         success: false,
         message: fallbackMessage,
     });
 }
-
-

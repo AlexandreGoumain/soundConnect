@@ -100,14 +100,16 @@ class AvailabilityController {
     }
 
     static handleServiceError(res, error, fallbackMessage) {
-        if (error instanceof AvailabilityError || typeof error?.statusCode === "number") {
+        if (
+            error instanceof AvailabilityError ||
+            typeof error?.statusCode === "number"
+        ) {
             return res.status(error.statusCode).json({
                 success: false,
                 message: error.message,
             });
         }
 
-        console.error(fallbackMessage, error);
         return res.status(500).json({
             success: false,
             message: fallbackMessage,

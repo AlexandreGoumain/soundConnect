@@ -1,7 +1,6 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { StudioFilterContext } from "../contexts/StudioFilterContext.js";
 import { useMyStudios } from "../features/studio-dashboard/hooks/useMyStudios.js";
-
-const StudioFilterContext = createContext(null);
 
 const STORAGE_KEY = "studioFilter.selectedId";
 
@@ -11,7 +10,7 @@ export function StudioFilterProvider({ children }) {
     const [selectedId, setSelectedId] = useState(() => {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
-            return raw ? JSON.parse(raw) : null; // null => Tous les studios
+            return raw ? JSON.parse(raw) : null;
         } catch {
             return null;
         }
@@ -19,9 +18,7 @@ export function StudioFilterProvider({ children }) {
 
     // Persist selection
     useEffect(() => {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedId));
-        } catch {}
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedId));
     }, [selectedId]);
 
     // If selected studio disappears, reset to all
@@ -31,13 +28,17 @@ export function StudioFilterProvider({ children }) {
             return;
         }
         if (selectedId === null) return;
-        const stillExists = studios.some((s) => String(s.id) === String(selectedId));
+        const stillExists = studios.some(
+            (s) => String(s.id) === String(selectedId)
+        );
         if (!stillExists) setSelectedId(null);
     }, [studios, selectedId]);
 
     const selectedStudio = useMemo(() => {
         if (selectedId === null) return null;
-        return studios?.find((s) => String(s.id) === String(selectedId)) || null;
+        return (
+            studios?.find((s) => String(s.id) === String(selectedId)) || null
+        );
     }, [studios, selectedId]);
 
     const value = useMemo(
@@ -60,10 +61,3 @@ export function StudioFilterProvider({ children }) {
         </StudioFilterContext.Provider>
     );
 }
-
-export function useStudioFilter() {
-    const ctx = useContext(StudioFilterContext);
-    if (!ctx) throw new Error("useStudioFilter must be used within StudioFilterProvider");
-    return ctx;
-}
-

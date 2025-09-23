@@ -1,7 +1,7 @@
 import { pool } from "../config/database.js";
 import User from "../models/User.js";
-import { comparePassword, generateToken } from "../utils/auth.js";
 import { findProfileById, updateProfileById } from "../services/userService.js";
+import { comparePassword, generateToken } from "../utils/auth.js";
 const getCookieOptions = () => {
     const isProduction = process.env.NODE_ENV === "production";
     return {
@@ -9,6 +9,16 @@ const getCookieOptions = () => {
         secure: isProduction,
         sameSite: isProduction ? "none" : "lax",
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+        path: "/",
+    };
+};
+
+const getClearCookieOptions = () => {
+    const isProduction = process.env.NODE_ENV === "production";
+    return {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
         path: "/",
     };
 };
@@ -102,7 +112,6 @@ export const register = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error("Registration error:", error);
         res.status(500).json({
             success: false,
             message: "Registration failed",
@@ -155,7 +164,6 @@ export const login = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error("Login error:", error);
         res.status(500).json({
             success: false,
             message: "Login failed",
@@ -165,14 +173,13 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
-        res.clearCookie("auth_token", getCookieOptions());
+        res.clearCookie("auth_token", getClearCookieOptions());
 
         res.json({
             success: true,
             message: "Logout successful",
         });
     } catch (error) {
-        console.error("Logout error:", error);
         res.status(500).json({
             success: false,
             message: "Logout failed",
@@ -198,7 +205,6 @@ export const getProfile = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error("Profile retrieval error:", error);
         res.status(500).json({
             success: false,
             message: "Profile retrieval failed",
@@ -207,7 +213,11 @@ export const getProfile = async (req, res) => {
 };
 export const updateProfile = async (req, res) => {
     try {
-        const updatedUser = await updateProfileById(req.user.id, req.body);
+        const updatedUser = await updateProfileById(
+            req.user.id,
+            req.body,
+            req.user
+        );
 
         res.json({
             success: true,
@@ -217,8 +227,6 @@ export const updateProfile = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error("Profile update error:", error);
-
         if (
             [
                 "No valid data to update",
@@ -239,7 +247,3 @@ export const updateProfile = async (req, res) => {
         });
     }
 };
-
-
-
-

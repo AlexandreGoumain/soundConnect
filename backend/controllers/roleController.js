@@ -7,7 +7,7 @@ export const getRoles = async (req, res) => {
 
         res.json({ success: true, data: { roles } });
     } catch (error) {
-        console.error("getRoles error:", error);
+        error("getRoles error:", error);
         res.status(500).json({
             success: false,
             message: "Failed to fetch roles",

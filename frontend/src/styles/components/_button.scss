@@ -1,64 +1,63 @@
-@use '../utils/variables' as *;
-@use '../utils/mixins' as *;
+@use "../utils/variables" as *;
+@use "../utils/mixins" as *;
 
 .btn {
-  @include button-base;
+    @include button-base;
 
-  &-primary {
-    background-color: var(--primary);
-    color: var(--text-white);
-    border-color: var(--primary);
+    &-primary {
+        background-color: var(--primary);
+        color: var(--text-white);
+        border-color: var(--primary);
 
-    &:hover:not(:disabled) {
-      background-color: var(--primary-light);
-      border-color: var(--primary-light);
+        &:hover:not(:disabled) {
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+
+        &:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
     }
 
-    &:focus {
-      outline: 2px solid var(--primary);
-      outline-offset: 2px;
+    &-primary-light {
+        background-color: var(--primary-light);
+        color: var(--text-white);
+        border-color: var(--primary-light);
+
+        &:hover:not(:disabled) {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
     }
-  }
 
-  &-primary-light {
-    background-color: var(--primary-light);
-    color: var(--text-white);
-    border-color: var(--primary-light);
+    &-secondary {
+        background-color: transparent;
+        color: var(--primary);
+        border-color: var(--primary);
 
-    &:hover:not(:disabled) {
-      background-color: var(--primary);
-      border-color: var(--primary);
+        &:hover:not(:disabled) {
+            background-color: var(--primary);
+            color: white;
+        }
     }
-  }
 
-  &-secondary {
-    background-color: transparent;
-    color: var(--primary);
-    border-color: var(--primary);
+    &-ghost {
+        background-color: transparent;
+        color: var(--text-color);
+        border-color: transparent;
 
-    &:hover:not(:disabled) {
-      background-color: var(--primary);
-      color: white;
+        &:hover:not(:disabled) {
+            background-color: var(--bg-secondary);
+        }
     }
-  }
 
-  &-ghost {
-    background-color: transparent;
-    color: var(--text-color);
-    border-color: transparent;
-
-    &:hover:not(:disabled) {
-      background-color: var(--bg-secondary);
+    &-sm {
+        padding: 0.4em 0.8em;
+        font-size: $font-size-sm;
     }
-  }
 
-  &-sm {
-    padding: 0.4em 0.8em;
-    font-size: $font-size-sm;
-  }
-
-
-  &-full {
-    width: 100%;
-  }
+    &-full {
+        width: 100%;
+    }
 }

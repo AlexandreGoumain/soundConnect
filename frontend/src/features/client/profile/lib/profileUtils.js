@@ -21,14 +21,13 @@ const assetsOrigin = (() => {
     }
 })();
 
-export const ACCEPTED_AVATAR_TYPES = new Set([
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-    "image/gif",
-]);
+import {
+    ACCEPTED_IMAGE_TYPES,
+    MAX_AVATAR_SIZE,
+} from "../../../../lib/validation.js";
 
-export const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
+export const ACCEPTED_AVATAR_TYPES = ACCEPTED_IMAGE_TYPES;
+export { MAX_AVATAR_SIZE };
 
 export const normalizeProfile = (user) => {
     const normalized = { ...DEFAULT_PROFILE };

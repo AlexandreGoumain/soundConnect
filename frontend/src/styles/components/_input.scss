@@ -1,63 +1,63 @@
-@use '../utils/variables' as *;
-@use '../utils/mixins' as *;
+@use "../utils/variables" as *;
+@use "../utils/mixins" as *;
 
 .input {
-  @include input-base;
-  width: 100%;
+    @include input-base;
+    width: 100%;
 
-  &-error {
-    border-color: var(--error);
-  }
+    &-error {
+        border-color: var(--error);
+    }
 
-  &-success {
-    border-color: var(--success);
-  }
+    &-success {
+        border-color: var(--success);
+    }
 }
 
 .form-group {
-  margin-bottom: $spacing-md;
+    margin-bottom: $spacing-md;
 
-  .label {
-    display: block;
-    margin-bottom: $spacing-xs;
-    font-weight: 500;
-    color: var(--text-color);
-  }
+    .label {
+        display: block;
+        margin-bottom: $spacing-xs;
+        font-weight: 500;
+        color: var(--text-color);
+    }
 
-  .error-message {
-    color: var(--error);
-    font-size: $font-size-sm;
-    margin-top: $spacing-xs;
-  }
+    .error-message {
+        color: var(--error);
+        font-size: $font-size-sm;
+        margin-top: $spacing-xs;
+    }
 
-  .help-text {
-    color: var(--text-muted);
-    font-size: $font-size-sm;
-    margin-top: $spacing-xs;
-  }
+    .help-text {
+        color: var(--text-muted);
+        font-size: $font-size-sm;
+        margin-top: $spacing-xs;
+    }
 }
 
 .form {
-  .form-row {
-    @include flex-between;
-    flex-direction: column;
-    gap: 0;
-    margin-bottom: $spacing-md;
+    .form-row {
+        @include flex-between;
+        flex-direction: column;
+        gap: 0;
+        margin-bottom: $spacing-md;
 
-    @include tablet {
-      flex-direction: row;
-      gap: $spacing-md;
+        @include tablet {
+            flex-direction: row;
+            gap: $spacing-md;
+        }
     }
-  }
 
-  .form-actions {
-    @include flex-between;
-    flex-direction: column;
-    gap: $spacing-md;
-    margin-top: $spacing-lg;
+    .form-actions {
+        @include flex-between;
+        flex-direction: column;
+        gap: $spacing-md;
+        margin-top: $spacing-lg;
 
-    @include tablet {
-      flex-direction: row;
+        @include tablet {
+            flex-direction: row;
+        }
     }
-  }
 }

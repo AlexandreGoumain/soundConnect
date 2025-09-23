@@ -1,9 +1,15 @@
 import { Link } from "react-router-dom";
 import { useChangePassword } from "./hooks/useChangePassword.js";
 
+function FieldError({ error }) {
+    if (!error) return null;
+    return <span className="field-error">{error}</span>;
+}
+
 export default function ChangePassword() {
     const {
         formData,
+        fieldErrors,
         isSubmitting,
         isUserLoggedIn,
         handleChange,
@@ -40,14 +46,14 @@ export default function ChangePassword() {
                                     <input
                                         id="currentPassword"
                                         name="currentPassword"
-                                        className="input"
+                                        className={`input ${fieldErrors.currentPassword ? 'input-error' : ''}`}
                                         type="password"
                                         value={formData.currentPassword}
                                         onChange={handleChange}
                                         autoComplete="current-password"
                                         disabled={isSubmitting}
-                                        required
                                     />
+                                    <FieldError error={fieldErrors.currentPassword} />
                                 </div>
 
                                 <div className="form-group">
@@ -57,14 +63,14 @@ export default function ChangePassword() {
                                     <input
                                         id="newPassword"
                                         name="newPassword"
-                                        className="input"
+                                        className={`input ${fieldErrors.newPassword ? 'input-error' : ''}`}
                                         type="password"
                                         value={formData.newPassword}
                                         onChange={handleChange}
                                         autoComplete="new-password"
                                         disabled={isSubmitting}
-                                        required
                                     />
+                                    <FieldError error={fieldErrors.newPassword} />
                                 </div>
 
                                 <div className="form-group">
@@ -74,14 +80,14 @@ export default function ChangePassword() {
                                     <input
                                         id="confirmPassword"
                                         name="confirmPassword"
-                                        className="input"
+                                        className={`input ${fieldErrors.confirmPassword ? 'input-error' : ''}`}
                                         type="password"
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
                                         autoComplete="new-password"
                                         disabled={isSubmitting}
-                                        required
                                     />
+                                    <FieldError error={fieldErrors.confirmPassword} />
                                 </div>
                             </div>
                         </div>

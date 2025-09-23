@@ -27,7 +27,10 @@ const parseDateTime = (value, fieldName) => {
 
     const parsed = new Date(value);
     if (Number.isNaN(parsed.getTime())) {
-        throw new ReservationError(400, `${fieldName} must be a valid ISO date string`);
+        throw new ReservationError(
+            400,
+            `${fieldName} must be a valid ISO date string`
+        );
     }
 
     return parsed;
@@ -38,7 +41,8 @@ export async function createReservationForUser(user, payload) {
         throw new ReservationError(403, "Only artists can create reservations");
     }
 
-    const { studio_id, start_datetime, end_datetime, special_requests } = payload;
+    const { studio_id, start_datetime, end_datetime, special_requests } =
+        payload;
 
     const startTime = parseDateTime(start_datetime, "start_datetime");
     const endTime = parseDateTime(end_datetime, "end_datetime");
@@ -60,7 +64,10 @@ export async function createReservationForUser(user, payload) {
     if (sameDay) {
         const minAdvance = new Date(now.getTime() + HOUR_IN_MS);
         if (startTime < minAdvance) {
-            throw new ReservationError(400, "Start time must be at least 1 hour in advance");
+            throw new ReservationError(
+                400,
+                "Start time must be at least 1 hour in advance"
+            );
         }
     }
 
@@ -69,7 +76,11 @@ export async function createReservationForUser(user, payload) {
         throw new ReservationError(404, "Studio not found");
     }
 
-    validateScheduleForReservation(studio.schedule, start_datetime, end_datetime);
+    validateScheduleForReservation(
+        studio.schedule,
+        start_datetime,
+        end_datetime
+    );
 
     const reservationData = {
         user_id: user.id,
@@ -116,14 +127,16 @@ export async function updateReservationForActor(user, id, payload) {
     const { status, special_requests } = payload;
 
     if (!status && !special_requests) {
-        throw new ReservationError(
-            400,
-            "No valid reservation data provided"
-        );
+        throw new ReservationError(400, "No valid reservation data provided");
     }
 
     if (status) {
-        const validStatuses = ["pending", "confirmed", "completed", "cancelled"];
+        const validStatuses = [
+            "pending",
+            "confirmed",
+            "completed",
+            "cancelled",
+        ];
         if (!validStatuses.includes(status)) {
             throw new ReservationError(400, "Invalid reservation status");
         }
@@ -135,12 +148,21 @@ export async function updateReservationForActor(user, id, payload) {
             );
         }
 
-        if (reservation.status === "cancelled" || reservation.status === "completed") {
-            throw new ReservationError(400, "Cannot change status of completed or cancelled reservations");
+        if (
+            reservation.status === "cancelled" ||
+            reservation.status === "completed"
+        ) {
+            throw new ReservationError(
+                400,
+                "Cannot change status of completed or cancelled reservations"
+            );
         }
 
         if (reservation.status === "confirmed" && status === "pending") {
-            throw new ReservationError(400, "Cannot revert status to pending once confirmed");
+            throw new ReservationError(
+                400,
+                "Cannot revert status to pending once confirmed"
+            );
         }
     }
 
@@ -221,7 +243,11 @@ export async function getReservationsForStudio(studioId, requester) {
     return reservations;
 }
 
-function validateScheduleForReservation(scheduleRaw, startDatetime, endDatetime) {
+function validateScheduleForReservation(
+    scheduleRaw,
+    startDatetime,
+    endDatetime
+) {
     try {
         const schedule =
             typeof scheduleRaw === "string"
@@ -234,7 +260,10 @@ function validateScheduleForReservation(scheduleRaw, startDatetime, endDatetime)
         const daySchedule = schedule?.[DAY_NAMES[start.getDay()]];
 
         if (!daySchedule || !daySchedule.is_open) {
-            throw new ReservationError(400, "Studio is closed on the selected date");
+            throw new ReservationError(
+                400,
+                "Studio is closed on the selected date"
+            );
         }
 
         const dateStr = startDatetime.split("T")[0];
@@ -252,7 +281,10 @@ function validateScheduleForReservation(scheduleRaw, startDatetime, endDatetime)
             throw error;
         }
 
-        throw new ReservationError(400, "Invalid studio schedule configuration");
+        throw new ReservationError(
+            400,
+            "Invalid studio schedule configuration"
+        );
     }
 }
 

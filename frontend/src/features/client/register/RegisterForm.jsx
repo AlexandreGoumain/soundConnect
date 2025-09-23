@@ -9,6 +9,11 @@ const ROLE_ICONS = {
     studio: FaMicrophone,
 };
 
+function FieldError({ error }) {
+    if (!error) return null;
+    return <span className="field-error">{error}</span>;
+}
+
 export default function RegisterForm() {
     const {
         step,
@@ -16,6 +21,7 @@ export default function RegisterForm() {
         roles,
         formData,
         error,
+        fieldErrors,
         showPassword,
         showConfirmPassword,
         status,
@@ -56,12 +62,12 @@ export default function RegisterForm() {
                             </h3>
 
                             <div className="account-types">
-                                {Object.entries(ROLE_ICONS).map(
-                                    ([roleName, IconComponent]) => {
-                                        const role = roles.find(
-                                            (r) => r.name === roleName
-                                        );
-                                        if (!role) return null;
+                                {roles
+                                    .filter((role) => ROLE_ICONS[role.name])
+                                    .map((role) => {
+                                        const IconComponent =
+                                            ROLE_ICONS[role.name];
+                                        const roleName = role.name;
 
                                         return (
                                             <div
@@ -88,8 +94,7 @@ export default function RegisterForm() {
                                                 </p>
                                             </div>
                                         );
-                                    }
-                                )}
+                                    })}
                             </div>
                         </div>
 
@@ -122,12 +127,12 @@ export default function RegisterForm() {
                                     <input
                                         id="first_name"
                                         name="first_name"
-                                        className="input"
+                                        className={`input ${fieldErrors.first_name ? 'input-error' : ''}`}
                                         value={formData.first_name}
                                         onChange={handleInputChange}
                                         type="text"
-                                        required
                                     />
+                                    <FieldError error={fieldErrors.first_name} />
                                 </div>
 
                                 <div className="form-group">
@@ -140,12 +145,12 @@ export default function RegisterForm() {
                                     <input
                                         id="last_name"
                                         name="last_name"
-                                        className="input"
+                                        className={`input ${fieldErrors.last_name ? 'input-error' : ''}`}
                                         value={formData.last_name}
                                         onChange={handleInputChange}
                                         type="text"
-                                        required
                                     />
+                                    <FieldError error={fieldErrors.last_name} />
                                 </div>
                             </div>
 
@@ -156,12 +161,13 @@ export default function RegisterForm() {
                                 <input
                                     id="username"
                                     name="username"
-                                    className="input"
+                                    className={`input ${fieldErrors.username ? 'input-error' : ''}`}
                                     value={formData.username}
                                     onChange={handleInputChange}
                                     type="text"
                                     required
                                 />
+                                <FieldError error={fieldErrors.username} />
                             </div>
 
                             <div className="form-group">
@@ -171,12 +177,13 @@ export default function RegisterForm() {
                                 <input
                                     id="email"
                                     name="email"
-                                    className="input"
+                                    className={`input ${fieldErrors.email ? 'input-error' : ''}`}
                                     value={formData.email}
                                     onChange={handleInputChange}
                                     type="email"
                                     required
                                 />
+                                <FieldError error={fieldErrors.email} />
                             </div>
 
                             <div className="form-group">
@@ -186,12 +193,13 @@ export default function RegisterForm() {
                                 <input
                                     id="phone"
                                     name="phone"
-                                    className="input"
+                                    className={`input ${fieldErrors.phone ? 'input-error' : ''}`}
                                     value={formData.phone}
                                     onChange={handleInputChange}
                                     type="tel"
                                     required
                                 />
+                                <FieldError error={fieldErrors.phone} />
                             </div>
 
                             <div className="form-row">
@@ -202,12 +210,12 @@ export default function RegisterForm() {
                                     <input
                                         id="city"
                                         name="city"
-                                        className="input"
+                                        className={`input ${fieldErrors.city ? 'input-error' : ''}`}
                                         value={formData.city}
                                         onChange={handleInputChange}
                                         type="text"
-                                        required
                                     />
+                                    <FieldError error={fieldErrors.city} />
                                 </div>
 
                                 <div className="form-group">
@@ -220,12 +228,12 @@ export default function RegisterForm() {
                                     <input
                                         id="postal_code"
                                         name="postal_code"
-                                        className="input"
+                                        className={`input ${fieldErrors.postal_code ? 'input-error' : ''}`}
                                         value={formData.postal_code}
                                         onChange={handleInputChange}
                                         type="text"
-                                        required
                                     />
+                                    <FieldError error={fieldErrors.postal_code} />
                                 </div>
                             </div>
 
@@ -237,13 +245,12 @@ export default function RegisterForm() {
                                     <input
                                         id="password"
                                         name="password"
-                                        className="input auth-form__password-input"
+                                        className={`input auth-form__password-input ${fieldErrors.password ? 'input-error' : ''}`}
                                         value={formData.password}
                                         onChange={handleInputChange}
                                         type={
                                             showPassword ? "text" : "password"
                                         }
-                                        required
                                     />
                                     <button
                                         type="button"
@@ -262,6 +269,7 @@ export default function RegisterForm() {
                                         )}
                                     </button>
                                 </div>
+                                <FieldError error={fieldErrors.password} />
                             </div>
 
                             <div className="form-group">
@@ -275,7 +283,7 @@ export default function RegisterForm() {
                                     <input
                                         id="confirmPassword"
                                         name="confirmPassword"
-                                        className="input auth-form__password-input"
+                                        className={`input auth-form__password-input ${fieldErrors.confirmPassword ? 'input-error' : ''}`}
                                         value={formData.confirmPassword}
                                         onChange={handleInputChange}
                                         type={
@@ -283,7 +291,6 @@ export default function RegisterForm() {
                                                 ? "text"
                                                 : "password"
                                         }
-                                        required
                                     />
                                     <button
                                         type="button"
@@ -304,6 +311,7 @@ export default function RegisterForm() {
                                         )}
                                     </button>
                                 </div>
+                                <FieldError error={fieldErrors.confirmPassword} />
                             </div>
                         </div>
 

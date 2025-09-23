@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useToast } from "../../../../context/ToastContext.jsx";
+import { useToast } from "../../../../hooks/useToast.js";
 import { apiClient } from "../../../../lib/apiClient";
 
 export const useAvailability = (studioId) => {
@@ -23,15 +23,14 @@ export const useAvailability = (studioId) => {
                 );
 
                 setAvailableSlots(response.data.data.available_slots || []);
-            } catch (err) {
-                console.error("Error fetching available slots:", err);
+            } catch {
                 showError("Erreur lors du chargement des créneaux disponibles");
                 setAvailableSlots([]);
             } finally {
                 setLoading(false);
             }
         },
-        [studioId]
+        [studioId, showError]
     );
 
     // Fetch weekly schedule
@@ -47,14 +46,13 @@ export const useAvailability = (studioId) => {
             );
 
             setWeeklySchedule(response.data.data.weekly_schedule || {});
-        } catch (err) {
-            console.error("Error fetching weekly schedule:", err);
+        } catch {
             showError("Erreur lors du chargement des horaires");
             setWeeklySchedule({});
         } finally {
             setLoading(false);
         }
-    }, [studioId]);
+    }, [studioId, showError]);
 
     // Check if a specific slot is available
     const checkSlotAvailability = useCallback(
@@ -72,15 +70,14 @@ export const useAvailability = (studioId) => {
                 );
 
                 return response.data.data.available;
-            } catch (err) {
-                console.error("Error checking slot availability:", err);
+            } catch {
                 showError(
                     "Erreur lors de la vérification de la disponibilité du créneau"
                 );
                 return false;
             }
         },
-        [studioId]
+        [studioId, showError]
     );
 
     // Get availability for a date range (for calendar view)
@@ -97,15 +94,14 @@ export const useAvailability = (studioId) => {
                 );
 
                 return response.data.data.availability || {};
-            } catch (err) {
-                console.error("Error fetching availability range:", err);
+            } catch {
                 showError("Erreur lors du chargement des disponibilités");
                 return {};
             } finally {
                 setLoading(false);
             }
         },
-        [studioId]
+        [studioId, showError]
     );
 
     // Format time for display
