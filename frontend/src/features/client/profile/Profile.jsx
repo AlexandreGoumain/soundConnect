@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext.jsx";
 import { useToast } from "../../../context/ToastContext.jsx";
 import { useProfile } from "./hooks/useProfile.js";
+import "../../../styles/components/_profile.scss";
 
 export default function Profile() {
     const { refresh, user } = useAuth();
@@ -84,7 +85,7 @@ export default function Profile() {
                                         ref={avatarInputRef}
                                         type="file"
                                         accept="image/png,image/jpeg,image/webp,image/gif"
-                                        style={{ display: "none" }}
+                                        className="profile__avatar-input"
                                         onChange={handleAvatarUpload}
                                     />
                                     <span className="profile-summary-avatar-hint">

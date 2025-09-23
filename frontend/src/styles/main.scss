@@ -14,6 +14,10 @@
 @use 'components/navbar';
 @use 'components/footer';
 @use 'components/toast';
+@use 'components/auth-form';
+@use 'components/studios-list';
+@use 'components/studio-dashboard';
+@use 'components/profile';
 
 // Layouts
 @use 'layouts/main-layout';

@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import DashboardSidebar from "./components/DashboardSidebar.jsx";
 import { useMyReservations } from "./hooks/useMyReservations.js";
 import { useStudioFilter } from "../../context/StudioFilterContext.jsx";
+import "../../styles/components/_studio-dashboard.scss";
 
 export default function StudioReservationsView({ all = false }) {
     const params = useParams();
@@ -35,10 +36,7 @@ export default function StudioReservationsView({ all = false }) {
                         <div className="cards-grid">
                             {reservations.map((r) => (
                                 <section key={r.id} className="card reservation-card">
-                                    <div
-                                        className="primary"
-                                        style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-                                    >
+                                    <div className="primary studio-reservations__header">
                                         <span>{r.studio_name}</span>
                                         <span className={`badge ${r.status}`}>{r.status}</span>
                                     </div>

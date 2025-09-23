@@ -1,0 +1,65 @@
+// Studio Dashboard Components Styles
+
+.studio-dashboard {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__stats {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__item-meta {
+    margin-bottom: 8px;
+  }
+}
+
+.studio-form {
+  &__section {
+    margin-top: 1.5rem;
+  }
+
+  &__images-section {
+    margin-top: 1.5rem;
+  }
+
+  &__schedule-title {
+    margin-bottom: 0;
+  }
+}
+
+.studio-reservations {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.dashboard-sidebar {
+  &__form-group {
+    margin-bottom: 16px;
+  }
+}
+
+.my-studios {
+  &__action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.studio-images-manager {
+  &__file-input {
+    display: none;
+  }
+}

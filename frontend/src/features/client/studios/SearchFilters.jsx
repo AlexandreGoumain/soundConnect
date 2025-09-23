@@ -1,85 +1,37 @@
-import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import "../../../styles/components/_studios-list.scss";
+import { useSearchFilters } from "./hooks/useSearchFilters.js";
 
 export default function SearchFilters() {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const q = useMemo(
-        () => new URLSearchParams(location.search),
-        [location.search]
-    );
-
-    const [city, setCity] = useState("");
-    const [postalCode, setPostalCode] = useState("");
-    const [minRate, setMinRate] = useState("");
-    const [maxRate, setMaxRate] = useState("");
-    const [tags, setTags] = useState("");
-    const [equipment, setEquipment] = useState("");
-    const [sort, setSort] = useState("");
-    const [availableOn, setAvailableOn] = useState("");
-    const [duration, setDuration] = useState("1");
-
-    useEffect(() => {
-        setCity(q.get("city") || "");
-        setPostalCode(q.get("postal_code") || "");
-        setMinRate(q.get("min_rate") || "");
-        setMaxRate(q.get("max_rate") || "");
-        setTags(q.get("tags") || "");
-        setEquipment(q.get("equipment") || "");
-        setSort(q.get("sort") || "");
-        setAvailableOn(q.get("available_on") || "");
-        setDuration(q.get("duration") || "1");
-    }, [q]);
-
-    const apply = (e) => {
-        e.preventDefault();
-        const params = new URLSearchParams();
-        if (city.trim()) params.set("city", city.trim());
-        if (postalCode.trim()) params.set("postal_code", postalCode.trim());
-        if (minRate) params.set("min_rate", minRate);
-        if (maxRate) params.set("max_rate", maxRate);
-        if (tags.trim()) params.set("tags", tags.trim());
-        if (equipment.trim()) params.set("equipment", equipment.trim());
-        if (sort) params.set("sort", sort);
-        if (availableOn) params.set("available_on", availableOn);
-        if (duration) params.set("duration", duration);
-        navigate(`/studios?${params.toString()}`);
-    };
-
-    const reset = () => {
-        setCity("");
-        setPostalCode("");
-        setMinRate("");
-        setMaxRate("");
-        setTags("");
-        setEquipment("");
-        setSort("");
-        setAvailableOn("");
-        setDuration("1");
-        navigate(`/studios`);
-    };
+    const {
+        filters,
+        minDate,
+        durationOptions,
+        handleCityChange,
+        handlePostalCodeChange,
+        handleMinRateChange,
+        handleMaxRateChange,
+        handleTagsChange,
+        handleEquipmentChange,
+        handleSortChange,
+        handleAvailableOnChange,
+        handleDurationChange,
+        handleApply,
+        handleReset,
+    } = useSearchFilters();
 
     return (
         <form
-            className="card"
-            onSubmit={apply}
-            style={{ padding: 16, marginBottom: 16 }}
+            className="card search-filters"
+            onSubmit={handleApply}
         >
-            <div
-                className="form-row"
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: 12,
-                }}
-            >
+            <div className="search-filters__row search-filters__row--two-cols">
                 <label className="label" htmlFor="city">
                     Ville
                     <input
                         id="city"
                         className="input"
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
+                        value={filters.city}
+                        onChange={handleCityChange}
                         placeholder="Paris"
                     />
                 </label>
@@ -88,22 +40,14 @@ export default function SearchFilters() {
                     <input
                         id="postal"
                         className="input"
-                        value={postalCode}
-                        onChange={(e) => setPostalCode(e.target.value)}
+                        value={filters.postalCode}
+                        onChange={handlePostalCodeChange}
                         placeholder="75001"
                     />
                 </label>
             </div>
 
-            <div
-                className="form-row"
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: 12,
-                    marginTop: 12,
-                }}
-            >
+            <div className="search-filters__row search-filters__row--two-cols">
                 <label className="label" htmlFor="min_rate">
                     Prix min (€/h)
                     <input
@@ -112,8 +56,8 @@ export default function SearchFilters() {
                         min="0"
                         step="1"
                         className="input"
-                        value={minRate}
-                        onChange={(e) => setMinRate(e.target.value)}
+                        value={filters.minRate}
+                        onChange={handleMinRateChange}
                     />
                 </label>
                 <label className="label" htmlFor="max_rate">
@@ -124,28 +68,20 @@ export default function SearchFilters() {
                         min="0"
                         step="1"
                         className="input"
-                        value={maxRate}
-                        onChange={(e) => setMaxRate(e.target.value)}
+                        value={filters.maxRate}
+                        onChange={handleMaxRateChange}
                     />
                 </label>
             </div>
 
-            <div
-                className="form-row"
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "2fr 1fr 1fr 1fr",
-                    gap: 12,
-                    marginTop: 12,
-                }}
-            >
+            <div className="search-filters__row search-filters__row--four-cols">
                 <label className="label" htmlFor="tags">
                     Tags (séparés par virgules)
                     <input
                         id="tags"
                         className="input"
-                        value={tags}
-                        onChange={(e) => setTags(e.target.value)}
+                        value={filters.tags}
+                        onChange={handleTagsChange}
                         placeholder="mixage, batterie"
                     />
                 </label>
@@ -154,8 +90,8 @@ export default function SearchFilters() {
                     <input
                         id="equipment"
                         className="input"
-                        value={equipment}
-                        onChange={(e) => setEquipment(e.target.value)}
+                        value={filters.equipment}
+                        onChange={handleEquipmentChange}
                         placeholder="piano, batterie"
                     />
                 </label>
@@ -164,8 +100,8 @@ export default function SearchFilters() {
                     <select
                         id="sort"
                         className="input"
-                        value={sort}
-                        onChange={(e) => setSort(e.target.value)}
+                        value={filters.sort}
+                        onChange={handleSortChange}
                     >
                         <option value="">Pertinence</option>
                         <option value="price_asc">Prix croissant</option>
@@ -179,9 +115,9 @@ export default function SearchFilters() {
                         id="available_on"
                         type="date"
                         className="input"
-                        value={availableOn}
-                        onChange={(e) => setAvailableOn(e.target.value)}
-                        min={new Date().toISOString().split("T")[0]}
+                        value={filters.availableOn}
+                        onChange={handleAvailableOnChange}
+                        min={minDate}
                     />
                 </label>
                 <label className="label" htmlFor="duration">
@@ -189,23 +125,23 @@ export default function SearchFilters() {
                     <select
                         id="duration"
                         className="input"
-                        value={duration}
-                        onChange={(e) => setDuration(e.target.value)}
+                        value={filters.duration}
+                        onChange={handleDurationChange}
                     >
-                        {Array.from({ length: 12 }).map((_, i) => (
-                            <option key={i + 1} value={i + 1}>
-                                {i + 1}h
+                        {durationOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.label}
                             </option>
                         ))}
                     </select>
                 </label>
             </div>
 
-            <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+            <div className="search-filters__actions">
                 <button type="submit" className="btn btn-primary">
                     Appliquer
                 </button>
-                <button type="button" className="btn btn-ghost" onClick={reset}>
+                <button type="button" className="btn btn-ghost" onClick={handleReset}>
                     Réinitialiser
                 </button>
             </div>

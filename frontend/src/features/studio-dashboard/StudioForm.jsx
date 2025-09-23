@@ -6,6 +6,7 @@ import StudioImagesManager from "./components/StudioImagesManager.jsx";
 import { useStudioForm } from "./hooks/useStudioForm.js";
 import { WEEK_DAYS } from "./lib/studioSchedule.js";
 import { MAX_TAGS_COUNT, MAX_TAGS_LENGTH } from "./lib/studioValidation.js";
+import "../../styles/components/_studio-dashboard.scss";
 const TAG_LIMIT = MAX_TAGS_COUNT;
 const TAG_CHAR_LIMIT = MAX_TAGS_LENGTH;
 const SECTIONS = {
@@ -288,10 +289,7 @@ export default function StudioForm() {
                                     </p>
                                 </div>
                                 <div className="card-body">
-                                    <p
-                                        className="text-sm"
-                                        style={{ marginBottom: 0 }}
-                                    >
+                                    <p className="text-sm studio-form__schedule-title">
                                         Vous pourrez ajuster ces details et
                                         enrichir votre galerie à tout moment.
                                     </p>
@@ -321,10 +319,7 @@ export default function StudioForm() {
                         </form>
                     )}
                     {isEdit ? (
-                        <section
-                            className="card"
-                            style={{ marginTop: "1.5rem" }}
-                        >
+                        <section className="card studio-form__images-section">
                             <div className="card-header">
                                 <h2 className="card-title">Galerie d'images</h2>
                                 <p className="card-subtitle">
@@ -341,7 +336,7 @@ export default function StudioForm() {
                             </div>
                         </section>
                     ) : (
-                        <div className="card" style={{ marginTop: "1.5rem" }}>
+                        <div className="card studio-form__section">
                             <div className="card-body">
                                 Vous pourrez ajouter des images une fois le
                                 studio créé.

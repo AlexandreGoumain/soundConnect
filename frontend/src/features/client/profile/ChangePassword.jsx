@@ -1,78 +1,19 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext.jsx";
-import { useToast } from "../../../context/ToastContext.jsx";
-import { authApi } from "../../../lib/apiClient.js";
-
-const DEFAULT_FORM = {
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-};
+import { useChangePassword } from "./hooks/useChangePassword.js";
 
 export default function ChangePassword() {
-    const { user } = useAuth();
-    const { showError, showSuccess } = useToast();
+    const {
+        formData,
+        isSubmitting,
+        isUserLoggedIn,
+        handleChange,
+        handleSubmit,
+    } = useChangePassword();
 
-    const [formData, setFormData] = useState(DEFAULT_FORM);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    if (!user?.id) {
+    if (!isUserLoggedIn) {
         return null;
     }
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        const currentPassword = formData.currentPassword.trim();
-        const newPassword = formData.newPassword.trim();
-        const confirmPassword = formData.confirmPassword.trim();
-
-        if (!currentPassword || !newPassword || !confirmPassword) {
-            showError("Tous les champs sont obligatoires.");
-            return;
-        }
-
-        if (newPassword.length < 6) {
-            showError("Le mot de passe doit contenir au moins 6 caracteres.");
-            return;
-        }
-
-        if (newPassword !== confirmPassword) {
-            showError("Les nouveaux mots de passe ne correspondent pas.");
-            return;
-        }
-
-        if (newPassword === currentPassword) {
-            showError("Le nouveau mot de passe doit etre different de l'actuel.");
-            return;
-        }
-
-        try {
-            setIsSubmitting(true);
-            await authApi.changePassword(user.id, {
-                currentPassword,
-                newPassword,
-            });
-            setFormData(DEFAULT_FORM);
-            showSuccess("Mot de passe mis a jour avec succes.");
-        } catch (error) {
-            const message =
-                error.response?.data?.message ||
-                "La modification du mot de passe a echoue.";
-            showError(message);
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
 
     const handleBackClick = (event) => {
         if (isSubmitting) {

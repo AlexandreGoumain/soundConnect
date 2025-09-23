@@ -71,7 +71,7 @@ export const resolveAssetUrl = (value) => {
 export const deriveRoleLabel = (role) => {
     if (role === "studio") return "Compte studio";
     if (role === "artist") return "Compte artiste";
-    return "artiste"; // default label
+    return "Compte artiste"; // default label
 };
 
 export const deriveDisplayName = (profile) => {

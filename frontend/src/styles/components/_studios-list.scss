@@ -1,0 +1,47 @@
+// Studios List Components Styles
+
+.studios-container {
+  padding: 2rem 1rem;
+}
+
+.studios-error {
+  color: var(--error);
+}
+
+.studios-grid {
+  margin-top: 16px;
+}
+
+.search-filters {
+  padding: 16px;
+  margin-bottom: 16px;
+
+  &__row {
+    display: grid;
+    gap: 12px;
+    margin-top: 12px;
+
+    &--two-cols {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &--four-cols {
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+    }
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+}

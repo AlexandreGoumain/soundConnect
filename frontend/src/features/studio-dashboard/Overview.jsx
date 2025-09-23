@@ -3,6 +3,7 @@ import DashboardSidebar from "./components/DashboardSidebar.jsx";
 import TimeRangeChips from "./components/TimeRangeChips.jsx";
 import { useOverview } from "./hooks/useOverview.js";
 import { useStudioFilter } from "../../context/StudioFilterContext.jsx";
+import "../../styles/components/_studio-dashboard.scss";
 
 export default function Overview() {
     const { data, loading, error } = useOverview();
@@ -33,7 +34,7 @@ export default function Overview() {
 
                     {/* Studios summary for owners with multiple studios */}
                     <section className="card mb-lg">
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div className="studio-dashboard__header">
                             <h3>Vos studios</h3>
                             <a className="link" href="/studio/studios">Voir tout</a>
                         </div>
@@ -49,7 +50,7 @@ export default function Overview() {
                                                 {(s.city || "Ville inconnue") + (s.postal_code ? " " + s.postal_code : "")} · {s.hourly_rate} €/h
                                             </div>
                                         </div>
-                                        <div style={{ display: "flex", gap: 8 }}>
+                                        <div className="studio-dashboard__stats">
                                             <a className="btn btn-ghost btn-sm" href={`/studio/studios/${s.id}`}>Gérer</a>
                                             <a className="btn btn-ghost btn-sm" href={`/studio/studios/${s.id}/reservations`}>Réservations</a>
                                         </div>
@@ -81,11 +82,11 @@ export default function Overview() {
 
                     <div className="content-grid">
                         <section className="card">
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <div className="studio-dashboard__header">
                                 <h3>Réservations récentes</h3>
                                 <a className="link" href="/studio/reservations">Voir tout</a>
                             </div>
-                            <div className="secondary" style={{ marginBottom: 8 }}>
+                            <div className="secondary studio-dashboard__item-meta">
                                 Vue: {selectedStudio ? selectedStudio.name : "Tous les studios"}
                             </div>
                             {upcoming?.length === 0 ? (
@@ -108,7 +109,7 @@ export default function Overview() {
                         </section>
 
                         <section className="card">
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <div className="studio-dashboard__header">
                                 <h3>Messages récents</h3>
                                 <a className="link" href="#">Voir tout</a>
                             </div>

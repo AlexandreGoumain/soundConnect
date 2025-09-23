@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import DashboardSidebar from "./components/DashboardSidebar.jsx";
 import { useMyStudios } from "./hooks/useMyStudios.js";
+import "../../styles/components/_studio-dashboard.scss";
 
 export default function MyStudios() {
     const { studios, loading, error } = useMyStudios();
@@ -45,12 +46,7 @@ export default function MyStudios() {
                                                     €/h
                                                 </div>
                                             </div>
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    gap: 8,
-                                                }}
-                                            >
+                                            <div className="my-studios__action-buttons">
                                                 <Link
                                                     className="btn btn-ghost btn-sm"
                                                     to={`/studio/studios/${s.id}`}
