@@ -204,6 +204,17 @@ class Reservation {
         const [result] = await pool.execute(query, params);
         return result[0].count > 0;
     }
+
+    static async findExpiredNotCompleted(currentTime) {
+        const [reservations] = await pool.execute(
+            `SELECT * FROM reservations
+             WHERE end_datetime < ?
+             AND status NOT IN ('completed', 'cancelled')`,
+            [currentTime]
+        );
+
+        return reservations;
+    }
 }
 
 export default Reservation;

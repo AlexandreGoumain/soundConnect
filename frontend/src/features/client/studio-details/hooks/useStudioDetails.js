@@ -197,9 +197,7 @@ export function useStudioDetails() {
                 studio_id: studio.id,
                 start_datetime: startDateTime,
                 end_datetime: endDateTime,
-                special_requests: specialRequests.trim() || null,
-                hourly_rate: studio.hourly_rate,
-                duration: selectedDuration,
+                special_requests: specialRequests.trim() || "",
             };
 
             await apiClient.post("/reservations", reservationData);

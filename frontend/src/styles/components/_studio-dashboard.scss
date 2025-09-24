@@ -255,6 +255,13 @@
             flex-direction: column;
             gap: $spacing-sm;
 
+            .status-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: $spacing-sm;
+                align-items: center;
+            }
+
             @include tablet {
                 flex-direction: row;
                 align-items: center;
@@ -306,6 +313,12 @@
                 &.cancelled {
                     background: linear-gradient(135deg, #ef4444, #dc2626);
                     border: 2px solid #ef4444;
+                }
+                &.expired {
+                    background: linear-gradient(135deg, #9333ea, #7c3aed);
+                    border: 2px solid #9333ea;
+                    font-size: 0.75rem;
+                    padding: 0.3rem 0.8rem;
                 }
 
                 .status-icon {

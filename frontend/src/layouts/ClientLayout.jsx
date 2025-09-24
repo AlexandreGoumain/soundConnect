@@ -10,6 +10,7 @@ export default function ClientLayout() {
         ? [
               { to: "/", label: "Accueil" },
               { to: "/studios", label: "Rechercher" },
+              ...(user.role === "artist" ? [{ to: "/reservations", label: "Mes réservations" }] : []),
           ]
         : [
               { to: "/", label: "Accueil" },
