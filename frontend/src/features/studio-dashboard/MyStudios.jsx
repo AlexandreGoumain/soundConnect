@@ -1,9 +1,25 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useStudioFilter } from "../../hooks/useStudioFilter.js";
+import "../../styles/components/_studio-dashboard.scss";
 import DashboardSidebar from "./components/DashboardSidebar.jsx";
 import { useMyStudios } from "./hooks/useMyStudios.js";
 
 export default function MyStudios() {
     const { studios, loading, error } = useMyStudios();
+    const { selectedStudioId } = useStudioFilter();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (selectedStudioId && studios.length > 0) {
+            const selectedStudio = studios.find(
+                (s) => String(s.id) === String(selectedStudioId)
+            );
+            if (selectedStudio) {
+                navigate(`/studio/studios/${selectedStudioId}`);
+            }
+        }
+    }, [selectedStudioId, studios, navigate]);
 
     if (loading) return <div className="container">Chargement…</div>;
     if (error) return <div className="container">Erreur: {error}</div>;
@@ -45,12 +61,7 @@ export default function MyStudios() {
                                                     €/h
                                                 </div>
                                             </div>
-                                            <div
-                                                style={{
-                                                    display: "flex",
-                                                    gap: 8,
-                                                }}
-                                            >
+                                            <div className="my-studios__action-buttons">
                                                 <Link
                                                     className="btn btn-ghost btn-sm"
                                                     to={`/studio/studios/${s.id}`}

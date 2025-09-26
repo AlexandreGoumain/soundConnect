@@ -1,5 +1,7 @@
-import "./StarRating.scss";
+import "../styles/components/_star-rating.scss";
 
+// check usage
+// TODO : replace by icon
 const StarRating = ({
     rating,
     maxRating = 5,

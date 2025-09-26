@@ -6,38 +6,76 @@ import Studio from "../models/Studio.js";
 export const getOverview = async (req, res) => {
     try {
         const ownerId = req.user.id;
+        const { studio_id, time_range = "year" } = req.query; // Optional studio and time filters
+
+        // Build date filter based on time_range
+        let dateFilter = "";
+        let dateParams = [];
+
+        const now = new Date();
+        if (time_range === "week") {
+            const weekStart = new Date(now.setDate(now.getDate() - now.getDay()));
+            weekStart.setHours(0, 0, 0, 0);
+            dateFilter = "AND r.start_datetime >= ?";
+            dateParams = [weekStart.toISOString().slice(0, 19).replace('T', ' ')];
+        } else if (time_range === "month") {
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+            dateFilter = "AND r.start_datetime >= ?";
+            dateParams = [monthStart.toISOString().slice(0, 19).replace('T', ' ')];
+        } else if (time_range === "year") {
+            const yearStart = new Date(now.getFullYear(), 0, 1);
+            dateFilter = "AND r.start_datetime >= ?";
+            dateParams = [yearStart.toISOString().slice(0, 19).replace('T', ' ')];
+        }
+
+        // Build dynamic WHERE clauses
+        const studioFilter = studio_id ? "AND s.id = ?" : "";
+        const params = studio_id ? [ownerId, studio_id] : [ownerId];
+        const countParams = studio_id
+            ? [ownerId, studio_id, ownerId, studio_id, ...dateParams, ownerId, studio_id, ...dateParams]
+            : [ownerId, ownerId, ...dateParams, ownerId, ...dateParams];
 
         // Counts and revenue
         const [counts] = await pool.execute(
             `SELECT
-                (SELECT COUNT(*) FROM studios WHERE owner_id = ?) AS total_studios,
-                (SELECT COUNT(*) FROM reservations r JOIN studios s ON r.studio_id = s.id WHERE s.owner_id = ?) AS total_reservations,
-                (SELECT SUM(r.total_price) FROM reservations r JOIN studios s ON r.studio_id = s.id WHERE s.owner_id = ? AND r.status = 'completed') AS total_revenue`,
-            [ownerId, ownerId, ownerId]
+                (SELECT COUNT(*) FROM studios WHERE owner_id = ? ${
+                    studio_id ? "AND id = ?" : ""
+                }) AS total_studios,
+                (SELECT COUNT(*) FROM reservations r JOIN studios s ON r.studio_id = s.id WHERE s.owner_id = ? ${
+                    studio_id ? "AND s.id = ?" : ""
+                } ${dateFilter}) AS total_reservations,
+                (SELECT SUM(r.total_price) FROM reservations r JOIN studios s ON r.studio_id = s.id WHERE s.owner_id = ? ${
+                    studio_id ? "AND s.id = ?" : ""
+                } ${dateFilter} AND r.status = 'completed') AS total_revenue`,
+            countParams
         );
 
         // Reservations by status
+        const statusParams = studio_id ? [ownerId, studio_id, ...dateParams] : [ownerId, ...dateParams];
         const [byStatus] = await pool.execute(
             `SELECT r.status, COUNT(*) as count
              FROM reservations r
              JOIN studios s ON r.studio_id = s.id
-             WHERE s.owner_id = ?
+             WHERE s.owner_id = ? ${studioFilter} ${dateFilter}
              GROUP BY r.status`,
-            [ownerId]
+            statusParams
         );
 
         // Average rating across owned studios
+        const reviewParams = studio_id ? [ownerId, studio_id, ...dateParams] : [ownerId, ...dateParams];
         const [avgRatingRows] = await pool.execute(
-            `SELECT AVG(r.rating) as average_rating, COUNT(*) as total_reviews
-             FROM reviews r
-             JOIN studios s ON r.studio_id = s.id
-             WHERE s.owner_id = ?`,
-            [ownerId]
+            `SELECT AVG(rv.rating) as average_rating, COUNT(*) as total_reviews
+             FROM reviews rv
+             JOIN studios s ON rv.studio_id = s.id
+             JOIN reservations r ON rv.reservation_id = r.id
+             WHERE s.owner_id = ? ${studioFilter} ${dateFilter}`,
+            reviewParams
         );
         const avgRating = avgRatingRows[0]?.average_rating || 0;
         const totalReviews = avgRatingRows[0]?.total_reviews || 0;
 
-        // Upcoming reservations (no limit)
+        // All reservations (no limit)
+        const upcomingParams = studio_id ? [ownerId, studio_id, ...dateParams] : [ownerId, ...dateParams];
         const [upcoming] = await pool.execute(
             `SELECT r.id, r.start_datetime, r.end_datetime, r.status,
                     u.first_name, u.last_name, u.username,
@@ -45,9 +83,9 @@ export const getOverview = async (req, res) => {
              FROM reservations r
              JOIN studios s ON r.studio_id = s.id
              JOIN users u ON r.user_id = u.id
-             WHERE s.owner_id = ? AND r.status IN ('pending','confirmed') AND r.start_datetime >= NOW()
-             ORDER BY r.start_datetime ASC`,
-            [ownerId]
+             WHERE s.owner_id = ? ${studioFilter} ${dateFilter}
+             ORDER BY r.start_datetime DESC`,
+            upcomingParams
         );
 
         res.json({
@@ -69,7 +107,6 @@ export const getOverview = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error("Error building dashboard overview:", error);
         res.status(500).json({
             success: false,
             message: "Error building dashboard overview",
@@ -93,7 +130,6 @@ export const listOwnStudios = async (req, res) => {
 
         res.json({ success: true, data: { studios: rows } });
     } catch (error) {
-        console.error("Error listing own studios:", error);
         res.status(500).json({
             success: false,
             message: "Error listing studios",
@@ -118,7 +154,6 @@ export const getOwnStudioById = async (req, res) => {
         }
         res.json({ success: true, data: { studio } });
     } catch (error) {
-        console.error("Error getting owned studio:", error);
         res.status(500).json({
             success: false,
             message: "Error getting studio",
@@ -139,7 +174,6 @@ export const createOwnStudio = async (req, res) => {
             data: { studio },
         });
     } catch (error) {
-        console.error("Error creating owned studio:", error);
         if (error.message?.includes("already in use")) {
             return res
                 .status(400)
@@ -175,7 +209,7 @@ export const updateOwnStudio = async (req, res) => {
             data: { studio: updated },
         });
     } catch (error) {
-        console.error("Error updating owned studio:", error);
+        error("Error updating owned studio:", error);
         if (error.message === "No valid data to update") {
             return res
                 .status(400)
@@ -217,7 +251,7 @@ export const deleteOwnStudio = async (req, res) => {
         }
         res.json({ success: true, message: "Studio deleted successfully" });
     } catch (error) {
-        console.error("Error deleting owned studio:", error);
+        error("Error deleting owned studio:", error);
         res.status(500).json({
             success: false,
             message: "Error deleting studio",
@@ -228,6 +262,12 @@ export const deleteOwnStudio = async (req, res) => {
 export const listOwnReservations = async (req, res) => {
     try {
         const ownerId = req.user.id;
+        const { studio_id } = req.query; // Optional studio filter
+
+        // Build dynamic WHERE clause
+        const studioFilter = studio_id ? "AND s.id = ?" : "";
+        const params = studio_id ? [ownerId, studio_id] : [ownerId];
+
         // All reservations across owned studios (no pagination)
         const [rows] = await pool.execute(
             `SELECT r.*, u.username, u.first_name, u.last_name, u.email as user_email,
@@ -235,14 +275,14 @@ export const listOwnReservations = async (req, res) => {
              FROM reservations r
              JOIN studios s ON r.studio_id = s.id
              JOIN users u ON r.user_id = u.id
-             WHERE s.owner_id = ?
+             WHERE s.owner_id = ? ${studioFilter}
              ORDER BY r.start_datetime DESC`,
-            [ownerId]
+            params
         );
 
         res.json({ success: true, data: { reservations: rows } });
     } catch (error) {
-        console.error("Error listing own reservations:", error);
+        error("Error listing own reservations:", error);
         res.status(500).json({
             success: false,
             message: "Error listing reservations",
@@ -270,11 +310,10 @@ export const listReservationsForOwnedStudio = async (req, res) => {
         const reservations = await Reservation.findByStudio(studio_id);
         res.json({ success: true, data: { reservations } });
     } catch (error) {
-        console.error("Error listing reservations for owned studio:", error);
+        error("Error listing reservations for owned studio:", error);
         res.status(500).json({
             success: false,
             message: "Error listing studio reservations",
         });
     }
 };
-

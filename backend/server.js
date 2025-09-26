@@ -127,7 +127,6 @@ app.use((err, req, res, next) => {
             message: "Invalid CSRF token",
         });
     }
-    console.error(err.stack);
     res.status(500).json({
         success: false,
         message: "Internal server error",
@@ -137,11 +136,6 @@ app.use((err, req, res, next) => {
 
 // Start server and test DB connection
 app.listen(PORT, async () => {
-    if (process.env.NODE_ENV === "development") {
-        console.log(`SoundConnect server started on port ${PORT}`);
-        console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
-        console.log(`API Test: http://localhost:${PORT}/api/test`);
-    }
 
     await testConnection();
 });

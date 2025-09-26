@@ -1,121 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { useToast } from "../context/ToastContext";
-import { apiClient } from "../lib/apiClient";
-import "./ReviewsSection.scss";
+import { useNavigate } from "react-router-dom";
+import { useReviewsSection } from "../hooks/useReviewsSection";
+import "../styles/components/_reviews-section.scss";
+import TextareaField from "./shared/TextareaField.jsx";
+
+//TODO: i can refacto to separate components
+//TODO: add pagination
 
 const ReviewsSection = ({ studioId, studioName }) => {
-    const { user } = useAuth();
-    const { showToast } = useToast();
-    const [reviews, setReviews] = useState([]);
-    const [stats, setStats] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [canReview, setCanReview] = useState(false);
-    const [showReviewForm, setShowReviewForm] = useState(false);
-    const [availableReservations, setAvailableReservations] = useState([]);
-    const [newReview, setNewReview] = useState({
-        rating: 0,
-        comment: "",
-        reservation_id: "",
-    });
+    const {
+        reviews,
+        stats,
+        loading,
+        canReview,
+        showReviewForm,
+        availableReservations,
+        newReview,
 
-    useEffect(() => {
-        fetchReviews();
-        fetchStats();
-        if (user) {
-            checkCanReview();
-            fetchAvailableReservations();
-        }
-    }, [studioId, user]);
+        user,
+        handleSubmitReview,
+        handleToggleReviewForm,
+        handleReviewChange,
+        handleRatingChange,
+        formatDate,
+        formatReservationDate,
+    } = useReviewsSection(studioId);
 
-    const fetchReviews = async () => {
-        try {
-            const response = await apiClient.get(
-                `/reviews?studio_id=${studioId}`
-            );
-            setReviews(response.data.data);
-        } catch {
-            showToast("Erreur lors du chargement des avis", "error");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchStats = async () => {
-        try {
-            const response = await apiClient.get(
-                `/reviews/studio/${studioId}/stats`
-            );
-            setStats(response.data.data);
-        } catch {
-            showToast("Erreur lors du chargement des stats", "error");
-        }
-    };
-
-    const checkCanReview = async () => {
-        try {
-            const response = await apiClient.get(
-                `/reviews/studio/${studioId}/can-review`
-            );
-            setCanReview(response.data.data.canReview);
-        } catch {
-            showToast(
-                "Erreur lors de la vérification de la possibilité de laisser un avis",
-                "error"
-            );
-        }
-    };
-
-    const fetchAvailableReservations = async () => {
-        try {
-            const response = await apiClient.get(
-                `/reviews/studio/${studioId}/reservations`
-            );
-            setAvailableReservations(response.data.data);
-        } catch {
-            showToast(
-                "Erreur lors du chargement des réservations disponibles",
-                "error"
-            );
-        }
-    };
-
-    const handleSubmitReview = async (e) => {
-        e.preventDefault();
-
-        if (!newReview.rating) {
-            showToast("Veuillez sélectionner une note", "error");
-            return;
-        }
-
-        if (!newReview.reservation_id) {
-            showToast("Veuillez sélectionner une réservation", "error");
-            return;
-        }
-
-        try {
-            await apiClient.post("/reviews", {
-                studio_id: studioId,
-                reservation_id: newReview.reservation_id,
-                rating: newReview.rating,
-                comment: newReview.comment,
-            });
-
-            showToast("Avis ajouté avec succès!", "success");
-            setShowReviewForm(false);
-            setNewReview({ rating: 0, comment: "", reservation_id: "" });
-            fetchReviews();
-            fetchStats();
-            checkCanReview();
-            fetchAvailableReservations();
-        } catch (error) {
-            console.error("Error submitting review:", error);
-            showToast(
-                "Erreur lors de l'ajout de l'avis, veuillez réessayer plus tard",
-                "error"
-            );
-        }
-    };
+    const navigate = useNavigate();
 
     const renderStars = (
         rating,
@@ -139,26 +49,6 @@ const ReviewsSection = ({ studioId, studioName }) => {
                 ))}
             </div>
         );
-    };
-
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString("fr-FR", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
-    };
-
-    const formatReservationDate = (startDate, endDate) => {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        return `${start.toLocaleDateString("fr-FR")} ${start.toLocaleTimeString(
-            "fr-FR",
-            { hour: "2-digit", minute: "2-digit" }
-        )} - ${end.toLocaleTimeString("fr-FR", {
-            hour: "2-digit",
-            minute: "2-digit",
-        })}`;
     };
 
     if (loading) {
@@ -192,7 +82,7 @@ const ReviewsSection = ({ studioId, studioName }) => {
                 <div className="add-review-section">
                     <button
                         className="btn btn-primary"
-                        onClick={() => setShowReviewForm(!showReviewForm)}
+                        onClick={handleToggleReviewForm}
                     >
                         {showReviewForm ? "Annuler" : "Ajouter un avis"}
                     </button>
@@ -210,10 +100,10 @@ const ReviewsSection = ({ studioId, studioName }) => {
                                     id="reservation"
                                     value={newReview.reservation_id}
                                     onChange={(e) =>
-                                        setNewReview({
-                                            ...newReview,
-                                            reservation_id: e.target.value,
-                                        })
+                                        handleReviewChange(
+                                            "reservation_id",
+                                            e.target.value
+                                        )
                                     }
                                     required
                                 >
@@ -237,23 +127,25 @@ const ReviewsSection = ({ studioId, studioName }) => {
                             </div>
                             <div className="form-group">
                                 <label>Note :</label>
-                                {renderStars(newReview.rating, true, (rating) =>
-                                    setNewReview({ ...newReview, rating })
+                                {renderStars(
+                                    newReview.rating,
+                                    true,
+                                    handleRatingChange
                                 )}
                             </div>
                             <div className="form-group">
-                                <label htmlFor="comment">Commentaire :</label>
-                                <textarea
+                                <TextareaField
                                     id="comment"
+                                    label="Commentaire :"
                                     value={newReview.comment}
                                     onChange={(e) =>
-                                        setNewReview({
-                                            ...newReview,
-                                            comment: e.target.value,
-                                        })
+                                        handleReviewChange(
+                                            "comment",
+                                            e.target.value
+                                        )
                                     }
                                     placeholder="Partagez votre expérience..."
-                                    rows="4"
+                                    rows={4}
                                 />
                             </div>
                             <button type="submit" className="btn btn-primary">
@@ -266,7 +158,8 @@ const ReviewsSection = ({ studioId, studioName }) => {
 
             {!user && (
                 <p className="login-prompt">
-                    <a href="/login">Connectez-vous</a> pour laisser un avis
+                    <a onClick={() => navigate("/login")}>Connectez-vous</a>{" "}
+                    pour laisser un avis
                 </p>
             )}
 

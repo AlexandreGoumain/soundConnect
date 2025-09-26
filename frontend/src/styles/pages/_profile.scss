@@ -1,7 +1,8 @@
 @use "../utils/variables" as *;
 @use "../utils/mixins" as *;
 
-.profile-page, .password-page {
+.profile-page,
+.password-page {
     background: var(--bg-secondary);
     padding: $spacing-xl 0 $spacing-xxl;
 

@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext.jsx";
-import { useStudioFilter } from "../../../context/StudioFilterContext.jsx";
+import { useAuth } from "../../../hooks/useAuth.js";
+import { useStudioFilter } from "../../../hooks/useStudioFilter.js";
+import "../../../styles/components/_studio-dashboard.scss";
 
 export default function DashboardSidebar() {
     const location = useLocation();
@@ -42,7 +43,7 @@ export default function DashboardSidebar() {
                     <div className="studio-subtitle">{studioEmail}</div>
                 )}
             </div>
-            <div className="form-group" style={{ marginBottom: 16 }}>
+            <div className="form-group dashboard-sidebar__form-group">
                 <label className="label" htmlFor="studio-select">
                     Sélection du studio
                 </label>

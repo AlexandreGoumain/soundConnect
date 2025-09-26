@@ -5,6 +5,7 @@ import ChangePassword from "../features/client/profile/ChangePassword.jsx";
 import RegisterForm from "../features/client/register/RegisterForm.jsx";
 import StudioDetails from "../features/client/studio-details/StudioDetails.jsx";
 import StudiosList from "../features/client/studios/StudiosList.jsx";
+import MyReservations from "../features/client/MyReservations.jsx";
 import ClientLayout from "../layouts/ClientLayout.jsx";
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
 
@@ -28,6 +29,14 @@ export const clientRouter = {
             element: (
                 <ProtectedRoute>
                     <ChangePassword />
+                </ProtectedRoute>
+            ),
+        },
+        {
+            path: "reservations",
+            element: (
+                <ProtectedRoute requireRole="artist">
+                    <MyReservations />
                 </ProtectedRoute>
             ),
         },

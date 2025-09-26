@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useToast } from "../../../../context/ToastContext.jsx";
+import { useEffect, useState, useCallback } from "react";
+import { useToast } from "../../../../hooks/useToast.js";
 import { apiClient } from "../../../../lib/apiClient.js";
 
 export const useStudios = () => {
@@ -8,7 +8,7 @@ export const useStudios = () => {
     const [error, setError] = useState(null);
     const { showToast } = useToast();
 
-    const fetchStudios = async () => {
+    const fetchStudios = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -23,11 +23,11 @@ export const useStudios = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [showToast]);
 
     useEffect(() => {
         fetchStudios();
-    }, []);
+    }, [fetchStudios]);
 
     return {
         studios,

@@ -1,5 +1,6 @@
 import { useStudioImagesManager } from "../hooks/useStudioImagesManager.js";
 import { MAX_STUDIO_IMAGES } from "../lib/studioImages.js";
+import "../../../styles/components/_studio-dashboard.scss";
 
 export default function StudioImagesManager({
     studioId,
@@ -25,7 +26,7 @@ export default function StudioImagesManager({
                 <div>
                     <h3>Images du studio</h3>
                     <p>
-                        Jusqu'à {MAX_STUDIO_IMAGES} images. Formats acceptés :
+                        Jusqu'à {MAX_STUDIO_IMAGES} images (5 Mo max chacune). Formats acceptés :
                         JPG, PNG, WEBP, GIF.
                     </p>
                 </div>
@@ -44,7 +45,7 @@ export default function StudioImagesManager({
                         ref={fileInputRef}
                         type="file"
                         accept="image/png,image/jpeg,image/webp,image/gif"
-                        style={{ display: "none" }}
+                        className="studio-images-manager__file-input"
                         multiple
                         onChange={handleFileChange}
                     />

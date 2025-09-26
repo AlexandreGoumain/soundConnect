@@ -27,7 +27,10 @@ const parseDateTime = (value, fieldName) => {
 
     const parsed = new Date(value);
     if (Number.isNaN(parsed.getTime())) {
-        throw new ReservationError(400, `${fieldName} must be a valid ISO date string`);
+        throw new ReservationError(
+            400,
+            `${fieldName} must be a valid ISO date string`
+        );
     }
 
     return parsed;
@@ -38,7 +41,8 @@ export async function createReservationForUser(user, payload) {
         throw new ReservationError(403, "Only artists can create reservations");
     }
 
-    const { studio_id, start_datetime, end_datetime, special_requests } = payload;
+    const { studio_id, start_datetime, end_datetime, special_requests } =
+        payload;
 
     const startTime = parseDateTime(start_datetime, "start_datetime");
     const endTime = parseDateTime(end_datetime, "end_datetime");
@@ -60,7 +64,10 @@ export async function createReservationForUser(user, payload) {
     if (sameDay) {
         const minAdvance = new Date(now.getTime() + HOUR_IN_MS);
         if (startTime < minAdvance) {
-            throw new ReservationError(400, "Start time must be at least 1 hour in advance");
+            throw new ReservationError(
+                400,
+                "Start time must be at least 1 hour in advance"
+            );
         }
     }
 
@@ -69,7 +76,11 @@ export async function createReservationForUser(user, payload) {
         throw new ReservationError(404, "Studio not found");
     }
 
-    validateScheduleForReservation(studio.schedule, start_datetime, end_datetime);
+    validateScheduleForReservation(
+        studio.schedule,
+        start_datetime,
+        end_datetime
+    );
 
     const reservationData = {
         user_id: user.id,
@@ -83,6 +94,9 @@ export async function createReservationForUser(user, payload) {
 }
 
 export async function getReservationsForActor(user) {
+    // Clean up expired reservations before fetching
+    await cleanupExpiredReservations();
+
     if (user.role_name === "studio") {
         return Reservation.findByStudioOwner(user.id);
     }
@@ -116,35 +130,78 @@ export async function updateReservationForActor(user, id, payload) {
     const { status, special_requests } = payload;
 
     if (!status && !special_requests) {
-        throw new ReservationError(
-            400,
-            "No valid reservation data provided"
-        );
+        throw new ReservationError(400, "No valid reservation data provided");
     }
 
+    const isOwner = user.id === reservation.user_id;
+    const isStudioOwner = user.id === reservation.studio_owner_id;
+
     if (status) {
-        const validStatuses = ["pending", "confirmed", "completed", "cancelled"];
+        const validStatuses = [
+            "pending",
+            "confirmed",
+            "completed",
+            "cancelled",
+        ];
         if (!validStatuses.includes(status)) {
             throw new ReservationError(400, "Invalid reservation status");
         }
 
-        if (user.id !== reservation.studio_owner_id) {
+        // Check if reservation is in the past
+        const now = new Date();
+        const reservationEnd = new Date(reservation.end_datetime);
+        if (reservationEnd < now) {
+            throw new ReservationError(400, "Cannot modify past reservations");
+        }
+
+        // Artists can cancel their reservations (except if already cancelled/completed)
+        if (isOwner && status === "cancelled") {
+            if (
+                reservation.status === "cancelled" ||
+                reservation.status === "completed"
+            ) {
+                throw new ReservationError(
+                    400,
+                    "Cannot change status of completed or cancelled reservations"
+                );
+            }
+        }
+        // Artists can only modify their pending reservations (other than cancellation)
+        else if (isOwner && status !== "cancelled") {
+            if (reservation.status !== "pending") {
+                throw new ReservationError(
+                    403,
+                    "Can only modify pending reservations"
+                );
+            }
+        }
+        // Studio owners can update status as before (except completed/cancelled reservations)
+        else if (isStudioOwner) {
+            if (
+                reservation.status === "cancelled" ||
+                reservation.status === "completed"
+            ) {
+                throw new ReservationError(
+                    400,
+                    "Cannot change status of completed or cancelled reservations"
+                );
+            }
+
+            if (reservation.status === "confirmed" && status === "pending") {
+                throw new ReservationError(
+                    400,
+                    "Cannot revert status to pending once confirmed"
+                );
+            }
+        } else {
             throw new ReservationError(
                 403,
-                "Only studio owners can update reservation status"
+                "Unauthorized to update reservation status"
             );
-        }
-
-        if (reservation.status === "cancelled" || reservation.status === "completed") {
-            throw new ReservationError(400, "Cannot change status of completed or cancelled reservations");
-        }
-
-        if (reservation.status === "confirmed" && status === "pending") {
-            throw new ReservationError(400, "Cannot revert status to pending once confirmed");
         }
     }
 
-    if (special_requests && user.id !== reservation.user_id) {
+    if (special_requests && !isOwner) {
         throw new ReservationError(
             403,
             "Only reservation owners can update special requests"
@@ -195,6 +252,9 @@ export async function getReservationsForUser(userId, requester) {
         throw new ReservationError(403, "Unauthorized");
     }
 
+    // Clean up expired reservations before fetching
+    await cleanupExpiredReservations();
+
     return Reservation.findByUser(userId);
 }
 
@@ -221,38 +281,102 @@ export async function getReservationsForStudio(studioId, requester) {
     return reservations;
 }
 
-function validateScheduleForReservation(scheduleRaw, startDatetime, endDatetime) {
+function validateScheduleForReservation(
+    scheduleRaw,
+    startDatetime,
+    endDatetime
+) {
+    console.log("=== Schedule validation debug ===");
+    console.log("Raw schedule:", scheduleRaw);
+    console.log("Start datetime:", startDatetime);
+    console.log("End datetime:", endDatetime);
+
     try {
         const schedule =
             typeof scheduleRaw === "string"
                 ? JSON.parse(scheduleRaw)
                 : scheduleRaw || {};
 
+        console.log("Parsed schedule:", schedule);
+
         const start = new Date(startDatetime);
         const end = new Date(endDatetime);
 
+        console.log("Start date object:", start);
+        console.log("Day index:", start.getDay());
+        console.log("Day name:", DAY_NAMES[start.getDay()]);
+
         const daySchedule = schedule?.[DAY_NAMES[start.getDay()]];
+        console.log("Day schedule:", daySchedule);
 
         if (!daySchedule || !daySchedule.is_open) {
-            throw new ReservationError(400, "Studio is closed on the selected date");
-        }
-
-        const dateStr = startDatetime.split("T")[0];
-        const openTime = new Date(`${dateStr}T${daySchedule.open_time}:00`);
-        const closeTime = new Date(`${dateStr}T${daySchedule.close_time}:00`);
-
-        if (start < openTime || end > closeTime) {
             throw new ReservationError(
                 400,
-                `Reservation must be within opening hours (${daySchedule.open_time}-${daySchedule.close_time})`
+                "Studio is closed on the selected date"
             );
+        }
+
+        // Only validate opening hours if the studio is open and has valid times
+        if (daySchedule.open_time && daySchedule.close_time) {
+            const dateStr =
+                typeof startDatetime === "string"
+                    ? startDatetime.split("T")[0]
+                    : start.toISOString().split("T")[0];
+            const openTime = new Date(`${dateStr}T${daySchedule.open_time}:00`);
+            const closeTime = new Date(
+                `${dateStr}T${daySchedule.close_time}:00`
+            );
+
+            if (start < openTime || end > closeTime) {
+                throw new ReservationError(
+                    400,
+                    `Reservation must be within opening hours (${daySchedule.open_time}-${daySchedule.close_time})`
+                );
+            }
         }
     } catch (error) {
         if (error instanceof ReservationError) {
             throw error;
         }
 
-        throw new ReservationError(400, "Invalid studio schedule configuration");
+        console.error("Schedule validation error:", error);
+        console.error("Schedule data:", scheduleRaw);
+        console.error("Start datetime:", startDatetime);
+        console.error("End datetime:", endDatetime);
+
+        throw new ReservationError(
+            400,
+            "Invalid studio schedule configuration"
+        );
+    }
+}
+
+export async function cleanupExpiredReservations() {
+    const now = new Date();
+
+    try {
+        // Get all reservations that are past their end time but not completed or cancelled
+        const expiredReservations = await Reservation.findExpiredNotCompleted(
+            now
+        );
+
+        console.log(
+            `Found ${expiredReservations.length} expired reservations to cleanup`
+        );
+
+        // Update each expired reservation to cancelled status
+        for (const reservation of expiredReservations) {
+            await Reservation.update(reservation.id, { status: "cancelled" });
+            console.log(`Auto-cancelled expired reservation ${reservation.id}`);
+        }
+
+        return expiredReservations.length;
+    } catch (error) {
+        console.error("Error cleaning up expired reservations:", error);
+        throw new ReservationError(
+            500,
+            "Failed to cleanup expired reservations"
+        );
     }
 }
 

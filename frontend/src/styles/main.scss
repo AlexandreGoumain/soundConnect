@@ -1,48 +1,62 @@
 // Utils (must be imported first)
-@use 'utils/variables' as *;
-@use 'utils/mixins' as *;
+@use "utils/variables" as *;
+@use "utils/mixins" as *;
 
 // Base
-@use 'base/reset';
-@use 'base/theme';
-@use 'base/typography';
+@use "base/reset";
+@use "base/theme";
+@use "base/typography";
 
 // Components
-@use 'components/button';
-@use 'components/input';
-@use 'components/card';
-@use 'components/navbar';
-@use 'components/footer';
-@use 'components/toast';
+@use "components/button";
+@use "components/input";
+@use "components/card";
+@use "components/navbar";
+@use "components/footer";
+@use "components/toast";
+@use "components/auth-form";
+@use "components/studios-list";
+@use "components/studio-dashboard" as studio-dashboard-components;
+@use "components/profile" as profile-components;
 
 // Layouts
-@use 'layouts/main-layout';
+@use "layouts/main-layout";
 
 // Pages
-@use 'pages/home';
-@use 'pages/register';
-@use 'pages/studio-dashboard';
-@use 'pages/profile';
+@use "pages/home";
+@use "pages/register";
+@use "pages/studio-dashboard" as studio-dashboard-pages;
+@use "pages/profile" as profile-pages;
 
 // Utilities
 .container {
-  max-width: $desktop;
-  margin: 0 auto;
-  padding: 0 $spacing-sm;
-  
-  @include tablet {
-    padding: 0 $spacing-md;
-  }
+    margin: 0 auto;
+    padding: 0 $spacing-sm;
+
+    @include tablet {
+        max-width: $tablet;
+        padding: 0 $spacing-md;
+    }
+
+    @include desktop {
+        max-width: $desktop;
+    }
+
+    &.studio-dashboard {
+        @include desktop {
+            max-width: 1400px;
+        }
+    }
 }
 
 .flex-column {
-  @include flex-column;
+    @include flex-column;
 }
 
 .flex-center {
-  @include flex-center;
+    @include flex-center;
 }
 
 .flex-between {
-  @include flex-between;
+    @include flex-between;
 }

@@ -11,9 +11,9 @@ $border-light: #e5e7eb; // Light borders
 $shadow-color: rgba(0, 0, 0, 0.1);
 
 // Breakpoints
-$mobile: 768px;
-$tablet: 1024px;
-$desktop: 1200px;
+$mobile: 768px;   // Tablet starts here
+$tablet: 1024px;  // Desktop starts here
+$desktop: 1200px; // Large desktop starts here
 
 // Spacing
 $spacing-xs: 0.25rem; // 4px

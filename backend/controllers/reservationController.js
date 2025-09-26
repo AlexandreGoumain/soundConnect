@@ -116,14 +116,16 @@ export const getReservationsByStudio = async (req, res) => {
 };
 
 function handleReservationError(res, error, fallbackMessage) {
-    if (error instanceof ReservationError || typeof error?.statusCode === "number") {
+    if (
+        error instanceof ReservationError ||
+        typeof error?.statusCode === "number"
+    ) {
         return res.status(error.statusCode).json({
             success: false,
             message: error.message,
         });
     }
 
-    console.error(fallbackMessage, error);
     return res.status(500).json({
         success: false,
         message: fallbackMessage,

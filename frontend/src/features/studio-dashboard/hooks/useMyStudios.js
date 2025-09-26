@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { apiClient } from "../../../lib/apiClient.js";
-import { useToast } from "../../../context/ToastContext.jsx";
+import { useToast } from "../../../hooks/useToast.js";
 
 export function useMyStudios() {
     const [studios, setStudios] = useState([]);
@@ -8,7 +8,7 @@ export function useMyStudios() {
     const [error, setError] = useState(null);
     const { showToast } = useToast();
 
-    const fetchMyStudios = async () => {
+    const fetchMyStudios = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
@@ -20,11 +20,11 @@ export function useMyStudios() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [showToast]);
 
     useEffect(() => {
         fetchMyStudios();
-    }, []);
+    }, [fetchMyStudios]);
 
     return { studios, loading, error, refetch: fetchMyStudios };
 }

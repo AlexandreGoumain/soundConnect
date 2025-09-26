@@ -1,21 +1,16 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import { useToast } from "../../../context/ToastContext.jsx";
+import { useToast } from "../../../hooks/useToast.js";
 import { uploadsApi } from "../../../lib/apiClient.js";
+import { MAX_IMAGE_SIZE, validateImageFiles } from "../../../lib/validation.js";
 import {
     MAX_STUDIO_IMAGES,
     getFilenameFromUrl,
     resolveStudioImageSrc,
 } from "../lib/studioImages.js";
 
-const ACCEPTED_IMAGE_TYPES = [
-    "image/png",
-    "image/jpeg",
-    "image/webp",
-    "image/gif",
-];
-
 export function useStudioImagesManager({ studioId, images, onImagesChange }) {
-    const { showToast } = useToast();
+    const { showError, showSuccess, showInfo } = useToast();
+
     const fileInputRef = useRef(null);
     const [isUploading, setIsUploading] = useState(false);
     const [deletingFilename, setDeletingFilename] = useState(null);
@@ -42,25 +37,33 @@ export function useStudioImagesManager({ studioId, images, onImagesChange }) {
                 return;
             }
 
-            const filtered = fileList.filter((file) =>
-                ACCEPTED_IMAGE_TYPES.includes(file.type)
+            // Validation des fichiers avec la fonction centralisée
+
+            const validationError = validateImageFiles(
+                fileList,
+                MAX_IMAGE_SIZE,
+                remainingSlots
             );
 
-            if (!filtered.length) {
-                showToast?.(
-                    "Les formats autorisés sont JPG, PNG, WEBP ou GIF.",
-                    "error"
-                );
+            if (validationError) {
+                // Utiliser showError au lieu de showToast
+                if (showError) {
+                    showError(validationError);
+                } else {
+                    alert(validationError);
+                }
+
                 resetInput(input);
                 return;
             }
 
+            // Si validation réussie, prendre les fichiers autorisés selon les slots restants
             const allowedFiles = remainingSlots
-                ? filtered.slice(0, remainingSlots)
-                : [];
+                ? fileList.slice(0, remainingSlots)
+                : fileList;
 
             if (!allowedFiles.length) {
-                showToast?.("Nombre maximum d'images atteint", "info");
+                showInfo?.("Nombre maximum d'images atteint");
                 resetInput(input);
                 return;
             }
@@ -73,18 +76,26 @@ export function useStudioImagesManager({ studioId, images, onImagesChange }) {
                 );
                 const nextImages = response?.data?.images ?? [];
                 onImagesChange?.(nextImages);
-                showToast?.("Images ajoutées", "success");
+                showSuccess?.("Images ajoutées");
             } catch (error) {
                 const message =
                     error.response?.data?.message ||
                     "échec de l'upload des images";
-                showToast?.(message, "error");
+                showError?.(message);
             } finally {
                 setIsUploading(false);
                 resetInput(input);
             }
         },
-        [onImagesChange, remainingSlots, resetInput, showToast, studioId]
+        [
+            onImagesChange,
+            remainingSlots,
+            resetInput,
+            showError,
+            showSuccess,
+            showInfo,
+            studioId,
+        ]
     );
 
     const handleDelete = useCallback(
@@ -101,16 +112,16 @@ export function useStudioImagesManager({ studioId, images, onImagesChange }) {
                 );
                 const nextImages = response?.data?.images ?? [];
                 onImagesChange?.(nextImages);
-                showToast?.("Image supprimée", "success");
+                showSuccess?.("Image supprimée");
             } catch (error) {
                 const message =
                     error.response?.data?.message || "La suppression a échoué";
-                showToast?.(message, "error");
+                showError?.(message);
             } finally {
                 setDeletingFilename(null);
             }
         },
-        [onImagesChange, showToast, studioId]
+        [onImagesChange, showError, showSuccess, studioId]
     );
 
     const handleMove = useCallback(
@@ -132,17 +143,17 @@ export function useStudioImagesManager({ studioId, images, onImagesChange }) {
                 );
                 const nextImages = response?.data?.images ?? reordered;
                 onImagesChange?.(nextImages);
-                showToast?.("Ordre des images mis à jour", "success");
+                showSuccess?.("Ordre des images mis à jour");
             } catch (error) {
                 const message =
                     error.response?.data?.message ||
                     "Impossible de réordonner les images";
-                showToast?.(message, "error");
+                showError?.(message);
             } finally {
                 setIsReordering(false);
             }
         },
-        [images, onImagesChange, showToast, studioId]
+        [images, onImagesChange, showError, showSuccess, studioId]
     );
 
     return {

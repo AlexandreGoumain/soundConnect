@@ -1,5 +1,5 @@
 import DashboardSidebar from "./components/DashboardSidebar.jsx";
-import { useStudioFilter } from "../../context/StudioFilterContext.jsx";
+import { useStudioFilter } from "../../hooks/useStudioFilter.js";
 
 export default function Messages() {
     const { selectedStudio } = useStudioFilter();

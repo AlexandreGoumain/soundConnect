@@ -1,109 +1,63 @@
-import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import DateInput from "../../../components/shared/DateInput.jsx";
+import SelectDropdown from "../../../components/shared/SelectDropdown.jsx";
+import "../../../styles/components/_studios-list.scss";
+import { useSearchFilters } from "./hooks/useSearchFilters.js";
+
+function FieldError({ error }) {
+    if (!error) return null;
+    return <span className="field-error">{error}</span>;
+}
 
 export default function SearchFilters() {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const q = useMemo(
-        () => new URLSearchParams(location.search),
-        [location.search]
-    );
-
-    const [city, setCity] = useState("");
-    const [postalCode, setPostalCode] = useState("");
-    const [minRate, setMinRate] = useState("");
-    const [maxRate, setMaxRate] = useState("");
-    const [tags, setTags] = useState("");
-    const [equipment, setEquipment] = useState("");
-    const [sort, setSort] = useState("");
-    const [availableOn, setAvailableOn] = useState("");
-    const [duration, setDuration] = useState("1");
-
-    useEffect(() => {
-        setCity(q.get("city") || "");
-        setPostalCode(q.get("postal_code") || "");
-        setMinRate(q.get("min_rate") || "");
-        setMaxRate(q.get("max_rate") || "");
-        setTags(q.get("tags") || "");
-        setEquipment(q.get("equipment") || "");
-        setSort(q.get("sort") || "");
-        setAvailableOn(q.get("available_on") || "");
-        setDuration(q.get("duration") || "1");
-    }, [q]);
-
-    const apply = (e) => {
-        e.preventDefault();
-        const params = new URLSearchParams();
-        if (city.trim()) params.set("city", city.trim());
-        if (postalCode.trim()) params.set("postal_code", postalCode.trim());
-        if (minRate) params.set("min_rate", minRate);
-        if (maxRate) params.set("max_rate", maxRate);
-        if (tags.trim()) params.set("tags", tags.trim());
-        if (equipment.trim()) params.set("equipment", equipment.trim());
-        if (sort) params.set("sort", sort);
-        if (availableOn) params.set("available_on", availableOn);
-        if (duration) params.set("duration", duration);
-        navigate(`/studios?${params.toString()}`);
-    };
-
-    const reset = () => {
-        setCity("");
-        setPostalCode("");
-        setMinRate("");
-        setMaxRate("");
-        setTags("");
-        setEquipment("");
-        setSort("");
-        setAvailableOn("");
-        setDuration("1");
-        navigate(`/studios`);
-    };
+    const {
+        filters,
+        fieldErrors,
+        minDate,
+        durationOptions,
+        handleCityChange,
+        handlePostalCodeChange,
+        handleMinRateChange,
+        handleMaxRateChange,
+        handleTagsChange,
+        handleEquipmentChange,
+        handleSortChange,
+        handleAvailableOnChange,
+        handleDurationChange,
+        handleApply,
+        handleReset,
+    } = useSearchFilters();
 
     return (
-        <form
-            className="card"
-            onSubmit={apply}
-            style={{ padding: 16, marginBottom: 16 }}
-        >
-            <div
-                className="form-row"
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: 12,
-                }}
-            >
+        <form className="card search-filters" onSubmit={handleApply}>
+            <div className="search-filters__row search-filters__row--two-cols">
                 <label className="label" htmlFor="city">
                     Ville
+                    {/* TODO: use shared inputField */}
                     <input
                         id="city"
-                        className="input"
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
+                        className={`input ${fieldErrors.city ? "error" : ""}`}
+                        value={filters.city}
+                        onChange={handleCityChange}
                         placeholder="Paris"
                     />
+                    <FieldError error={fieldErrors.city} />
                 </label>
                 <label className="label" htmlFor="postal">
                     Code postal
                     <input
                         id="postal"
-                        className="input"
-                        value={postalCode}
-                        onChange={(e) => setPostalCode(e.target.value)}
+                        className={`input ${
+                            fieldErrors.postalCode ? "error" : ""
+                        }`}
+                        value={filters.postalCode}
+                        onChange={handlePostalCodeChange}
                         placeholder="75001"
                     />
+                    <FieldError error={fieldErrors.postalCode} />
                 </label>
             </div>
 
-            <div
-                className="form-row"
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: 12,
-                    marginTop: 12,
-                }}
-            >
+            <div className="search-filters__row search-filters__row--two-cols">
                 <label className="label" htmlFor="min_rate">
                     Prix min (€/h)
                     <input
@@ -111,10 +65,13 @@ export default function SearchFilters() {
                         type="number"
                         min="0"
                         step="1"
-                        className="input"
-                        value={minRate}
-                        onChange={(e) => setMinRate(e.target.value)}
+                        className={`input ${
+                            fieldErrors.minRate ? "error" : ""
+                        }`}
+                        value={filters.minRate}
+                        onChange={handleMinRateChange}
                     />
+                    <FieldError error={fieldErrors.minRate} />
                 </label>
                 <label className="label" htmlFor="max_rate">
                     Prix max (€/h)
@@ -123,29 +80,24 @@ export default function SearchFilters() {
                         type="number"
                         min="0"
                         step="1"
-                        className="input"
-                        value={maxRate}
-                        onChange={(e) => setMaxRate(e.target.value)}
+                        className={`input ${
+                            fieldErrors.maxRate ? "error" : ""
+                        }`}
+                        value={filters.maxRate}
+                        onChange={handleMaxRateChange}
                     />
+                    <FieldError error={fieldErrors.maxRate} />
                 </label>
             </div>
 
-            <div
-                className="form-row"
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "2fr 1fr 1fr 1fr",
-                    gap: 12,
-                    marginTop: 12,
-                }}
-            >
+            <div className="search-filters__row search-filters__row--four-cols">
                 <label className="label" htmlFor="tags">
                     Tags (séparés par virgules)
                     <input
                         id="tags"
                         className="input"
-                        value={tags}
-                        onChange={(e) => setTags(e.target.value)}
+                        value={filters.tags}
+                        onChange={handleTagsChange}
                         placeholder="mixage, batterie"
                     />
                 </label>
@@ -154,63 +106,53 @@ export default function SearchFilters() {
                     <input
                         id="equipment"
                         className="input"
-                        value={equipment}
-                        onChange={(e) => setEquipment(e.target.value)}
+                        value={filters.equipment}
+                        onChange={handleEquipmentChange}
                         placeholder="piano, batterie"
                     />
                 </label>
-                <label className="label" htmlFor="sort">
-                    Tri
-                    <select
-                        id="sort"
-                        className="input"
-                        value={sort}
-                        onChange={(e) => setSort(e.target.value)}
-                    >
-                        <option value="">Pertinence</option>
-                        <option value="price_asc">Prix croissant</option>
-                        <option value="price_desc">Prix décroissant</option>
-                        <option value="rating_desc">Mieux notés</option>
-                    </select>
-                </label>
-                <label className="label" htmlFor="available_on">
-                    Disponible le
-                    <input
-                        id="available_on"
-                        type="date"
-                        className="input"
-                        value={availableOn}
-                        onChange={(e) => setAvailableOn(e.target.value)}
-                        min={new Date().toISOString().split("T")[0]}
-                    />
-                </label>
-                <label className="label" htmlFor="duration">
-                    Durée (h)
-                    <select
-                        id="duration"
-                        className="input"
-                        value={duration}
-                        onChange={(e) => setDuration(e.target.value)}
-                    >
-                        {Array.from({ length: 12 }).map((_, i) => (
-                            <option key={i + 1} value={i + 1}>
-                                {i + 1}h
-                            </option>
-                        ))}
-                    </select>
-                </label>
+                <SelectDropdown
+                    id="sort"
+                    label="Tri"
+                    value={filters.sort}
+                    onChange={handleSortChange}
+                    options={[
+                        { value: "", label: "Pertinence" },
+                        { value: "price_asc", label: "Prix croissant" },
+                        { value: "price_desc", label: "Prix décroissant" },
+                        { value: "rating_desc", label: "Mieux notés" },
+                    ]}
+                />
+                <DateInput
+                    id="available_on"
+                    label="Disponible le"
+                    value={filters.availableOn}
+                    onChange={handleAvailableOnChange}
+                    min={minDate}
+                    error={fieldErrors.availableOn}
+                />
+                <SelectDropdown
+                    id="duration"
+                    label="Durée (h)"
+                    value={filters.duration}
+                    onChange={handleDurationChange}
+                    options={durationOptions}
+                    error={fieldErrors.duration}
+                />
             </div>
 
-            <div style={{ display: "flex", gap: 8, marginTop: 16 }}>
+            <div className="search-filters__actions">
                 <button type="submit" className="btn btn-primary">
                     Appliquer
                 </button>
-                <button type="button" className="btn btn-ghost" onClick={reset}>
+                <button
+                    type="button"
+                    className="btn btn-ghost"
+                    onClick={handleReset}
+                >
                     Réinitialiser
                 </button>
             </div>
         </form>
     );
 }
-
-

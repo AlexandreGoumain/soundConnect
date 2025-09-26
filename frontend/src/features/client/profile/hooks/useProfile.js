@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { authApi } from "../../../../lib/apiClient.js";
 import {
-    ACCEPTED_AVATAR_TYPES,
-    DEFAULT_PROFILE,
     MAX_AVATAR_SIZE,
+    validateImageFile,
+} from "../../../../lib/validation.js";
+import { validateProfileForm } from "../../../../lib/validation/formValidators.js";
+// TODO: Check this one, i can separete in several files
+import {
+    DEFAULT_PROFILE,
     PROFILE_FIELDS,
     computeInitials,
     deriveDisplayName,
@@ -27,6 +31,7 @@ export function useProfile({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isAvatarUploading, setIsAvatarUploading] = useState(false);
     const [fetchError, setFetchError] = useState(null);
+    const [fieldErrors, setFieldErrors] = useState({});
 
     const avatarInputRef = useRef(null);
 
@@ -85,16 +90,21 @@ export function useProfile({
             const file = event.target?.files?.[0];
             if (!file) return;
 
-            if (!ACCEPTED_AVATAR_TYPES.has(file.type)) {
-                showError?.(
-                    "Format de fichier non supporté (jpg, png, webp, gif)."
-                );
-                event.target.value = "";
-                return;
-            }
+            // Utiliser la validation centralisée
+            const validationError = validateImageFile(
+                file,
+                MAX_AVATAR_SIZE,
+                "avatar"
+            );
 
-            if (file.size > MAX_AVATAR_SIZE) {
-                showError?.("L'image doit faire moins de 2 Mo.");
+            if (validationError) {
+                // Essayer showError d'abord, puis fallback sur alert si nécessaire
+                if (showError) {
+                    showError(validationError);
+                } else {
+                    alert(validationError);
+                }
+
                 event.target.value = "";
                 return;
             }
@@ -133,20 +143,39 @@ export function useProfile({
         [profileId, profileInfo, refresh, showError, showSuccess]
     );
 
-    const handleChange = useCallback((event) => {
-        const { name, value } = event.target;
+    const handleChange = useCallback(
+        (event) => {
+            const { name, value } = event.target;
 
-        if (!PROFILE_FIELDS.includes(name)) return;
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    }, []);
+            if (!PROFILE_FIELDS.includes(name)) return;
+            setFormData((prev) => ({
+                ...prev,
+                [name]: value,
+            }));
+
+            // Effacer l'erreur du champ quand l'utilisateur tape
+            if (fieldErrors[name]) {
+                setFieldErrors((prev) => {
+                    const newErrors = { ...prev };
+                    delete newErrors[name];
+                    return newErrors;
+                });
+            }
+        },
+        [fieldErrors]
+    );
 
     const handleReset = useCallback(() => {
         if (!initialData) return;
         setFormData({ ...initialData });
     }, [initialData]);
+
+    // Form validation function (adapted from useRegisterForm)
+    const validateForm = useCallback((dataToValidate) => {
+        const { errors, isValid } = validateProfileForm(dataToValidate);
+        setFieldErrors(errors);
+        return isValid;
+    }, []);
 
     const handleSubmit = useCallback(
         async (event) => {
@@ -154,15 +183,27 @@ export function useProfile({
 
             if (!initialData) return;
 
-            const payload = {};
+            // D'abord, nettoyer les données
             const sanitizedForm = { ...formData };
-
             for (const field of PROFILE_FIELDS) {
                 const rawValue = formData[field] ?? "";
                 const sanitized =
                     typeof rawValue === "string" ? rawValue.trim() : rawValue;
                 sanitizedForm[field] = sanitized;
+            }
 
+            // Validation frontend - si elle échoue, on arrête tout
+            if (!validateForm(sanitizedForm)) {
+                return;
+            }
+
+            // Si on arrive ici, la validation frontend a réussi
+            setFieldErrors({});
+
+            // Construire le payload des champs modifiés
+            const payload = {};
+            for (const field of PROFILE_FIELDS) {
+                const sanitized = sanitizedForm[field];
                 const baseline = initialData[field] ?? "";
 
                 if (sanitized !== baseline) {
@@ -193,19 +234,35 @@ export function useProfile({
                 await refresh?.();
                 showSuccess?.("Profil mis a jour");
             } catch (error) {
-                const validationErrors = error.response?.data?.errors;
-                const message =
-                    (Array.isArray(validationErrors) &&
-                    validationErrors.length > 0
-                        ? validationErrors[0]?.message
-                        : error.response?.data?.message) ||
-                    "La mise a jour du profil a echoue.";
-                showError?.(message);
+                const errorMessage = error?.response?.data?.message;
+                const validationErrors = error?.response?.data?.errors;
+
+                if (validationErrors && Array.isArray(validationErrors)) {
+                    // Transformer le tableau d'erreurs en objet fieldErrors
+                    const errors = {};
+                    validationErrors.forEach((error) => {
+                        errors[error.field] = error.message;
+                    });
+                    setFieldErrors(errors);
+                } else {
+                    // Sinon, afficher l'erreur générale
+                    const message =
+                        errorMessage || "La mise à jour du profil a échoué";
+                    showError?.(message);
+                }
             } finally {
                 setIsSubmitting(false);
             }
         },
-        [formData, initialData, refresh, showError, showInfo, showSuccess]
+        [
+            formData,
+            initialData,
+            validateForm,
+            refresh,
+            showError,
+            showInfo,
+            showSuccess,
+        ]
     );
 
     const hasChanges = useMemo(
@@ -235,6 +292,7 @@ export function useProfile({
         avatarUrl,
         displayName,
         fetchError,
+        fieldErrors,
         formData,
         handleAvatarUpload,
         handleChange,

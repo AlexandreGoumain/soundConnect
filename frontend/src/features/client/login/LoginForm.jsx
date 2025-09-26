@@ -1,28 +1,31 @@
-import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext.jsx";
+import { Link } from "react-router-dom";
+import InputField from "../../../components/shared/InputField.jsx";
+import PasswordField from "../../../components/shared/PasswordField.jsx";
+import "../../../styles/components/_auth-form.scss";
+import { useLoginForm } from "./hooks/useLoginForm.js";
+
+function FieldError({ error }) {
+    if (!error) return null;
+    return <span className="field-error">{error}</span>;
+}
 
 export default function LoginForm() {
-    const { login, status, user } = useAuth();
-    const navigate = useNavigate();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState(null);
-    const [showPassword, setShowPassword] = useState(false);
-
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        setError(null);
-        try {
-            await login(email, password);
-        } catch (err) {
-            setError(err?.response?.data?.message || "Connexion échouée");
-        }
-    };
+    const {
+        email,
+        password,
+        error,
+        fieldErrors,
+        showPassword,
+        status,
+        user,
+        handleEmailChange,
+        handlePasswordChange,
+        handleSubmit,
+        togglePasswordVisibility,
+    } = useLoginForm();
 
     if (user) {
-        navigate("/");
+        return null;
     }
 
     return (
@@ -35,86 +38,36 @@ export default function LoginForm() {
                     </p>
                 </div>
 
-                <form className="form" onSubmit={onSubmit}>
+                <form className="form" onSubmit={handleSubmit}>
                     <div className="card-body">
                         {error && (
-                            <div
-                                className="card"
-                                style={{
-                                    borderColor: "var(--error)",
-                                    backgroundColor: "rgba(239, 68, 68, 0.1)",
-                                }}
-                            >
-                                <p
-                                    className="text-sm"
-                                    style={{
-                                        color: "var(--error)",
-                                        marginBottom: 0,
-                                    }}
-                                >
-                                    {error}
-                                </p>
+                            <div className="card auth-form__error-message">
+                                <p className="text-sm">{error}</p>
                             </div>
                         )}
 
-                        <div className="form-group">
-                            <label className="label" htmlFor="email">
-                                Email
-                            </label>
-                            <input
-                                id="email"
-                                className="input"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                type="email"
-                                placeholder="votre@email.com"
-                                required
-                            />
-                        </div>
+                        <InputField
+                            id="email"
+                            label="Email"
+                            name="email"
+                            type="email"
+                            value={email}
+                            onChange={handleEmailChange}
+                            placeholder="votre@email.com"
+                            error={fieldErrors.email}
+                        />
 
-                        <div className="form-group">
-                            <label className="label" htmlFor="password">
-                                Mot de passe
-                            </label>
-                            <div style={{ position: "relative" }}>
-                                <input
-                                    id="password"
-                                    className="input"
-                                    value={password}
-                                    onChange={(e) =>
-                                        setPassword(e.target.value)
-                                    }
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="********"
-                                    required
-                                    style={{ paddingRight: "2.5rem" }}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setShowPassword(!showPassword)
-                                    }
-                                    style={{
-                                        position: "absolute",
-                                        right: "0.75rem",
-                                        top: "50%",
-                                        transform: "translateY(-50%)",
-                                        background: "none",
-                                        border: "none",
-                                        cursor: "pointer",
-                                        color: "var(--text-secondary)",
-                                        fontSize: "1.1rem",
-                                    }}
-                                    aria-label={
-                                        showPassword
-                                            ? "Masquer le mot de passe"
-                                            : "Afficher le mot de passe"
-                                    }
-                                >
-                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                                </button>
-                            </div>
-                        </div>
+                        <PasswordField
+                            id="password"
+                            label="Mot de passe"
+                            name="password"
+                            value={password}
+                            onChange={handlePasswordChange}
+                            showPassword={showPassword}
+                            onTogglePassword={togglePasswordVisibility}
+                            placeholder="********"
+                            error={fieldErrors.password}
+                        />
                     </div>
 
                     <div className="card-footer">
@@ -132,7 +85,7 @@ export default function LoginForm() {
 
                 <div className="auth-footer">
                     <p>
-                        Pas encore de compte ? {" "}
+                        Pas encore de compte ?{" "}
                         <Link to="/register" className="auth-link">
                             Inscrivez-vous
                         </Link>

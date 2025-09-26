@@ -1,18 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { apiClient } from "../../../lib/apiClient.js";
-import { useToast } from "../../../context/ToastContext.jsx";
+import { useToast } from "../../../hooks/useToast.js";
+import { useStudioFilter } from "../../../hooks/useStudioFilter.js";
 
-export function useOverview() {
+export function useOverview(timeRange = "year") {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { showToast } = useToast();
+    const { selectedStudioId } = useStudioFilter();
 
-    const fetchOverview = async () => {
+    const fetchOverview = useCallback(async () => {
         try {
             setLoading(true);
             setError(null);
-            const res = await apiClient.get("/dashboard/overview");
+            const params = {
+                ...(selectedStudioId && { studio_id: selectedStudioId }),
+                time_range: timeRange
+            };
+            const res = await apiClient.get("/dashboard/overview", { params });
             setData(res.data?.data || null);
         } catch (err) {
             setError(err.message);
@@ -20,11 +26,11 @@ export function useOverview() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [selectedStudioId, timeRange, showToast]);
 
     useEffect(() => {
         fetchOverview();
-    }, []);
+    }, [fetchOverview]);
 
     return { data, loading, error, refetch: fetchOverview };
 }
