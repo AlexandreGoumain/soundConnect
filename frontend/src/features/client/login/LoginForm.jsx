@@ -1,5 +1,6 @@
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import InputField from "../../../components/shared/InputField.jsx";
+import PasswordField from "../../../components/shared/PasswordField.jsx";
 import "../../../styles/components/_auth-form.scss";
 import { useLoginForm } from "./hooks/useLoginForm.js";
 
@@ -45,49 +46,28 @@ export default function LoginForm() {
                             </div>
                         )}
 
-                        <div className="form-group">
-                            <label className="label" htmlFor="email">
-                                Email
-                            </label>
-                            <input
-                                id="email"
-                                className={`input ${fieldErrors.email ? 'input-error' : ''}`}
-                                value={email}
-                                onChange={handleEmailChange}
-                                type="email"
-                                placeholder="votre@email.com"
-                            />
-                            <FieldError error={fieldErrors.email} />
-                        </div>
+                        <InputField
+                            id="email"
+                            label="Email"
+                            name="email"
+                            type="email"
+                            value={email}
+                            onChange={handleEmailChange}
+                            placeholder="votre@email.com"
+                            error={fieldErrors.email}
+                        />
 
-                        <div className="form-group">
-                            <label className="label" htmlFor="password">
-                                Mot de passe
-                            </label>
-                            <div className="auth-form__password-field">
-                                <input
-                                    id="password"
-                                    className={`input auth-form__password-input ${fieldErrors.password ? 'input-error' : ''}`}
-                                    value={password}
-                                    onChange={handlePasswordChange}
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="********"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={togglePasswordVisibility}
-                                    className="auth-form__password-toggle"
-                                    aria-label={
-                                        showPassword
-                                            ? "Masquer le mot de passe"
-                                            : "Afficher le mot de passe"
-                                    }
-                                >
-                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                                </button>
-                            </div>
-                            <FieldError error={fieldErrors.password} />
-                        </div>
+                        <PasswordField
+                            id="password"
+                            label="Mot de passe"
+                            name="password"
+                            value={password}
+                            onChange={handlePasswordChange}
+                            showPassword={showPassword}
+                            onTogglePassword={togglePasswordVisibility}
+                            placeholder="********"
+                            error={fieldErrors.password}
+                        />
                     </div>
 
                     <div className="card-footer">

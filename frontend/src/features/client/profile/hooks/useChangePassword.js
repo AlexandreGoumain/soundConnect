@@ -22,6 +22,11 @@ export function useChangePassword() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [fieldErrors, setFieldErrors] = useState({});
 
+    // Password visibility state
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     // Form handlers
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -113,6 +118,19 @@ export function useChangePassword() {
         }
     };
 
+    // Password visibility handlers
+    const toggleCurrentPasswordVisibility = () => {
+        setShowCurrentPassword(!showCurrentPassword);
+    };
+
+    const toggleNewPasswordVisibility = () => {
+        setShowNewPassword(!showNewPassword);
+    };
+
+    const toggleConfirmPasswordVisibility = () => {
+        setShowConfirmPassword(!showConfirmPassword);
+    };
+
     // Check if user is logged in
     const isUserLoggedIn = Boolean(user?.id);
 
@@ -122,9 +140,15 @@ export function useChangePassword() {
         fieldErrors,
         isSubmitting,
         isUserLoggedIn,
+        showCurrentPassword,
+        showNewPassword,
+        showConfirmPassword,
 
         // Handlers
         handleChange,
         handleSubmit,
+        toggleCurrentPasswordVisibility,
+        toggleNewPasswordVisibility,
+        toggleConfirmPasswordVisibility,
     };
 }

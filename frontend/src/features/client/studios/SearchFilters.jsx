@@ -1,9 +1,17 @@
+import DateInput from "../../../components/shared/DateInput.jsx";
+import SelectDropdown from "../../../components/shared/SelectDropdown.jsx";
 import "../../../styles/components/_studios-list.scss";
 import { useSearchFilters } from "./hooks/useSearchFilters.js";
+
+function FieldError({ error }) {
+    if (!error) return null;
+    return <span className="field-error">{error}</span>;
+}
 
 export default function SearchFilters() {
     const {
         filters,
+        fieldErrors,
         minDate,
         durationOptions,
         handleCityChange,
@@ -20,30 +28,32 @@ export default function SearchFilters() {
     } = useSearchFilters();
 
     return (
-        <form
-            className="card search-filters"
-            onSubmit={handleApply}
-        >
+        <form className="card search-filters" onSubmit={handleApply}>
             <div className="search-filters__row search-filters__row--two-cols">
                 <label className="label" htmlFor="city">
                     Ville
+                    {/* TODO: use shared inputField */}
                     <input
                         id="city"
-                        className="input"
+                        className={`input ${fieldErrors.city ? "error" : ""}`}
                         value={filters.city}
                         onChange={handleCityChange}
                         placeholder="Paris"
                     />
+                    <FieldError error={fieldErrors.city} />
                 </label>
                 <label className="label" htmlFor="postal">
                     Code postal
                     <input
                         id="postal"
-                        className="input"
+                        className={`input ${
+                            fieldErrors.postalCode ? "error" : ""
+                        }`}
                         value={filters.postalCode}
                         onChange={handlePostalCodeChange}
                         placeholder="75001"
                     />
+                    <FieldError error={fieldErrors.postalCode} />
                 </label>
             </div>
 
@@ -55,10 +65,13 @@ export default function SearchFilters() {
                         type="number"
                         min="0"
                         step="1"
-                        className="input"
+                        className={`input ${
+                            fieldErrors.minRate ? "error" : ""
+                        }`}
                         value={filters.minRate}
                         onChange={handleMinRateChange}
                     />
+                    <FieldError error={fieldErrors.minRate} />
                 </label>
                 <label className="label" htmlFor="max_rate">
                     Prix max (€/h)
@@ -67,10 +80,13 @@ export default function SearchFilters() {
                         type="number"
                         min="0"
                         step="1"
-                        className="input"
+                        className={`input ${
+                            fieldErrors.maxRate ? "error" : ""
+                        }`}
                         value={filters.maxRate}
                         onChange={handleMaxRateChange}
                     />
+                    <FieldError error={fieldErrors.maxRate} />
                 </label>
             </div>
 
@@ -95,58 +111,48 @@ export default function SearchFilters() {
                         placeholder="piano, batterie"
                     />
                 </label>
-                <label className="label" htmlFor="sort">
-                    Tri
-                    <select
-                        id="sort"
-                        className="input"
-                        value={filters.sort}
-                        onChange={handleSortChange}
-                    >
-                        <option value="">Pertinence</option>
-                        <option value="price_asc">Prix croissant</option>
-                        <option value="price_desc">Prix décroissant</option>
-                        <option value="rating_desc">Mieux notés</option>
-                    </select>
-                </label>
-                <label className="label" htmlFor="available_on">
-                    Disponible le
-                    <input
-                        id="available_on"
-                        type="date"
-                        className="input"
-                        value={filters.availableOn}
-                        onChange={handleAvailableOnChange}
-                        min={minDate}
-                    />
-                </label>
-                <label className="label" htmlFor="duration">
-                    Durée (h)
-                    <select
-                        id="duration"
-                        className="input"
-                        value={filters.duration}
-                        onChange={handleDurationChange}
-                    >
-                        {durationOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
-                </label>
+                <SelectDropdown
+                    id="sort"
+                    label="Tri"
+                    value={filters.sort}
+                    onChange={handleSortChange}
+                    options={[
+                        { value: "", label: "Pertinence" },
+                        { value: "price_asc", label: "Prix croissant" },
+                        { value: "price_desc", label: "Prix décroissant" },
+                        { value: "rating_desc", label: "Mieux notés" },
+                    ]}
+                />
+                <DateInput
+                    id="available_on"
+                    label="Disponible le"
+                    value={filters.availableOn}
+                    onChange={handleAvailableOnChange}
+                    min={minDate}
+                    error={fieldErrors.availableOn}
+                />
+                <SelectDropdown
+                    id="duration"
+                    label="Durée (h)"
+                    value={filters.duration}
+                    onChange={handleDurationChange}
+                    options={durationOptions}
+                    error={fieldErrors.duration}
+                />
             </div>
 
             <div className="search-filters__actions">
                 <button type="submit" className="btn btn-primary">
                     Appliquer
                 </button>
-                <button type="button" className="btn btn-ghost" onClick={handleReset}>
+                <button
+                    type="button"
+                    className="btn btn-ghost"
+                    onClick={handleReset}
+                >
                     Réinitialiser
                 </button>
             </div>
         </form>
     );
 }
-
-

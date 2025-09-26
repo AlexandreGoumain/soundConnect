@@ -2,14 +2,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { authApi } from "../../../../lib/apiClient.js";
 import {
     MAX_AVATAR_SIZE,
-    validateCity,
-    validateEmail,
-    validateHumanName,
     validateImageFile,
-    validatePhone,
-    validatePostalCode,
-    validateUsername,
 } from "../../../../lib/validation.js";
+import { validateProfileForm } from "../../../../lib/validation/formValidators.js";
+// TODO: Check this one, i can separete in several files
 import {
     DEFAULT_PROFILE,
     PROFILE_FIELDS,
@@ -176,48 +172,8 @@ export function useProfile({
 
     // Form validation function (adapted from useRegisterForm)
     const validateForm = useCallback((dataToValidate) => {
-        const errors = {};
-
-        // Utilisation des utilitaires de validation
-        const firstNameError = validateHumanName(
-            dataToValidate.first_name,
-            "prénom"
-        );
-        if (firstNameError) errors.first_name = firstNameError;
-
-        const lastNameError = validateHumanName(
-            dataToValidate.last_name,
-            "nom"
-        );
-        if (lastNameError) errors.last_name = lastNameError;
-
-        const usernameError = validateUsername(dataToValidate.username);
-        if (usernameError) errors.username = usernameError;
-
-        const emailError = validateEmail(dataToValidate.email);
-        if (emailError) errors.email = emailError;
-
-        // Champs optionnels - seulement valider s'ils ne sont pas vides
-        if (dataToValidate.phone && dataToValidate.phone.trim()) {
-            const phoneError = validatePhone(dataToValidate.phone);
-            if (phoneError) errors.phone = phoneError;
-        }
-
-        if (dataToValidate.city && dataToValidate.city.trim()) {
-            const cityError = validateCity(dataToValidate.city);
-            if (cityError) errors.city = cityError;
-        }
-
-        if (dataToValidate.postal_code && dataToValidate.postal_code.trim()) {
-            const postalCodeError = validatePostalCode(
-                dataToValidate.postal_code
-            );
-            if (postalCodeError) errors.postal_code = postalCodeError;
-        }
-
+        const { errors, isValid } = validateProfileForm(dataToValidate);
         setFieldErrors(errors);
-        const isValid = Object.keys(errors).length === 0;
-
         return isValid;
     }, []);
 

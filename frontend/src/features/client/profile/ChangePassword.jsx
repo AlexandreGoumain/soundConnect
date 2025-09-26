@@ -1,10 +1,7 @@
 import { Link } from "react-router-dom";
 import { useChangePassword } from "./hooks/useChangePassword.js";
+import PasswordField from "../../../components/shared/PasswordField.jsx";
 
-function FieldError({ error }) {
-    if (!error) return null;
-    return <span className="field-error">{error}</span>;
-}
 
 export default function ChangePassword() {
     const {
@@ -12,8 +9,14 @@ export default function ChangePassword() {
         fieldErrors,
         isSubmitting,
         isUserLoggedIn,
+        showCurrentPassword,
+        showNewPassword,
+        showConfirmPassword,
         handleChange,
         handleSubmit,
+        toggleCurrentPasswordVisibility,
+        toggleNewPasswordVisibility,
+        toggleConfirmPasswordVisibility,
     } = useChangePassword();
 
     if (!isUserLoggedIn) {
@@ -39,56 +42,44 @@ export default function ChangePassword() {
                     <form className="profile-form card" onSubmit={handleSubmit}>
                         <div className="card-body">
                             <div className="profile-form-grid">
-                                <div className="form-group">
-                                    <label className="label" htmlFor="currentPassword">
-                                        Mot de passe actuel
-                                    </label>
-                                    <input
-                                        id="currentPassword"
-                                        name="currentPassword"
-                                        className={`input ${fieldErrors.currentPassword ? 'input-error' : ''}`}
-                                        type="password"
-                                        value={formData.currentPassword}
-                                        onChange={handleChange}
-                                        autoComplete="current-password"
-                                        disabled={isSubmitting}
-                                    />
-                                    <FieldError error={fieldErrors.currentPassword} />
-                                </div>
+                                <PasswordField
+                                    label="Mot de passe actuel"
+                                    name="currentPassword"
+                                    id="currentPassword"
+                                    value={formData.currentPassword}
+                                    onChange={handleChange}
+                                    showPassword={showCurrentPassword}
+                                    onTogglePassword={toggleCurrentPasswordVisibility}
+                                    autoComplete="current-password"
+                                    disabled={isSubmitting}
+                                    error={fieldErrors.currentPassword}
+                                />
 
-                                <div className="form-group">
-                                    <label className="label" htmlFor="newPassword">
-                                        Nouveau mot de passe
-                                    </label>
-                                    <input
-                                        id="newPassword"
-                                        name="newPassword"
-                                        className={`input ${fieldErrors.newPassword ? 'input-error' : ''}`}
-                                        type="password"
-                                        value={formData.newPassword}
-                                        onChange={handleChange}
-                                        autoComplete="new-password"
-                                        disabled={isSubmitting}
-                                    />
-                                    <FieldError error={fieldErrors.newPassword} />
-                                </div>
+                                <PasswordField
+                                    label="Nouveau mot de passe"
+                                    name="newPassword"
+                                    id="newPassword"
+                                    value={formData.newPassword}
+                                    onChange={handleChange}
+                                    showPassword={showNewPassword}
+                                    onTogglePassword={toggleNewPasswordVisibility}
+                                    autoComplete="new-password"
+                                    disabled={isSubmitting}
+                                    error={fieldErrors.newPassword}
+                                />
 
-                                <div className="form-group">
-                                    <label className="label" htmlFor="confirmPassword">
-                                        Confirmer le nouveau mot de passe
-                                    </label>
-                                    <input
-                                        id="confirmPassword"
-                                        name="confirmPassword"
-                                        className={`input ${fieldErrors.confirmPassword ? 'input-error' : ''}`}
-                                        type="password"
-                                        value={formData.confirmPassword}
-                                        onChange={handleChange}
-                                        autoComplete="new-password"
-                                        disabled={isSubmitting}
-                                    />
-                                    <FieldError error={fieldErrors.confirmPassword} />
-                                </div>
+                                <PasswordField
+                                    label="Confirmer le nouveau mot de passe"
+                                    name="confirmPassword"
+                                    id="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    showPassword={showConfirmPassword}
+                                    onTogglePassword={toggleConfirmPasswordVisibility}
+                                    autoComplete="new-password"
+                                    disabled={isSubmitting}
+                                    error={fieldErrors.confirmPassword}
+                                />
                             </div>
                         </div>
 

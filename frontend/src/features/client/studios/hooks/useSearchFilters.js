@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { validateSearchFilters } from "../../../../lib/validation/formValidators.js";
 
 export function useSearchFilters() {
     const location = useLocation();
@@ -24,6 +25,9 @@ export function useSearchFilters() {
         duration: "1",
     });
 
+    // Validation state
+    const [fieldErrors, setFieldErrors] = useState({});
+
     // Initialize form state from URL parameters
     useEffect(() => {
         setFilters({
@@ -41,25 +45,42 @@ export function useSearchFilters() {
 
     // Individual field handlers
     const updateFilter = (field, value) => {
-        setFilters(prev => ({
+        setFilters((prev) => ({
             ...prev,
             [field]: value,
         }));
     };
 
     const handleCityChange = (e) => updateFilter("city", e.target.value);
-    const handlePostalCodeChange = (e) => updateFilter("postalCode", e.target.value);
+    const handlePostalCodeChange = (e) =>
+        updateFilter("postalCode", e.target.value);
     const handleMinRateChange = (e) => updateFilter("minRate", e.target.value);
     const handleMaxRateChange = (e) => updateFilter("maxRate", e.target.value);
     const handleTagsChange = (e) => updateFilter("tags", e.target.value);
-    const handleEquipmentChange = (e) => updateFilter("equipment", e.target.value);
+    const handleEquipmentChange = (e) =>
+        updateFilter("equipment", e.target.value);
     const handleSortChange = (e) => updateFilter("sort", e.target.value);
-    const handleAvailableOnChange = (e) => updateFilter("availableOn", e.target.value);
-    const handleDurationChange = (e) => updateFilter("duration", e.target.value);
+    const handleAvailableOnChange = (e) =>
+        updateFilter("availableOn", e.target.value);
+    const handleDurationChange = (e) =>
+        updateFilter("duration", e.target.value);
+
+    // Form validation
+    const validateForm = () => {
+        const { errors, isValid } = validateSearchFilters(filters);
+        setFieldErrors(errors);
+        return isValid;
+    };
 
     // Form submission
     const handleApply = (e) => {
         e.preventDefault();
+
+        // Validate form before submitting
+        if (!validateForm()) {
+            return;
+        }
+
         const params = new URLSearchParams();
 
         // Add non-empty parameters to URL
@@ -95,6 +116,7 @@ export function useSearchFilters() {
             availableOn: "",
             duration: "1",
         });
+        setFieldErrors({});
         navigate("/studios");
     };
 
@@ -114,6 +136,7 @@ export function useSearchFilters() {
     return {
         // State
         filters,
+        fieldErrors,
         minDate,
         durationOptions,
 
@@ -129,5 +152,6 @@ export function useSearchFilters() {
         handleDurationChange,
         handleApply,
         handleReset,
+        validateForm,
     };
 }

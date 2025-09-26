@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import InputField from "../../components/shared/InputField.jsx";
+import SectionCard from "../../components/shared/SectionCard.jsx";
+import TextareaField from "../../components/shared/TextareaField.jsx";
 import { useToast } from "../../hooks/useToast.js";
+import "../../styles/components/_studio-dashboard.scss";
 import DashboardSidebar from "./components/DashboardSidebar.jsx";
 import StudioImagesManager from "./components/StudioImagesManager.jsx";
 import { useStudioForm } from "./hooks/useStudioForm.js";
 import { WEEK_DAYS } from "./lib/studioSchedule.js";
 import { MAX_TAGS_COUNT, MAX_TAGS_LENGTH } from "./lib/studioValidation.js";
-import "../../styles/components/_studio-dashboard.scss";
 const TAG_LIMIT = MAX_TAGS_COUNT;
 const TAG_CHAR_LIMIT = MAX_TAGS_LENGTH;
 const SECTIONS = {
@@ -82,7 +85,7 @@ export default function StudioForm() {
                             noValidate
                         >
                             <SectionCard {...SECTIONS.general}>
-                                <Input
+                                <InputField
                                     label="Nom"
                                     name="name"
                                     value={form.name}
@@ -91,7 +94,7 @@ export default function StudioForm() {
                                     disabled={disableForm}
                                     error={errors.name}
                                 />
-                                <Textarea
+                                <TextareaField
                                     label="Description"
                                     name="description"
                                     value={form.description}
@@ -103,7 +106,7 @@ export default function StudioForm() {
                             </SectionCard>
                             <SectionCard {...SECTIONS.address}>
                                 <div className="form-row">
-                                    <Input
+                                    <InputField
                                         label="Numéro de rue"
                                         name="street_number"
                                         value={form.street_number}
@@ -112,7 +115,7 @@ export default function StudioForm() {
                                         disabled={disableForm}
                                         error={errors.street_number}
                                     />
-                                    <Input
+                                    <InputField
                                         label="Rue"
                                         name="street_name"
                                         value={form.street_name}
@@ -123,7 +126,7 @@ export default function StudioForm() {
                                     />
                                 </div>
                                 <div className="form-row">
-                                    <Input
+                                    <InputField
                                         label="Code postal"
                                         name="postal_code"
                                         value={form.postal_code}
@@ -132,7 +135,7 @@ export default function StudioForm() {
                                         disabled={disableForm}
                                         error={errors.postal_code}
                                     />
-                                    <Input
+                                    <InputField
                                         label="Ville"
                                         name="city"
                                         value={form.city}
@@ -142,7 +145,7 @@ export default function StudioForm() {
                                         error={errors.city}
                                     />
                                 </div>
-                                <Input
+                                <InputField
                                     label="Pays"
                                     name="country"
                                     value={form.country}
@@ -152,7 +155,7 @@ export default function StudioForm() {
                                 />
                             </SectionCard>
                             <SectionCard {...SECTIONS.contact}>
-                                <Input
+                                <InputField
                                     label="Tarif horaire (€ / h)"
                                     name="hourly_rate"
                                     type="number"
@@ -165,7 +168,7 @@ export default function StudioForm() {
                                     error={errors.hourly_rate}
                                 />
                                 <div className="form-row">
-                                    <Input
+                                    <InputField
                                         label="Téléphone"
                                         name="phone"
                                         value={form.phone}
@@ -174,7 +177,7 @@ export default function StudioForm() {
                                         disabled={disableForm}
                                         error={errors.phone}
                                     />
-                                    <Input
+                                    <InputField
                                         label="Email"
                                         name="email"
                                         type="email"
@@ -185,7 +188,7 @@ export default function StudioForm() {
                                         error={errors.email}
                                     />
                                 </div>
-                                <Input
+                                <InputField
                                     label="Site web"
                                     name="website"
                                     value={form.website}
@@ -348,95 +351,6 @@ export default function StudioForm() {
         </div>
     );
 }
-function SectionCard({ title, subtitle, children, className, error }) {
-    const classes = className ? `card ${className}` : "card";
-    return (
-        <section className={classes}>
-            <div className="card-header">
-                <div className="card-header-title">
-                    <h2 className="card-title">{title}</h2>
-                    {subtitle ? (
-                        <p className="card-subtitle">{subtitle}</p>
-                    ) : null}
-                </div>
-                {error ? <p className="error-message">{error}</p> : null}
-            </div>
-            <div className="card-body">{children}</div>
-        </section>
-    );
-}
-function Input({
-    label,
-    name,
-    id,
-    hint,
-    required = false,
-    error,
-    className,
-    ...props
-}) {
-    const fieldId = id || name;
-    const inputClassName = ["input", error ? "input-error" : "", className]
-        .filter(Boolean)
-        .join(" ");
-    return (
-        <div className="form-group">
-            <label className="label" htmlFor={fieldId}>
-                {label}
-                {required ? " *" : ""}
-            </label>
-            <input
-                id={fieldId}
-                name={name}
-                className={inputClassName}
-                required={required}
-                {...props}
-            />
-            {error ? (
-                <p className="error-message">{error}</p>
-            ) : hint ? (
-                <p className="help-text">{hint}</p>
-            ) : null}
-        </div>
-    );
-}
-function Textarea({
-    label,
-    name,
-    id,
-    hint,
-    required = false,
-    rows = 4,
-    error,
-    className,
-    ...props
-}) {
-    const fieldId = id || name;
-    const textareaClassName = ["input", error ? "input-error" : "", className]
-        .filter(Boolean)
-        .join(" ");
-    return (
-        <div className="form-group">
-            <label className="label" htmlFor={fieldId}>
-                {label}
-                {required ? " *" : ""}
-            </label>
-            <textarea
-                id={fieldId}
-                name={name}
-                className={textareaClassName}
-                rows={rows}
-                required={required}
-                {...props}
-            />
-            {error ? (
-                <p className="error-message">{error}</p>
-            ) : hint ? (
-                <p className="help-text">{hint}</p>
-            ) : null}
-        </div>
-    );
-}
 function ScheduleDayRow({
     dayKey,
     label,
@@ -515,6 +429,8 @@ function ScheduleDayRow({
         </div>
     );
 }
+
+// TODO : extract to a shared component
 
 function TokenInput({
     label,

@@ -1,7 +1,9 @@
-import { FaEye, FaEyeSlash, FaMicrophone, FaUser } from "react-icons/fa";
+import { FaMicrophone, FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "../../../styles/components/_auth-form.scss";
 import { useRegisterForm } from "./hooks/useRegisterForm.js";
+import InputField from "../../../components/shared/InputField.jsx";
+import PasswordField from "../../../components/shared/PasswordField.jsx";
 
 // Map backend role names to UI icons
 const ROLE_ICONS = {
@@ -9,10 +11,6 @@ const ROLE_ICONS = {
     studio: FaMicrophone,
 };
 
-function FieldError({ error }) {
-    if (!error) return null;
-    return <span className="field-error">{error}</span>;
-}
 
 export default function RegisterForm() {
     const {
@@ -117,202 +115,109 @@ export default function RegisterForm() {
                             )}
 
                             <div className="form-row">
-                                <div className="form-group">
-                                    <label
-                                        className="label"
-                                        htmlFor="first_name"
-                                    >
-                                        Prénom *
-                                    </label>
-                                    <input
-                                        id="first_name"
-                                        name="first_name"
-                                        className={`input ${fieldErrors.first_name ? 'input-error' : ''}`}
-                                        value={formData.first_name}
-                                        onChange={handleInputChange}
-                                        type="text"
-                                    />
-                                    <FieldError error={fieldErrors.first_name} />
-                                </div>
-
-                                <div className="form-group">
-                                    <label
-                                        className="label"
-                                        htmlFor="last_name"
-                                    >
-                                        Nom *
-                                    </label>
-                                    <input
-                                        id="last_name"
-                                        name="last_name"
-                                        className={`input ${fieldErrors.last_name ? 'input-error' : ''}`}
-                                        value={formData.last_name}
-                                        onChange={handleInputChange}
-                                        type="text"
-                                    />
-                                    <FieldError error={fieldErrors.last_name} />
-                                </div>
-                            </div>
-
-                            <div className="form-group">
-                                <label className="label" htmlFor="username">
-                                    Nom d'utilisateur *
-                                </label>
-                                <input
-                                    id="username"
-                                    name="username"
-                                    className={`input ${fieldErrors.username ? 'input-error' : ''}`}
-                                    value={formData.username}
+                                <InputField
+                                    label="Prénom"
+                                    name="first_name"
+                                    id="first_name"
+                                    value={formData.first_name}
                                     onChange={handleInputChange}
                                     type="text"
                                     required
+                                    error={fieldErrors.first_name}
                                 />
-                                <FieldError error={fieldErrors.username} />
+
+                                <InputField
+                                    label="Nom"
+                                    name="last_name"
+                                    id="last_name"
+                                    value={formData.last_name}
+                                    onChange={handleInputChange}
+                                    type="text"
+                                    required
+                                    error={fieldErrors.last_name}
+                                />
                             </div>
 
-                            <div className="form-group">
-                                <label className="label" htmlFor="email">
-                                    Email *
-                                </label>
-                                <input
-                                    id="email"
-                                    name="email"
-                                    className={`input ${fieldErrors.email ? 'input-error' : ''}`}
-                                    value={formData.email}
-                                    onChange={handleInputChange}
-                                    type="email"
-                                    required
-                                />
-                                <FieldError error={fieldErrors.email} />
-                            </div>
+                            <InputField
+                                label="Nom d'utilisateur"
+                                name="username"
+                                id="username"
+                                value={formData.username}
+                                onChange={handleInputChange}
+                                type="text"
+                                required
+                                error={fieldErrors.username}
+                            />
 
-                            <div className="form-group">
-                                <label className="label" htmlFor="phone">
-                                    Téléphone *
-                                </label>
-                                <input
-                                    id="phone"
-                                    name="phone"
-                                    className={`input ${fieldErrors.phone ? 'input-error' : ''}`}
-                                    value={formData.phone}
-                                    onChange={handleInputChange}
-                                    type="tel"
-                                    required
-                                />
-                                <FieldError error={fieldErrors.phone} />
-                            </div>
+                            <InputField
+                                label="Email"
+                                name="email"
+                                id="email"
+                                value={formData.email}
+                                onChange={handleInputChange}
+                                type="email"
+                                required
+                                error={fieldErrors.email}
+                            />
+
+                            <InputField
+                                label="Téléphone"
+                                name="phone"
+                                id="phone"
+                                value={formData.phone}
+                                onChange={handleInputChange}
+                                type="tel"
+                                required
+                                error={fieldErrors.phone}
+                            />
 
                             <div className="form-row">
-                                <div className="form-group">
-                                    <label className="label" htmlFor="city">
-                                        Ville *
-                                    </label>
-                                    <input
-                                        id="city"
-                                        name="city"
-                                        className={`input ${fieldErrors.city ? 'input-error' : ''}`}
-                                        value={formData.city}
-                                        onChange={handleInputChange}
-                                        type="text"
-                                    />
-                                    <FieldError error={fieldErrors.city} />
-                                </div>
+                                <InputField
+                                    label="Ville"
+                                    name="city"
+                                    id="city"
+                                    value={formData.city}
+                                    onChange={handleInputChange}
+                                    type="text"
+                                    required
+                                    error={fieldErrors.city}
+                                />
 
-                                <div className="form-group">
-                                    <label
-                                        className="label"
-                                        htmlFor="postal_code"
-                                    >
-                                        Code postal *
-                                    </label>
-                                    <input
-                                        id="postal_code"
-                                        name="postal_code"
-                                        className={`input ${fieldErrors.postal_code ? 'input-error' : ''}`}
-                                        value={formData.postal_code}
-                                        onChange={handleInputChange}
-                                        type="text"
-                                    />
-                                    <FieldError error={fieldErrors.postal_code} />
-                                </div>
+                                <InputField
+                                    label="Code postal"
+                                    name="postal_code"
+                                    id="postal_code"
+                                    value={formData.postal_code}
+                                    onChange={handleInputChange}
+                                    type="text"
+                                    required
+                                    error={fieldErrors.postal_code}
+                                />
                             </div>
 
-                            <div className="form-group">
-                                <label className="label" htmlFor="password">
-                                    Mot de passe *
-                                </label>
-                                <div className="auth-form__password-field">
-                                    <input
-                                        id="password"
-                                        name="password"
-                                        className={`input auth-form__password-input ${fieldErrors.password ? 'input-error' : ''}`}
-                                        value={formData.password}
-                                        onChange={handleInputChange}
-                                        type={
-                                            showPassword ? "text" : "password"
-                                        }
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={togglePasswordVisibility}
-                                        className="auth-form__password-toggle"
-                                        aria-label={
-                                            showPassword
-                                                ? "Masquer le mot de passe"
-                                                : "Afficher le mot de passe"
-                                        }
-                                    >
-                                        {showPassword ? (
-                                            <FaEyeSlash />
-                                        ) : (
-                                            <FaEye />
-                                        )}
-                                    </button>
-                                </div>
-                                <FieldError error={fieldErrors.password} />
-                            </div>
+                            <PasswordField
+                                label="Mot de passe"
+                                name="password"
+                                id="password"
+                                value={formData.password}
+                                onChange={handleInputChange}
+                                showPassword={showPassword}
+                                onTogglePassword={togglePasswordVisibility}
+                                required
+                                error={fieldErrors.password}
+                            />
 
-                            <div className="form-group">
-                                <label
-                                    className="label"
-                                    htmlFor="confirmPassword"
-                                >
-                                    Confirmer le mot de passe *
-                                </label>
-                                <div className="auth-form__password-field">
-                                    <input
-                                        id="confirmPassword"
-                                        name="confirmPassword"
-                                        className={`input auth-form__password-input ${fieldErrors.confirmPassword ? 'input-error' : ''}`}
-                                        value={formData.confirmPassword}
-                                        onChange={handleInputChange}
-                                        type={
-                                            showConfirmPassword
-                                                ? "text"
-                                                : "password"
-                                        }
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={
-                                            toggleConfirmPasswordVisibility
-                                        }
-                                        className="auth-form__password-toggle"
-                                        aria-label={
-                                            showConfirmPassword
-                                                ? "Masquer le mot de passe"
-                                                : "Afficher le mot de passe"
-                                        }
-                                    >
-                                        {showConfirmPassword ? (
-                                            <FaEyeSlash />
-                                        ) : (
-                                            <FaEye />
-                                        )}
-                                    </button>
-                                </div>
-                                <FieldError error={fieldErrors.confirmPassword} />
-                            </div>
+                            <PasswordField
+                                label="Confirmer le mot de passe"
+                                name="confirmPassword"
+                                id="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleInputChange}
+                                showPassword={showConfirmPassword}
+                                onTogglePassword={toggleConfirmPasswordVisibility}
+                                required
+                                error={fieldErrors.confirmPassword}
+                            />
                         </div>
 
                         <div className="card-footer">

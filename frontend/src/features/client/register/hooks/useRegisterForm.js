@@ -2,16 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../hooks/useAuth.js";
 import { apiClient } from "../../../../lib/apiClient.js";
-import {
-    validateCity,
-    validateConfirmPassword,
-    validateEmail,
-    validateHumanName,
-    validatePassword,
-    validatePhone,
-    validatePostalCode,
-    validateUsername,
-} from "../../../../lib/validation.js";
+import { validateRegistrationForm } from "../../../../lib/validation/formValidators.js";
 
 // Map backend role names to UI labels/icons
 export const ROLE_DISPLAY = {
@@ -108,44 +99,9 @@ export function useRegisterForm() {
         setShowConfirmPassword(!showConfirmPassword);
     };
 
-    // Form validation
     const validateForm = () => {
-        const errors = {};
-
-        // Utilisation des utilitaires de validation
-        const firstNameError = validateHumanName(formData.first_name, "prénom");
-        if (firstNameError) errors.first_name = firstNameError;
-
-        const lastNameError = validateHumanName(formData.last_name, "nom");
-        if (lastNameError) errors.last_name = lastNameError;
-
-        const usernameError = validateUsername(formData.username);
-        if (usernameError) errors.username = usernameError;
-
-        const emailError = validateEmail(formData.email);
-        if (emailError) errors.email = emailError;
-
-        const phoneError = validatePhone(formData.phone);
-        if (phoneError) errors.phone = phoneError;
-
-        const cityError = validateCity(formData.city);
-        if (cityError) errors.city = cityError;
-
-        const postalCodeError = validatePostalCode(formData.postal_code);
-        if (postalCodeError) errors.postal_code = postalCodeError;
-
-        const passwordError = validatePassword(formData.password);
-        if (passwordError) errors.password = passwordError;
-
-        const confirmPasswordError = validateConfirmPassword(
-            formData.password,
-            formData.confirmPassword
-        );
-        if (confirmPasswordError) errors.confirmPassword = confirmPasswordError;
-
+        const { errors, isValid } = validateRegistrationForm(formData);
         setFieldErrors(errors);
-        const isValid = Object.keys(errors).length === 0;
-
         return isValid;
     };
 

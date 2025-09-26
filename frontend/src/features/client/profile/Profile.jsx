@@ -1,13 +1,9 @@
 import { Link } from "react-router-dom";
+import InputField from "../../../components/shared/InputField.jsx";
 import { useAuth } from "../../../hooks/useAuth.js";
 import { useToast } from "../../../hooks/useToast.js";
 import "../../../styles/components/_profile.scss";
 import { useProfile } from "./hooks/useProfile.js";
-
-function FieldError({ error }) {
-    if (!error) return null;
-    return <span className="field-error">{error}</span>;
-}
 
 export default function Profile() {
     const { refresh, user } = useAuth();
@@ -52,6 +48,7 @@ export default function Profile() {
                         {profileInfo && (
                             <div className="profile-summary card">
                                 <div className="profile-summary-avatar-wrapper">
+                                    {/* TODO Move this into a shared component (avatar) with a custom hook associated*/}
                                     <div
                                         className={`profile-summary-avatar${
                                             avatarUrl
@@ -126,136 +123,83 @@ export default function Profile() {
                         >
                             <div className="card-body">
                                 <div className="profile-form-grid">
-                                    <div className="form-group">
-                                        <label
-                                            className="label"
-                                            htmlFor="first_name"
-                                        >
-                                            Prénom
-                                        </label>
-                                        <input
-                                            id="first_name"
-                                            name="first_name"
-                                            className={`input ${fieldErrors.first_name ? 'input-error' : ''}`}
-                                            type="text"
-                                            value={formData.first_name}
-                                            onChange={handleChange}
-                                            disabled={isSubmitting}
-                                        />
-                                        <FieldError error={fieldErrors.first_name} />
-                                    </div>
+                                    <InputField
+                                        label="Prénom"
+                                        name="first_name"
+                                        id="first_name"
+                                        type="text"
+                                        value={formData.first_name}
+                                        onChange={handleChange}
+                                        disabled={isSubmitting}
+                                        error={fieldErrors.first_name}
+                                    />
 
-                                    <div className="form-group">
-                                        <label
-                                            className="label"
-                                            htmlFor="last_name"
-                                        >
-                                            Nom
-                                        </label>
-                                        <input
-                                            id="last_name"
-                                            name="last_name"
-                                            className={`input ${fieldErrors.last_name ? 'input-error' : ''}`}
-                                            type="text"
-                                            value={formData.last_name}
-                                            onChange={handleChange}
-                                            disabled={isSubmitting}
-                                        />
-                                        <FieldError error={fieldErrors.last_name} />
-                                    </div>
+                                    <InputField
+                                        label="Nom"
+                                        name="last_name"
+                                        id="last_name"
+                                        type="text"
+                                        value={formData.last_name}
+                                        onChange={handleChange}
+                                        disabled={isSubmitting}
+                                        error={fieldErrors.last_name}
+                                    />
 
-                                    <div className="form-group">
-                                        <label
-                                            className="label"
-                                            htmlFor="username"
-                                        >
-                                            Nom d'utilisateur
-                                        </label>
-                                        <input
-                                            id="username"
-                                            name="username"
-                                            className={`input ${fieldErrors.username ? 'input-error' : ''}`}
-                                            type="text"
-                                            value={formData.username}
-                                            onChange={handleChange}
-                                            disabled={isSubmitting}
-                                        />
-                                        <FieldError error={fieldErrors.username} />
-                                    </div>
+                                    <InputField
+                                        label="Nom d'utilisateur"
+                                        name="username"
+                                        id="username"
+                                        type="text"
+                                        value={formData.username}
+                                        onChange={handleChange}
+                                        disabled={isSubmitting}
+                                        error={fieldErrors.username}
+                                    />
 
-                                    <div className="form-group">
-                                        <label
-                                            className="label"
-                                            htmlFor="email"
-                                        >
-                                            Email
-                                        </label>
-                                        <input
-                                            id="email"
-                                            name="email"
-                                            className={`input ${fieldErrors.email ? 'input-error' : ''}`}
-                                            type="email"
-                                            value={formData.email}
-                                            onChange={handleChange}
-                                            disabled={isSubmitting}
-                                        />
-                                        <FieldError error={fieldErrors.email} />
-                                    </div>
+                                    <InputField
+                                        label="Email"
+                                        name="email"
+                                        id="email"
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        disabled={isSubmitting}
+                                        error={fieldErrors.email}
+                                    />
 
-                                    <div className="form-group">
-                                        <label
-                                            className="label"
-                                            htmlFor="phone"
-                                        >
-                                            Téléphone
-                                        </label>
-                                        <input
-                                            id="phone"
-                                            name="phone"
-                                            className={`input ${fieldErrors.phone ? 'input-error' : ''}`}
-                                            type="tel"
-                                            value={formData.phone}
-                                            onChange={handleChange}
-                                            placeholder="Ex. 06 12 34 56 78"
-                                            disabled={isSubmitting}
-                                        />
-                                        <FieldError error={fieldErrors.phone} />
-                                    </div>
+                                    <InputField
+                                        label="Téléphone"
+                                        name="phone"
+                                        id="phone"
+                                        type="tel"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        placeholder="Ex. 06 12 34 56 78"
+                                        disabled={isSubmitting}
+                                        error={fieldErrors.phone}
+                                    />
 
-                                    <div className="form-group">
-                                        <label className="label" htmlFor="city">
-                                            Ville
-                                        </label>
-                                        <input
-                                            id="city"
-                                            name="city"
-                                            className={`input ${fieldErrors.city ? 'input-error' : ''}`}
-                                            type="text"
-                                            value={formData.city}
-                                            onChange={handleChange}
-                                            disabled={isSubmitting}
-                                        />
-                                        <FieldError error={fieldErrors.city} />
-                                    </div>
+                                    <InputField
+                                        label="Ville"
+                                        name="city"
+                                        id="city"
+                                        type="text"
+                                        value={formData.city}
+                                        onChange={handleChange}
+                                        disabled={isSubmitting}
+                                        error={fieldErrors.city}
+                                    />
 
-                                    <div className="form-group">
-                                        <label
-                                            className="label"
-                                            htmlFor="postal_code"
-                                        >
-                                            Code postal
-                                        </label>
-                                        <input
-                                            id="postal_code"
-                                            name="postal_code"
-                                            className={`input ${fieldErrors.postal_code ? 'input-error' : ''}`}
-                                            type="text"
-                                            value={formData.postal_code}
-                                            onChange={handleChange}
-                                            disabled={isSubmitting}
-                                        />
-                                        <FieldError error={fieldErrors.postal_code} />
-                                    </div>
+                                    <InputField
+                                        label="Code postal"
+                                        name="postal_code"
+                                        id="postal_code"
+                                        type="text"
+                                        value={formData.postal_code}
+                                        onChange={handleChange}
+                                        disabled={isSubmitting}
+                                        error={fieldErrors.postal_code}
+                                    />
                                 </div>
                             </div>
 

@@ -1,6 +1,8 @@
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 export default function Footer() {
+    const navigate = useNavigate();
     return (
         <footer className="footer">
             <div className="container">
@@ -18,10 +20,14 @@ export default function Footer() {
                             <h4 className="footer-title">Navigation</h4>
                             <ul className="footer-menu">
                                 <li>
-                                    <a href="/">Rechercher</a>
+                                    <a onClick={() => navigate("/")}>
+                                        Rechercher
+                                    </a>
                                 </li>
                                 <li>
-                                    <a href="/">Comment ça marche</a>
+                                    <a onClick={() => navigate("/")}>
+                                        Comment ça marche
+                                    </a>
                                 </li>
                             </ul>
                         </div>
@@ -29,11 +35,9 @@ export default function Footer() {
                         <div className="footer-column">
                             <h4 className="footer-title">Légal</h4>
                             <ul className="footer-menu">
-                                <li>
-                                    <a href="#">CGU</a>
-                                </li>
-                                <li>
-                                    <a href="#">Confidentialité</a>
+                                <li onClick={() => navigate("/")}>navCGU</li>
+                                <li onClick={() => navigate("/")}>
+                                    Confidentialité
                                 </li>
                             </ul>
                         </div>
@@ -41,16 +45,28 @@ export default function Footer() {
                         <div className="footer-column">
                             <h4 className="footer-title">Suivez-nous</h4>
                             <div className="social-links">
-                                <a href="#" className="social-link">
+                                <a
+                                    onClick={() => navigate("/")}
+                                    className="social-link"
+                                >
                                     <FaFacebook />
                                 </a>
-                                <a href="#" className="social-link">
+                                <a
+                                    onClick={() => navigate("/")}
+                                    className="social-link"
+                                >
                                     <FaInstagram />
                                 </a>
-                                <a href="#" className="social-link">
+                                <a
+                                    onClick={() => navigate("/")}
+                                    className="social-link"
+                                >
                                     <FaTwitter />
                                 </a>
-                                <a href="#" className="social-link">
+                                <a
+                                    onClick={() => navigate("/")}
+                                    className="social-link"
+                                >
                                     <FaYoutube />
                                 </a>
                             </div>
