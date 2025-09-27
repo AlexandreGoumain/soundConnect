@@ -1,3 +1,4 @@
+import InputField from "../../../../components/shared/InputField.jsx";
 import { useHeroSection } from "../hooks/useHeroSection.js";
 
 export default function HeroSection() {
@@ -15,14 +16,14 @@ export default function HeroSection() {
                 </p>
                 <form className="search-form" onSubmit={handleSubmit}>
                     <div className="search-input-group">
-                        {/* TODO: use shared inputField */}
-                        <input
-                            className={`search-input ${error ? "error" : ""}`}
+                        <InputField
+                            className="search-input"
                             type="text"
                             placeholder="Ville ou code postal"
                             value={query}
                             onChange={handleChange}
                             aria-label="Ville ou code postal"
+                            error={error}
                         />
                         <button
                             className="btn btn-primary search-btn"
@@ -31,7 +32,6 @@ export default function HeroSection() {
                             Rechercher
                         </button>
                     </div>
-                    {error && <div className="error-message">{error}</div>}
                 </form>
             </div>
         </section>

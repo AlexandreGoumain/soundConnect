@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { useToast } from "../../../../hooks/useToast.js";
 import { apiClient } from "../../../../lib/apiClient";
+import { getDayOfWeek } from "../../../../lib/dateUtils.js";
 
 export const useAvailability = (studioId) => {
     const [availableSlots, setAvailableSlots] = useState([]);
@@ -114,7 +115,7 @@ export const useAvailability = (studioId) => {
     const isStudioOpen = useCallback(
         (date) => {
             const targetDate = new Date(date);
-            const dayOfWeek = targetDate.getDay();
+            const dayOfWeek = getDayOfWeek(targetDate);
             const dayNames = [
                 "sunday",
                 "monday",

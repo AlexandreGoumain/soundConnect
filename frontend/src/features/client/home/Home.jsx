@@ -1,6 +1,6 @@
 import HeroSection from "./components/HeroSection.jsx";
-import StudiosSection from "./components/StudiosSection.jsx";
 import HowItWorksSection from "./components/HowItWorksSection.jsx";
+import StudiosSection from "./components/StudiosSection.jsx";
 import { useStudios } from "./hooks/useStudios.js";
 
 export default function Home() {

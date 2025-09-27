@@ -31,6 +31,24 @@ export const STEPS_DATA = [
     },
 ];
 
+export const STUDIO_STEPS_DATA = [
+    {
+        id: 1,
+        title: "Créez votre profil",
+        description: "Inscrivez-vous et configurez votre studio avec photos et équipements",
+    },
+    {
+        id: 2,
+        title: "Gérez vos horaires",
+        description: "Définissez vos disponibilités et tarifs selon vos préférences",
+    },
+    {
+        id: 3,
+        title: "Accueillez vos clients",
+        description: "Recevez des réservations et développez votre activité musicale",
+    },
+];
+
 export const BADGES = {
     PRO: "Pro",
     TRENDING: "Tendance",

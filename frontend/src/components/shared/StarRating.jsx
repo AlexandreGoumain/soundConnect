@@ -1,15 +1,12 @@
-import "../styles/components/_star-rating.scss";
-
-// check usage
-// TODO : replace by icon
-const StarRating = ({
-    rating,
+export default function StarRating({
+    rating = 0,
     maxRating = 5,
     size = "medium",
     showNumber = false,
     interactive = false,
     onRatingChange = null,
-}) => {
+    className = ""
+}) {
     const handleStarClick = (starValue) => {
         if (interactive && onRatingChange) {
             onRatingChange(starValue);
@@ -25,7 +22,7 @@ const StarRating = ({
                     className={`star ${i <= rating ? "filled" : ""} ${
                         interactive ? "interactive" : ""
                     } ${size}`}
-                    onClick={() => handleStarClick(i)}
+                    onClick={interactive ? () => handleStarClick(i) : undefined}
                 >
                     ★
                 </span>
@@ -35,13 +32,11 @@ const StarRating = ({
     };
 
     return (
-        <div className="star-rating">
+        <div className={`star-rating ${className}`.trim()}>
             <div className="stars">{renderStars()}</div>
             {showNumber && (
                 <span className="rating-number">{rating.toFixed(1)}</span>
             )}
         </div>
     );
-};
-
-export default StarRating;
+}

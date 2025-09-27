@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { validateSearchFilters } from "../../../../lib/validation/formValidators.js";
+import { getTodayISO } from "../../../../lib/dateUtils.js";
 
 export function useSearchFilters() {
     const location = useLocation();
@@ -122,7 +123,7 @@ export function useSearchFilters() {
 
     // Generate min date for availableOn field
     const minDate = useMemo(() => {
-        return new Date().toISOString().split("T")[0];
+        return getTodayISO();
     }, []);
 
     // Generate duration options

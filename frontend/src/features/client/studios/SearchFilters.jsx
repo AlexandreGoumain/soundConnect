@@ -1,12 +1,9 @@
 import DateInput from "../../../components/shared/DateInput.jsx";
-import SelectDropdown from "../../../components/shared/SelectDropdown.jsx";
+import InputField from "../../../components/shared/InputField.jsx";
+import SectionCard from "../../../components/shared/SectionCard.jsx";
+import SelectField from "../../../components/shared/SelectField.jsx";
 import "../../../styles/components/_studios-list.scss";
 import { useSearchFilters } from "./hooks/useSearchFilters.js";
-
-function FieldError({ error }) {
-    if (!error) return null;
-    return <span className="field-error">{error}</span>;
-}
 
 export default function SearchFilters() {
     const {
@@ -27,132 +24,150 @@ export default function SearchFilters() {
         handleReset,
     } = useSearchFilters();
 
+    const sortOptions = [
+        { value: "", label: "Pertinence" },
+        { value: "price_asc", label: "Prix croissant" },
+        { value: "price_desc", label: "Prix décroissant" },
+        { value: "rating_desc", label: "Mieux notés" },
+    ];
+
     return (
-        <form className="card search-filters" onSubmit={handleApply}>
-            <div className="search-filters__row search-filters__row--two-cols">
-                <label className="label" htmlFor="city">
-                    Ville
-                    {/* TODO: use shared inputField */}
-                    <input
-                        id="city"
-                        className={`input ${fieldErrors.city ? "error" : ""}`}
-                        value={filters.city}
-                        onChange={handleCityChange}
-                        placeholder="Paris"
-                    />
-                    <FieldError error={fieldErrors.city} />
-                </label>
-                <label className="label" htmlFor="postal">
-                    Code postal
-                    <input
-                        id="postal"
-                        className={`input ${
-                            fieldErrors.postalCode ? "error" : ""
-                        }`}
-                        value={filters.postalCode}
-                        onChange={handlePostalCodeChange}
-                        placeholder="75001"
-                    />
-                    <FieldError error={fieldErrors.postalCode} />
-                </label>
-            </div>
+        <SectionCard
+            title="Filtres de recherche"
+            subtitle="Affinez votre recherche de studios"
+            className="search-filters"
+        >
+            <form onSubmit={handleApply}>
+                <div className="search-filters__section">
+                    <h3 className="search-filters__section-title">
+                        Localisation
+                    </h3>
+                    <div className="search-filters__row search-filters__row--two-cols">
+                        <InputField
+                            id="city"
+                            name="city"
+                            label="Ville"
+                            value={filters.city}
+                            onChange={handleCityChange}
+                            placeholder="Paris"
+                            error={fieldErrors.city}
+                        />
+                        <InputField
+                            id="postal"
+                            name="postalCode"
+                            label="Code postal"
+                            value={filters.postalCode}
+                            onChange={handlePostalCodeChange}
+                            placeholder="75001"
+                            error={fieldErrors.postalCode}
+                        />
+                    </div>
+                </div>
 
-            <div className="search-filters__row search-filters__row--two-cols">
-                <label className="label" htmlFor="min_rate">
-                    Prix min (€/h)
-                    <input
-                        id="min_rate"
-                        type="number"
-                        min="0"
-                        step="1"
-                        className={`input ${
-                            fieldErrors.minRate ? "error" : ""
-                        }`}
-                        value={filters.minRate}
-                        onChange={handleMinRateChange}
-                    />
-                    <FieldError error={fieldErrors.minRate} />
-                </label>
-                <label className="label" htmlFor="max_rate">
-                    Prix max (€/h)
-                    <input
-                        id="max_rate"
-                        type="number"
-                        min="0"
-                        step="1"
-                        className={`input ${
-                            fieldErrors.maxRate ? "error" : ""
-                        }`}
-                        value={filters.maxRate}
-                        onChange={handleMaxRateChange}
-                    />
-                    <FieldError error={fieldErrors.maxRate} />
-                </label>
-            </div>
+                <div className="search-filters__section">
+                    <h3 className="search-filters__section-title">Budget</h3>
+                    <div className="search-filters__row search-filters__row--two-cols">
+                        <InputField
+                            id="min_rate"
+                            name="minRate"
+                            label="Prix minimum (€/h)"
+                            type="number"
+                            min="0"
+                            step="1"
+                            value={filters.minRate}
+                            onChange={handleMinRateChange}
+                            placeholder="0"
+                            error={fieldErrors.minRate}
+                        />
+                        <InputField
+                            id="max_rate"
+                            name="maxRate"
+                            label="Prix maximum (€/h)"
+                            type="number"
+                            min="0"
+                            step="1"
+                            value={filters.maxRate}
+                            onChange={handleMaxRateChange}
+                            placeholder="100"
+                            error={fieldErrors.maxRate}
+                        />
+                    </div>
+                </div>
 
-            <div className="search-filters__row search-filters__row--four-cols">
-                <label className="label" htmlFor="tags">
-                    Tags (séparés par virgules)
-                    <input
-                        id="tags"
-                        className="input"
-                        value={filters.tags}
-                        onChange={handleTagsChange}
-                        placeholder="mixage, batterie"
-                    />
-                </label>
-                <label className="label" htmlFor="equipment">
-                    Équipements (séparés par virgules)
-                    <input
-                        id="equipment"
-                        className="input"
-                        value={filters.equipment}
-                        onChange={handleEquipmentChange}
-                        placeholder="piano, batterie"
-                    />
-                </label>
-                <SelectDropdown
-                    id="sort"
-                    label="Tri"
-                    value={filters.sort}
-                    onChange={handleSortChange}
-                    options={[
-                        { value: "", label: "Pertinence" },
-                        { value: "price_asc", label: "Prix croissant" },
-                        { value: "price_desc", label: "Prix décroissant" },
-                        { value: "rating_desc", label: "Mieux notés" },
-                    ]}
-                />
-                <DateInput
-                    id="available_on"
-                    label="Disponible le"
-                    value={filters.availableOn}
-                    onChange={handleAvailableOnChange}
-                    min={minDate}
-                    error={fieldErrors.availableOn}
-                />
-                <SelectDropdown
-                    id="duration"
-                    label="Durée (h)"
-                    value={filters.duration}
-                    onChange={handleDurationChange}
-                    options={durationOptions}
-                    error={fieldErrors.duration}
-                />
-            </div>
+                <div className="search-filters__section">
+                    <h3 className="search-filters__section-title">
+                        Spécialités et équipements
+                    </h3>
+                    <div className="search-filters__row search-filters__row--two-cols">
+                        <InputField
+                            id="tags"
+                            name="tags"
+                            label="Tags"
+                            hint="Séparés par virgules"
+                            value={filters.tags}
+                            onChange={handleTagsChange}
+                            placeholder="mixage, batterie"
+                        />
+                        <InputField
+                            id="equipment"
+                            name="equipment"
+                            label="Équipements"
+                            hint="Séparés par virgules"
+                            value={filters.equipment}
+                            onChange={handleEquipmentChange}
+                            placeholder="piano, batterie"
+                        />
+                    </div>
+                </div>
 
-            <div className="search-filters__actions">
-                <button type="submit" className="btn btn-primary">
-                    Appliquer
-                </button>
-                <button
-                    type="button"
-                    className="btn btn-ghost"
-                    onClick={handleReset}
-                >
-                    Réinitialiser
-                </button>
-            </div>
-        </form>
+                <div className="search-filters__section">
+                    <h3 className="search-filters__section-title">
+                        Disponibilité et préférences
+                    </h3>
+                    <div className="search-filters__row search-filters__row--grid">
+                        <SelectField
+                            id="sort"
+                            name="sort"
+                            label="Tri"
+                            value={filters.sort}
+                            onChange={handleSortChange}
+                            options={sortOptions}
+                            placeholder="Pertinence"
+                        />
+                        <DateInput
+                            id="available_on"
+                            label="Disponible le"
+                            value={filters.availableOn}
+                            onChange={handleAvailableOnChange}
+                            min={minDate}
+                            error={fieldErrors.availableOn}
+                        />
+                        <SelectField
+                            id="duration"
+                            name="duration"
+                            label="Durée (h)"
+                            value={filters.duration}
+                            onChange={handleDurationChange}
+                            options={durationOptions}
+                            placeholder="Choisir une durée"
+                            error={fieldErrors.duration}
+                        />
+                    </div>
+                </div>
+
+                <div className="search-filters__actions">
+                    <button type="submit" className="btn btn-primary">
+                        Appliquer les filtres
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={handleReset}
+                    >
+                        Réinitialiser
+                    </button>
+                </div>
+            </form>
+        </SectionCard>
     );
 }

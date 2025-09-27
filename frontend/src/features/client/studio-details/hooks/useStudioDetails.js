@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../../../hooks/useAuth.js";
 import { useToast } from "../../../../hooks/useToast.js";
 import { apiClient } from "../../../../lib/apiClient";
+import { getTodayISO } from "../../../../lib/dateUtils.js";
 import {
     parseStudioImagesField,
     resolveStudioImageSrc,
@@ -227,7 +228,7 @@ export function useStudioDetails() {
 
     // Get minimum date for date picker (today)
     const minDate = useMemo(() => {
-        return new Date().toISOString().split("T")[0];
+        return getTodayISO();
     }, []);
 
     // Generate duration options

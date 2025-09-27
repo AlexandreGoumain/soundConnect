@@ -20,14 +20,14 @@ export default function Footer() {
                             <h4 className="footer-title">Navigation</h4>
                             <ul className="footer-menu">
                                 <li>
-                                    <a onClick={() => navigate("/")}>
+                                    <button type="button" onClick={() => navigate("/")} className="footer-link">
                                         Rechercher
-                                    </a>
+                                    </button>
                                 </li>
                                 <li>
-                                    <a onClick={() => navigate("/")}>
+                                    <button type="button" onClick={() => navigate("/")} className="footer-link">
                                         Comment ça marche
-                                    </a>
+                                    </button>
                                 </li>
                             </ul>
                         </div>
@@ -45,30 +45,34 @@ export default function Footer() {
                         <div className="footer-column">
                             <h4 className="footer-title">Suivez-nous</h4>
                             <div className="social-links">
-                                <a
+                                <button
+                                    type="button"
                                     onClick={() => navigate("/")}
                                     className="social-link"
                                 >
                                     <FaFacebook />
-                                </a>
-                                <a
+                                </button>
+                                <button
+                                    type="button"
                                     onClick={() => navigate("/")}
                                     className="social-link"
                                 >
                                     <FaInstagram />
-                                </a>
-                                <a
+                                </button>
+                                <button
+                                    type="button"
                                     onClick={() => navigate("/")}
                                     className="social-link"
                                 >
                                     <FaTwitter />
-                                </a>
-                                <a
+                                </button>
+                                <button
+                                    type="button"
                                     onClick={() => navigate("/")}
                                     className="social-link"
                                 >
                                     <FaYoutube />
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>

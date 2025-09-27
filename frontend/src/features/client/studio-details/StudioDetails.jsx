@@ -52,7 +52,6 @@ const StudioDetails = () => {
         navigate,
     } = useStudioDetailsLogic();
 
-
     if (loading) {
         return (
             <div className="studio-details loading">
@@ -99,10 +98,7 @@ const StudioDetails = () => {
                     studioName={studio.name}
                 />
 
-                <StudioOverview
-                    studio={studio}
-                    formatAddress={formatAddress}
-                />
+                <StudioOverview studio={studio} formatAddress={formatAddress} />
 
                 <StudioEquipment equipmentList={studio.equipment_list} />
 

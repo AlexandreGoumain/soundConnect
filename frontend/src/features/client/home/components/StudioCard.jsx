@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import StarRating from "../../../../components/StarRating.jsx";
+import StarRating from "../../../../components/shared/StarRating.jsx";
 import { resolveStudioImages } from "../../../studio-dashboard/lib/studioImages.js";
 import { BADGES, HOME_CONSTANTS } from "../constants/homeConstants.js";
 

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useArtistReservations } from "../../../hooks/useArtistReservations.js";
 import { useToast } from "../../../hooks/useToast.js";
 import { apiClient } from "../../../lib/apiClient.js";
+import { formatDateTime, calculateDuration, toISOString } from "../../../lib/dateUtils.js";
 
 export function useMyReservations() {
     const [statusFilter, setStatusFilter] = useState("all");
@@ -52,29 +53,7 @@ export function useMyReservations() {
         return icons[status] || "📋";
     };
 
-    const formatDateTime = (datetime) => {
-        const date = new Date(datetime);
-        //TODO : create a shared function timezone converter
-        return {
-            date: date.toLocaleDateString("fr-FR", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-            }),
-            time: date.toLocaleTimeString("fr-FR", {
-                hour: "2-digit",
-                minute: "2-digit",
-            }),
-        };
-    };
 
-    const calculateDuration = (start, end) => {
-        const duration = new Date(end) - new Date(start);
-        const hours = Math.floor(duration / (1000 * 60 * 60));
-        const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
-        return `${hours}h${minutes > 0 ? ` ${minutes}min` : ""}`;
-    };
 
     const isReservationModifiable = (reservation) => {
         const now = new Date();
@@ -85,8 +64,8 @@ export function useMyReservations() {
         console.log(`Reservation ${reservation.id.slice(-8)}:`, {
             status: reservation.status,
             isPending,
-            endTime: endTime.toISOString(),
-            now: now.toISOString(),
+            endTime: toISOString(endTime),
+            now: toISOString(now),
             isFuture,
             canModify: isPending && isFuture,
         });

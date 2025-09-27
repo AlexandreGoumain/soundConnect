@@ -4,6 +4,12 @@ import { useAuth } from "../../../../hooks/useAuth.js";
 import { useToast } from "../../../../hooks/useToast.js";
 import { apiClient } from "../../../../lib/apiClient";
 import {
+    formatTimeFromComponents,
+    getFutureDateISO,
+    getNextHourTime,
+    getTodayISO,
+} from "../../../../lib/dateUtils.js";
+import {
     parseStudioImagesField,
     resolveStudioImageSrc,
 } from "../../../studio-dashboard/lib/studioImages.js";
@@ -127,7 +133,10 @@ export function useStudioDetailsLogic() {
 
         try {
             setIsBooking(true);
-            const endTime = calculateEndTime(selectedTimeSlot, selectedDuration);
+            const endTime = calculateEndTime(
+                selectedTimeSlot,
+                selectedDuration
+            );
 
             // Create datetime strings for the reservation
             const startDateTime = `${selectedDate}T${selectedTimeSlot}:00`;
@@ -221,21 +230,18 @@ export function useStudioDetailsLogic() {
         const endDate = new Date(
             startDate.getTime() + duration * 60 * 60 * 1000
         );
-        return `${endDate.getHours().toString().padStart(2, "0")}:${endDate
-            .getMinutes()
-            .toString()
-            .padStart(2, "0")}`;
+        return formatTimeFromComponents(
+            endDate.getHours(),
+            endDate.getMinutes()
+        );
     };
 
     const getMinDate = () => {
-        const today = new Date();
-        return today.toISOString().split("T")[0];
+        return getTodayISO();
     };
 
     const getMaxDate = () => {
-        const maxDate = new Date();
-        maxDate.setDate(maxDate.getDate() + 30); // 30 days in advance
-        return maxDate.toISOString().split("T")[0];
+        return getFutureDateISO(30); // 30 days in advance
     };
 
     const formatAddress = () => {
@@ -261,9 +267,9 @@ export function useStudioDetailsLogic() {
 
         if (selectedDateObj.getTime() === today.getTime()) {
             const now = new Date();
-            const nextHour = new Date(now);
-            nextHour.setHours(now.getHours() + 1, 0, 0, 0);
-            return `Aucun créneau disponible pour aujourd'hui. Prochains créneaux disponibles à partir de ${nextHour.getHours()}:00 (réservation minimum 1h à l'avance)`;
+            return `Aucun créneau disponible pour aujourd'hui. Prochains créneaux disponibles à partir de ${getNextHourTime(
+                now
+            )} (réservation minimum 1h à l'avance)`;
         } else if (!isStudioOpen(selectedDate)) {
             return "Le studio est fermé ce jour";
         } else {

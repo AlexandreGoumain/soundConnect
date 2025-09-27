@@ -1,37 +1,34 @@
 import { useState } from "react";
-import { useStudioFilter } from "../../hooks/useStudioFilter.js";
+import { formatDateWithOptions } from "../../lib/dateUtils.js";
 import "../../styles/components/_studio-dashboard.scss";
 import DashboardSidebar from "./components/DashboardSidebar.jsx";
 import TimeRangeChips from "./components/TimeRangeChips.jsx";
 import { useOverview } from "./hooks/useOverview.js";
 
+const STATUS_LABELS = {
+    pending: "En attente",
+    confirmed: "Confirmées",
+    completed: "Terminées",
+    cancelled: "Annulées",
+};
+
+const DATE_FORMAT_OPTIONS = {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+};
+
 export default function Overview() {
     const [range, setRange] = useState("year");
     const { data, loading, error } = useOverview(range);
-    const { selectedStudio } = useStudioFilter();
 
     if (loading)
         return <div className="container">Chargement du dashboard…</div>;
     if (error) return <div className="container">Erreur: {error}</div>;
     if (!data) return <div className="container">Aucune donnée</div>;
 
-    const { totals, rating, upcoming, reservations_by_status } = data;
-
-    // Organiser les réservations par statut
-    const reservationsByStatus = {
-        pending: upcoming.filter(r => r.status === 'pending'),
-        confirmed: upcoming.filter(r => r.status === 'confirmed'),
-        completed: upcoming.filter(r => r.status === 'completed'),
-        cancelled: upcoming.filter(r => r.status === 'cancelled')
-    };
-
-    const statusLabels = {
-        pending: 'En attente',
-        confirmed: 'Confirmées',
-        completed: 'Terminées',
-        cancelled: 'Annulées'
-    };
-
+    const { totals, rating, reservations_by_status } = data;
 
     return (
         <div className="container studio-dashboard">
@@ -79,54 +76,75 @@ export default function Overview() {
                     </div>
 
                     <div className="reservations-section">
-                        <h2 className="section-title">Réservations par statut</h2>
+                        <h2 className="section-title">
+                            Réservations par statut
+                        </h2>
                         <div className="reservations-grid">
-                            {Object.entries(reservationsByStatus).map(([status, reservations]) => (
-                                <div key={status} className="reservation-status-card">
-                                    <div className="card-header">
-                                        <h3 className="card-title">
-                                            {statusLabels[status]}
-                                        </h3>
-                                        <span className={`count-badge ${status}`}>
-                                            {reservations.length}
-                                        </span>
-                                    </div>
-                                    <div className="reservation-list">
-                                        {reservations.length === 0 ? (
-                                            <p className="no-reservations">Aucune réservation</p>
-                                        ) : (
-                                            reservations.slice(0, 5).map(reservation => (
-                                                <div key={reservation.id} className="reservation-item">
-                                                    <div className="reservation-info">
-                                                        <span className="client-name">
-                                                            {reservation.first_name} {reservation.last_name}
-                                                        </span>
-                                                        <span className="studio-name">
-                                                            {reservation.studio_name}
-                                                        </span>
-                                                    </div>
-                                                    <div className="reservation-time">
-                                                        {new Date(reservation.start_datetime).toLocaleDateString('fr-FR', {
-                                                            day: '2-digit',
-                                                            month: '2-digit',
-                                                            hour: '2-digit',
-                                                            minute: '2-digit'
-                                                        })}
-                                                    </div>
+                            {Object.entries(reservations_by_status).map(
+                                ([status, reservations]) => (
+                                    <div
+                                        key={status}
+                                        className="reservation-status-card"
+                                    >
+                                        <div className="card-header">
+                                            <h3 className="card-title">
+                                                {STATUS_LABELS[status]}
+                                            </h3>
+                                            <span
+                                                className={`count-badge ${status}`}
+                                            >
+                                                {reservations.length}
+                                            </span>
+                                        </div>
+                                        <div className="reservation-list">
+                                            {reservations.length === 0 ? (
+                                                <p className="no-reservations">
+                                                    Aucune réservation
+                                                </p>
+                                            ) : (
+                                                reservations
+                                                    .slice(0, 5)
+                                                    .map((reservation) => (
+                                                        <div
+                                                            key={reservation.id}
+                                                            className="reservation-item"
+                                                        >
+                                                            <div className="reservation-info">
+                                                                <span className="client-name">
+                                                                    {
+                                                                        reservation.first_name
+                                                                    }{" "}
+                                                                    {
+                                                                        reservation.last_name
+                                                                    }
+                                                                </span>
+                                                                <span className="studio-name">
+                                                                    {
+                                                                        reservation.studio_name
+                                                                    }
+                                                                </span>
+                                                            </div>
+                                                            <div className="reservation-time">
+                                                                {formatDateWithOptions(
+                                                                    reservation.start_datetime,
+                                                                    DATE_FORMAT_OPTIONS
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                            )}
+                                            {reservations.length > 5 && (
+                                                <div className="see-more">
+                                                    +{reservations.length - 5}{" "}
+                                                    autres
                                                 </div>
-                                            ))
-                                        )}
-                                        {reservations.length > 5 && (
-                                            <div className="see-more">
-                                                +{reservations.length - 5} autres
-                                            </div>
-                                        )}
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                )
+                            )}
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

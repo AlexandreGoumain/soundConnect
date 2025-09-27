@@ -16,35 +16,107 @@
 }
 
 .search-filters {
-    padding: 16px;
-    margin-bottom: 16px;
+    margin-bottom: $spacing-xl;
+
+    &__section {
+        margin-bottom: $spacing-xl;
+
+        &:last-of-type {
+            margin-bottom: $spacing-lg;
+        }
+    }
+
+    &__section-title {
+        font-size: $font-size-md;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: $spacing-md;
+        padding-bottom: $spacing-sm;
+        border-bottom: 2px solid var(--border-color);
+        position: relative;
+
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 3rem;
+            height: 2px;
+            background: var(--primary);
+        }
+    }
 
     &__row {
         display: grid;
-        gap: 8px;
-        margin-top: 12px;
+        gap: $spacing-md;
         grid-template-columns: 1fr;
 
-        &:first-child {
-            margin-top: 0;
+        &--two-cols {
+            @include tablet {
+                grid-template-columns: 1fr 1fr;
+                gap: $spacing-lg;
+            }
         }
 
-        @include tablet {
-            gap: 12px;
-
-            &--two-cols {
-                grid-template-columns: 1fr 1fr;
+        &--grid {
+            @include tablet {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: $spacing-lg;
             }
 
-            &--four-cols {
-                grid-template-columns: 2fr 1fr 1fr 1fr;
+            @include desktop {
+                grid-template-columns: repeat(3, 1fr);
             }
         }
     }
 
     &__actions {
         display: flex;
-        gap: 8px;
-        margin-top: 16px;
+        flex-direction: column;
+        gap: $spacing-sm;
+        margin-top: $spacing-xl;
+        padding-top: $spacing-lg;
+        border-top: 1px solid var(--border-color);
+
+        @include tablet {
+            flex-direction: row;
+            justify-content: flex-end;
+            gap: $spacing-md;
+        }
+    }
+
+    // Override form-group styles for better integration
+    .form-group {
+        margin-bottom: 0;
+
+        label {
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: $spacing-sm;
+            display: block;
+        }
+
+        .input, .select {
+            @include input-base;
+            width: 100%;
+
+            &.input-error, &.select-error {
+                border-color: var(--error);
+            }
+        }
+
+        .hint {
+            font-size: $font-size-sm;
+            color: var(--text-muted);
+            margin-top: $spacing-xs;
+            display: block;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: $font-size-sm;
+            margin-top: $spacing-xs;
+            display: block;
+        }
     }
 }

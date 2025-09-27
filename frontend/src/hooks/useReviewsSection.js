@@ -3,6 +3,7 @@ import { useAuth } from "./useAuth";
 import { useToast } from "./useToast";
 import { apiClient } from "../lib/apiClient";
 import { validateReview } from "../lib/validation/formValidators.js";
+import { formatDate, formatDateRange } from "../lib/dateUtils.js";
 
 export function useReviewsSection(studioId) {
     const { user } = useAuth();
@@ -154,25 +155,9 @@ export function useReviewsSection(studioId) {
         setNewReview({ ...newReview, rating });
     };
 
-    // Utility functions
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString("fr-FR", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
-    };
-
+    // Utility functions - using shared date utilities
     const formatReservationDate = (startDate, endDate) => {
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        return `${start.toLocaleDateString("fr-FR")} ${start.toLocaleTimeString(
-            "fr-FR",
-            { hour: "2-digit", minute: "2-digit" }
-        )} - ${end.toLocaleTimeString("fr-FR", {
-            hour: "2-digit",
-            minute: "2-digit",
-        })}`;
+        return formatDateRange(startDate, endDate);
     };
 
     return {

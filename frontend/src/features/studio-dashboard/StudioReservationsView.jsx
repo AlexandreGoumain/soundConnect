@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useStudioFilter } from "../../hooks/useStudioFilter.js";
 import { useToast } from "../../hooks/useToast.js";
 import { apiClient } from "../../lib/apiClient.js";
+import { formatDateTime, calculateDuration } from "../../lib/dateUtils.js";
 import "../../styles/components/_studio-dashboard.scss";
 import DashboardSidebar from "./components/DashboardSidebar.jsx";
 import { useMyReservations } from "./hooks/useMyReservations.js";
@@ -60,28 +61,7 @@ export default function StudioReservationsView({ all = false }) {
         return icons[status] || "📋";
     };
 
-    const formatDateTime = (datetime) => {
-        const date = new Date(datetime);
-        return {
-            date: date.toLocaleDateString("fr-FR", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-            }),
-            time: date.toLocaleTimeString("fr-FR", {
-                hour: "2-digit",
-                minute: "2-digit",
-            }),
-        };
-    };
 
-    const calculateDuration = (start, end) => {
-        const duration = new Date(end) - new Date(start);
-        const hours = Math.floor(duration / (1000 * 60 * 60));
-        const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
-        return `${hours}h${minutes > 0 ? ` ${minutes}min` : ""}`;
-    };
 
     const updateReservationStatus = async (reservationId, newStatus) => {
         try {
