@@ -10,7 +10,10 @@ class StudioError extends Error {
 const parseDate = (value, fieldName) => {
     const parsed = new Date(value);
     if (Number.isNaN(parsed.getTime())) {
-        throw new StudioError(400, `Invalid date format for ${fieldName}. Use YYYY-MM-DD`);
+        throw new StudioError(
+            400,
+            `Invalid date format for ${fieldName}. Use YYYY-MM-DD`
+        );
     }
     return parsed;
 };
@@ -39,6 +42,8 @@ export async function listStudios(filters = {}) {
         sort,
         available_on,
         duration,
+        page,
+        limit,
     } = filters;
 
     if (available_on) {
@@ -48,9 +53,15 @@ export async function listStudios(filters = {}) {
         target.setHours(0, 0, 0, 0);
 
         if (target < today) {
-            throw new StudioError(400, "Cannot search availability for past dates");
+            throw new StudioError(
+                400,
+                "Cannot search availability for past dates"
+            );
         }
     }
+
+    // Check if pagination is requested
+    const isPaginated = page || limit;
 
     const hasFilters =
         city ||
@@ -63,6 +74,24 @@ export async function listStudios(filters = {}) {
         available_on ||
         duration;
 
+    if (isPaginated) {
+        // Use paginated version
+        return Studio.findFilteredWithPagination({
+            city,
+            postal_code,
+            min_rate,
+            max_rate,
+            tags,
+            equipment,
+            sort,
+            available_on,
+            duration,
+            page: parseInt(page) || 1,
+            limit: parseInt(limit) || 9,
+        });
+    }
+
+    // Backward compatibility: return non-paginated results
     if (hasFilters) {
         return Studio.findFiltered({
             city,

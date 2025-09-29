@@ -24,12 +24,28 @@ export const createStudio = async (req, res) => {
 
 export const getAllStudios = async (req, res) => {
     try {
-        const studios = await listStudios(req.query);
+        const result = await listStudios(req.query);
 
-        res.json({
-            success: true,
-            data: { studios },
-        });
+        // Check if result has pagination metadata, else backward compatibility
+        if (result.pagination) {
+            res.json({
+                success: true,
+                data: {
+                    studios: result.studios,
+                    totalPages: result.pagination.totalPages,
+                    totalStudios: result.pagination.totalStudios,
+                    currentPage: result.pagination.currentPage,
+                    pageSize: result.pagination.pageSize,
+                    hasNextPage: result.pagination.hasNextPage,
+                    hasPrevPage: result.pagination.hasPrevPage,
+                },
+            });
+        } else {
+            res.json({
+                success: true,
+                data: { studios: result },
+            });
+        }
     } catch (error) {
         handleStudioError(res, error, "Error retrieving studios");
     }
@@ -104,7 +120,7 @@ function handleStudioError(res, error, fallbackMessage) {
         });
     }
 
-    error(fallbackMessage, error);
+    console.error(fallbackMessage, error);
     return res.status(500).json({
         success: false,
         message: fallbackMessage,

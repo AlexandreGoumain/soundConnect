@@ -92,13 +92,71 @@ class Reservation {
         return reservations.length > 0 ? reservations[0] : null;
     }
 
+    static async findByUserWithPagination(user_id, options = {}) {
+        const { page = 1, limit = 5, status = null, sort = 'date' } = options;
+        const pageInt = parseInt(page);
+        const limitInt = parseInt(limit);
+        const offset = (pageInt - 1) * limitInt;
+
+        let whereClause = 'WHERE r.user_id = ?';
+        let params = [user_id];
+
+        if (status && status !== 'all') {
+            whereClause += ' AND r.status = ?';
+            params.push(status);
+        }
+
+        let orderClause = 'ORDER BY r.start_datetime DESC';
+        if (sort === 'status') {
+            orderClause = 'ORDER BY r.status ASC, r.start_datetime DESC';
+        } else if (sort === 'studio') {
+            orderClause = 'ORDER BY s.name ASC, r.start_datetime DESC';
+        }
+
+        // Get total count
+        const [countResult] = await pool.execute(
+            `SELECT COUNT(*) as total FROM reservations r ${whereClause}`,
+            params
+        );
+
+        const totalReservations = countResult[0].total;
+        const totalPages = Math.ceil(totalReservations / limitInt);
+
+        // Get paginated results
+        const [reservations] = await pool.execute(
+            `SELECT r.*,
+                    s.name as studio_name, s.email as studio_email, s.phone as studio_phone,
+                    s.street_number, s.street_name, s.city as studio_city, s.postal_code as studio_postal_code,
+                    CONCAT(s.street_number, ' ', s.street_name) as studio_address
+             FROM reservations r
+             JOIN studios s ON r.studio_id = s.id
+             ${whereClause}
+             ${orderClause}
+             LIMIT ${limitInt} OFFSET ${offset}`,
+            params
+        );
+
+        return {
+            reservations,
+            pagination: {
+                currentPage: pageInt,
+                totalPages,
+                totalReservations,
+                pageSize: limitInt,
+                hasNextPage: pageInt < totalPages,
+                hasPrevPage: pageInt > 1,
+            }
+        };
+    }
+
     static async findByUser(user_id) {
         const [reservations] = await pool.execute(
-            `SELECT r.*, 
+            `SELECT r.*,
                     s.name as studio_name, s.email as studio_email, s.phone as studio_phone,
-                    s.street_number, s.street_name, s.city as studio_city, s.postal_code as studio_postal_code
-             FROM reservations r 
-             JOIN studios s ON r.studio_id = s.id 
+                    s.street_number, s.street_name, s.city as studio_city, s.postal_code as studio_postal_code,
+                    CONCAT(s.street_number, ' ', s.street_name) as studio_address
+             FROM reservations r
+             JOIN studios s ON r.studio_id = s.id
              WHERE r.user_id = ?
              ORDER BY r.start_datetime DESC`,
             [user_id]

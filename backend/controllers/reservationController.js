@@ -25,12 +25,28 @@ export const createReservation = async (req, res) => {
 
 export const getAllReservations = async (req, res) => {
     try {
-        const reservations = await getReservationsForActor(req.user);
+        const result = await getReservationsForActor(req.user, req.query);
 
-        res.json({
-            success: true,
-            data: { reservations },
-        });
+        // Check if result has pagination metadata, else backward compatibility
+        if (result.pagination) {
+            res.json({
+                success: true,
+                data: {
+                    reservations: result.reservations,
+                    totalPages: result.pagination.totalPages,
+                    totalReservations: result.pagination.totalReservations,
+                    currentPage: result.pagination.currentPage,
+                    pageSize: result.pagination.pageSize,
+                    hasNextPage: result.pagination.hasNextPage,
+                    hasPrevPage: result.pagination.hasPrevPage,
+                },
+            });
+        } else {
+            res.json({
+                success: true,
+                data: { reservations: result },
+            });
+        }
     } catch (error) {
         handleReservationError(res, error, "Error retrieving reservations");
     }

@@ -11,8 +11,71 @@
     color: var(--error);
 }
 
+.studios-results-info {
+    margin: $spacing-lg 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: $font-size-sm;
+}
+
 .studios-grid {
     margin-top: 16px;
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: $spacing-md;
+    margin-top: $spacing-xl;
+    padding: $spacing-lg 0;
+
+    .pagination-btn {
+        @include button-base;
+        padding: $spacing-sm $spacing-md;
+        border: 1px solid var(--border-color);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+
+        &:hover:not(:disabled) {
+            background: var(--bg-primary);
+            border-color: var(--primary);
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    .pagination-pages {
+        display: flex;
+        gap: $spacing-xs;
+
+        .pagination-page {
+            @include button-base;
+            padding: $spacing-sm $spacing-md;
+            border-radius: $border-radius;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-weight: 500;
+            min-width: 2.5rem;
+            text-align: center;
+            transition: all 0.2s ease;
+
+            &:hover {
+                background: var(--bg-primary);
+                border-color: var(--primary);
+            }
+
+            &.active {
+                background: var(--primary);
+                color: white;
+                border-color: var(--primary);
+            }
+        }
+    }
 }
 
 .search-filters {

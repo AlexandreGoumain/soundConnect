@@ -93,12 +93,25 @@ export async function createReservationForUser(user, payload) {
     return Reservation.create(reservationData);
 }
 
-export async function getReservationsForActor(user) {
+export async function getReservationsForActor(user, options = {}) {
     // Clean up expired reservations before fetching
     await cleanupExpiredReservations();
 
+    const { page, limit, status, sort } = options;
+    const isPaginated = page || limit;
+
     if (user.role_name === "studio") {
+        // TODO: Add pagination for studio owner reservations if needed
         return Reservation.findByStudioOwner(user.id);
+    }
+
+    if (isPaginated) {
+        return Reservation.findByUserWithPagination(user.id, {
+            page: parseInt(page) || 1,
+            limit: parseInt(limit) || 5,
+            status,
+            sort,
+        });
     }
 
     return Reservation.findByUser(user.id);
@@ -286,28 +299,16 @@ function validateScheduleForReservation(
     startDatetime,
     endDatetime
 ) {
-    console.log("=== Schedule validation debug ===");
-    console.log("Raw schedule:", scheduleRaw);
-    console.log("Start datetime:", startDatetime);
-    console.log("End datetime:", endDatetime);
-
     try {
         const schedule =
             typeof scheduleRaw === "string"
                 ? JSON.parse(scheduleRaw)
                 : scheduleRaw || {};
 
-        console.log("Parsed schedule:", schedule);
-
         const start = new Date(startDatetime);
         const end = new Date(endDatetime);
 
-        console.log("Start date object:", start);
-        console.log("Day index:", start.getDay());
-        console.log("Day name:", DAY_NAMES[start.getDay()]);
-
         const daySchedule = schedule?.[DAY_NAMES[start.getDay()]];
-        console.log("Day schedule:", daySchedule);
 
         if (!daySchedule || !daySchedule.is_open) {
             throw new ReservationError(
@@ -360,14 +361,9 @@ export async function cleanupExpiredReservations() {
             now
         );
 
-        console.log(
-            `Found ${expiredReservations.length} expired reservations to cleanup`
-        );
-
         // Update each expired reservation to cancelled status
         for (const reservation of expiredReservations) {
             await Reservation.update(reservation.id, { status: "cancelled" });
-            console.log(`Auto-cancelled expired reservation ${reservation.id}`);
         }
 
         return expiredReservations.length;

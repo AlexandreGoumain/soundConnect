@@ -20,12 +20,20 @@ export default function Footer() {
                             <h4 className="footer-title">Navigation</h4>
                             <ul className="footer-menu">
                                 <li>
-                                    <button type="button" onClick={() => navigate("/")} className="footer-link">
+                                    <button
+                                        type="button"
+                                        onClick={() => navigate("/")}
+                                        className="footer-link"
+                                    >
                                         Rechercher
                                     </button>
                                 </li>
                                 <li>
-                                    <button type="button" onClick={() => navigate("/")} className="footer-link">
+                                    <button
+                                        type="button"
+                                        onClick={() => navigate("/")}
+                                        className="footer-link"
+                                    >
                                         Comment ça marche
                                     </button>
                                 </li>
@@ -35,7 +43,7 @@ export default function Footer() {
                         <div className="footer-column">
                             <h4 className="footer-title">Légal</h4>
                             <ul className="footer-menu">
-                                <li onClick={() => navigate("/")}>navCGU</li>
+                                <li onClick={() => navigate("/")}>CGU</li>
                                 <li onClick={() => navigate("/")}>
                                     Confidentialité
                                 </li>

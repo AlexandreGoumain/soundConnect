@@ -2,6 +2,286 @@ import { randomUUID } from "crypto";
 import { pool } from "../config/database.js";
 
 class Studio {
+    static async findFilteredWithPagination(filters) {
+        const {
+            city,
+            postal_code,
+            min_rate,
+            max_rate,
+            tags,
+            equipment,
+            sort,
+            available_on,
+            duration,
+            page = 1,
+            limit = 9,
+        } = filters;
+
+        const pageInt = parseInt(page);
+        const limitInt = parseInt(limit);
+        const offset = (pageInt - 1) * limitInt;
+
+        // Base query
+        const where = [];
+        const params = [];
+
+        if (city) {
+            where.push("s.city LIKE ?");
+            params.push(`%${city}%`);
+        }
+        if (postal_code) {
+            where.push("s.postal_code LIKE ?");
+            params.push(`%${postal_code}%`);
+        }
+        if (min_rate) {
+            where.push("s.hourly_rate >= ?");
+            params.push(min_rate);
+        }
+        if (max_rate) {
+            where.push("s.hourly_rate <= ?");
+            params.push(max_rate);
+        }
+        if (tags) {
+            const list = String(tags)
+                .split(",")
+                .map((t) => t.trim())
+                .filter(Boolean);
+            for (const t of list) {
+                where.push("s.tags LIKE ?");
+                params.push(`%${t}%`);
+            }
+        }
+
+        if (equipment) {
+            const list = String(equipment)
+                .split(",")
+                .map((t) => t.trim())
+                .filter(Boolean);
+            for (const t of list) {
+                where.push("s.equipment_list LIKE ?");
+                params.push(`%${t}%`);
+            }
+        }
+
+        let orderBy = "s.created_at DESC";
+        if (sort === "price_asc") orderBy = "s.hourly_rate ASC";
+        if (sort === "price_desc") orderBy = "s.hourly_rate DESC";
+        if (sort === "rating_desc") orderBy = "rs.average_rating DESC";
+
+        const whereSql = where.length ? `WHERE ${where.join(" AND ")}` : "";
+
+        // Get total count for pagination
+        const [countResult] = await pool.execute(
+            `SELECT COUNT(DISTINCT s.id) as total
+             FROM studios s
+             JOIN users u ON s.owner_id = u.id
+             ${whereSql}`,
+            params
+        );
+
+        const totalStudios = countResult[0].total;
+        const totalPages = Math.ceil(totalStudios / limitInt);
+
+        // Get paginated results
+        const [rows] = await pool.execute(
+            `SELECT s.*, u.username as owner_username, u.email as owner_email,
+                    u.first_name as owner_first_name, u.last_name as owner_last_name,
+                    rs.total_reviews, rs.average_rating, rs.five_star, rs.four_star,
+                    rs.three_star, rs.two_star, rs.one_star
+             FROM studios s
+             JOIN users u ON s.owner_id = u.id
+             LEFT JOIN (
+                SELECT studio_id,
+                       COUNT(*) as total_reviews,
+                       AVG(rating) as average_rating,
+                       SUM(CASE WHEN rating = 5 THEN 1 ELSE 0 END) as five_star,
+                       SUM(CASE WHEN rating = 4 THEN 1 ELSE 0 END) as four_star,
+                       SUM(CASE WHEN rating = 3 THEN 1 ELSE 0 END) as three_star,
+                       SUM(CASE WHEN rating = 2 THEN 1 ELSE 0 END) as two_star,
+                       SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) as one_star
+                FROM reviews
+                GROUP BY studio_id
+             ) rs ON rs.studio_id = s.id
+             ${whereSql}
+             ORDER BY ${orderBy}
+             LIMIT ${limitInt} OFFSET ${offset}`,
+            params
+        );
+
+        // Normalize review stats
+        for (const studio of rows) {
+            studio.review_stats = {
+                total_reviews: studio.total_reviews || 0,
+                average_rating: studio.average_rating || 0,
+                five_star: studio.five_star || 0,
+                four_star: studio.four_star || 0,
+                three_star: studio.three_star || 0,
+                two_star: studio.two_star || 0,
+                one_star: studio.one_star || 0,
+            };
+            delete studio.total_reviews;
+            delete studio.average_rating;
+            delete studio.five_star;
+            delete studio.four_star;
+            delete studio.three_star;
+            delete studio.two_star;
+            delete studio.one_star;
+        }
+
+        // Handle availability filtering (simplified for pagination)
+        let studios = rows;
+        if (available_on && studios.length > 0) {
+            // Apply availability filter to current page results
+            studios = await this.filterByAvailability(
+                studios,
+                available_on,
+                duration
+            );
+        }
+
+        return {
+            studios,
+            pagination: {
+                currentPage: pageInt,
+                totalPages,
+                totalStudios,
+                pageSize: limitInt,
+                hasNextPage: pageInt < totalPages,
+                hasPrevPage: pageInt > 1,
+            },
+        };
+    }
+
+    static async filterByAvailability(studios, available_on, duration) {
+        const targetDate = new Date(available_on);
+        if (isNaN(targetDate.getTime())) return studios;
+
+        const durationHours = Math.min(
+            12,
+            Math.max(1, parseInt(duration || "1", 10) || 1)
+        );
+        const dayNames = [
+            "sunday",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+        ];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const targetYMD = new Date(targetDate);
+        targetYMD.setHours(0, 0, 0, 0);
+        const sameDay = targetYMD.getTime() === today.getTime();
+
+        const availableStudios = [];
+
+        for (const studio of studios) {
+            const schedule = studio.schedule || null;
+            if (!schedule) continue;
+
+            const daySchedule = schedule[dayNames[targetDate.getDay()]];
+            if (!daySchedule || !daySchedule.is_open) continue;
+
+            const openTime = new Date(
+                `${available_on}T${daySchedule.open_time}:00`
+            );
+            const closeTime = new Date(
+                `${available_on}T${daySchedule.close_time}:00`
+            );
+            if (!(closeTime > openTime)) continue;
+
+            // Apply minimum advance booking if date is today
+            let effectiveOpen = new Date(openTime);
+            if (sameDay) {
+                const now = new Date();
+                const minAdvance = new Date(now.getTime() + 60 * 60 * 1000);
+                const nextHour = new Date(minAdvance);
+                nextHour.setMinutes(0, 0, 0, 0);
+                while (nextHour < minAdvance) {
+                    nextHour.setHours(nextHour.getHours() + 1);
+                }
+                if (nextHour > effectiveOpen) effectiveOpen = nextHour;
+            }
+            if (effectiveOpen >= closeTime) continue;
+
+            // Check availability
+            const [reservations] = await pool.execute(
+                `SELECT start_datetime, end_datetime
+                 FROM reservations
+                 WHERE studio_id = ?
+                   AND DATE(start_datetime) = DATE(?)
+                   AND status IN ('confirmed','pending')`,
+                [studio.id, available_on]
+            );
+
+            const hasAvailability = this.checkTimeSlotAvailability(
+                effectiveOpen,
+                closeTime,
+                reservations,
+                durationHours
+            );
+
+            if (hasAvailability) {
+                availableStudios.push(studio);
+            }
+        }
+
+        return availableStudios;
+    }
+
+    static checkTimeSlotAvailability(
+        effectiveOpen,
+        closeTime,
+        reservations,
+        durationHours
+    ) {
+        const inWindow = reservations
+            .map((r) => ({
+                start: new Date(r.start_datetime),
+                end: new Date(r.end_datetime),
+            }))
+            .filter((iv) => iv.end > effectiveOpen && iv.start < closeTime)
+            .map((iv) => ({
+                start: iv.start < effectiveOpen ? effectiveOpen : iv.start,
+                end: iv.end > closeTime ? closeTime : iv.end,
+            }))
+            .sort((a, b) => a.start - b.start);
+
+        // Merge overlaps
+        const merged = [];
+        for (const iv of inWindow) {
+            if (!merged.length || iv.start > merged[merged.length - 1].end) {
+                merged.push({ ...iv });
+            } else {
+                merged[merged.length - 1].end = new Date(
+                    Math.max(
+                        merged[merged.length - 1].end.getTime(),
+                        iv.end.getTime()
+                    )
+                );
+            }
+        }
+
+        // Check free gaps >= duration
+        const needMs = durationHours * 60 * 60 * 1000;
+        let prev = effectiveOpen;
+
+        if (!merged.length) {
+            return closeTime.getTime() - prev.getTime() >= needMs;
+        }
+
+        for (const iv of merged) {
+            if (iv.start.getTime() - prev.getTime() >= needMs) {
+                return true;
+            }
+            if (iv.end > prev) prev = iv.end;
+        }
+
+        return closeTime.getTime() - prev.getTime() >= needMs;
+    }
+
     static async findFiltered(filters) {
         const {
             city,
@@ -302,19 +582,92 @@ class Studio {
         return await this.findById(id);
     }
 
+    static async findAllWithPagination(options = {}) {
+        const { page = 1, limit = 9 } = options;
+        const pageInt = parseInt(page);
+        const limitInt = parseInt(limit);
+        const offset = (pageInt - 1) * limitInt;
+
+        // Get total count
+        const [countResult] = await pool.execute(
+            `SELECT COUNT(DISTINCT s.id) as total
+             FROM studios s
+             JOIN users u ON s.owner_id = u.id`
+        );
+
+        const totalStudios = countResult[0].total;
+        const totalPages = Math.ceil(totalStudios / limitInt);
+
+        // Get paginated results with review stats
+        const [studios] = await pool.execute(
+            `SELECT s.*, u.username as owner_username, u.email as owner_email,
+                    u.first_name as owner_first_name, u.last_name as owner_last_name,
+                    rs.total_reviews, rs.average_rating, rs.five_star, rs.four_star,
+                    rs.three_star, rs.two_star, rs.one_star
+             FROM studios s
+             JOIN users u ON s.owner_id = u.id
+             LEFT JOIN (
+                SELECT studio_id,
+                       COUNT(*) as total_reviews,
+                       AVG(rating) as average_rating,
+                       SUM(CASE WHEN rating = 5 THEN 1 ELSE 0 END) as five_star,
+                       SUM(CASE WHEN rating = 4 THEN 1 ELSE 0 END) as four_star,
+                       SUM(CASE WHEN rating = 3 THEN 1 ELSE 0 END) as three_star,
+                       SUM(CASE WHEN rating = 2 THEN 1 ELSE 0 END) as two_star,
+                       SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) as one_star
+                FROM reviews
+                GROUP BY studio_id
+             ) rs ON rs.studio_id = s.id
+             ORDER BY s.created_at DESC
+             LIMIT ${limitInt} OFFSET ${offset}`
+        );
+
+        // Normalize review stats
+        for (const studio of studios) {
+            studio.review_stats = {
+                total_reviews: studio.total_reviews || 0,
+                average_rating: studio.average_rating || 0,
+                five_star: studio.five_star || 0,
+                four_star: studio.four_star || 0,
+                three_star: studio.three_star || 0,
+                two_star: studio.two_star || 0,
+                one_star: studio.one_star || 0,
+            };
+            delete studio.total_reviews;
+            delete studio.average_rating;
+            delete studio.five_star;
+            delete studio.four_star;
+            delete studio.three_star;
+            delete studio.two_star;
+            delete studio.one_star;
+        }
+
+        return {
+            studios,
+            pagination: {
+                currentPage: pageInt,
+                totalPages,
+                totalStudios,
+                pageSize: limitInt,
+                hasNextPage: pageInt < totalPages,
+                hasPrevPage: pageInt > 1,
+            },
+        };
+    }
+
     static async findAll() {
         const [studios] = await pool.execute(
             `SELECT s.*, u.username as owner_username, u.email as owner_email,
                     u.first_name as owner_first_name, u.last_name as owner_last_name
-             FROM studios s 
-             JOIN users u ON s.owner_id = u.id 
+             FROM studios s
+             JOIN users u ON s.owner_id = u.id
              ORDER BY s.created_at DESC`
         );
 
         // Add review statistics to each studio
         for (let studio of studios) {
             const [reviewStats] = await pool.execute(
-                `SELECT 
+                `SELECT
                     COUNT(*) as total_reviews,
                     AVG(rating) as average_rating,
                     SUM(CASE WHEN rating = 5 THEN 1 ELSE 0 END) as five_star,
@@ -322,7 +675,7 @@ class Studio {
                     SUM(CASE WHEN rating = 3 THEN 1 ELSE 0 END) as three_star,
                     SUM(CASE WHEN rating = 2 THEN 1 ELSE 0 END) as two_star,
                     SUM(CASE WHEN rating = 1 THEN 1 ELSE 0 END) as one_star
-                 FROM reviews 
+                 FROM reviews
                  WHERE studio_id = ?`,
                 [studio.id]
             );

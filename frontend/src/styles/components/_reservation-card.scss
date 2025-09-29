@@ -1,0 +1,315 @@
+@use "../utils/variables" as *;
+@use "../utils/mixins" as *;
+
+.reservation-card {
+    @include card;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    &__header {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: $spacing-md;
+        border-bottom: 1px solid var(--border-color);
+        gap: $spacing-md;
+
+        @include tablet {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: $spacing-lg;
+        }
+    }
+
+    &__studio-info {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+        flex: 1;
+
+        @include tablet {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+
+    &__studio-name {
+        font-size: $font-size-base;
+        font-weight: 600;
+        margin: 0;
+        color: var(--text-color);
+        line-height: 1.2;
+
+        @include tablet {
+            font-size: $font-size-lg;
+        }
+    }
+
+    &__status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 0.875rem;
+        border-radius: 50px;
+        font-size: $font-size-sm;
+        font-weight: 600;
+        text-transform: capitalize;
+        white-space: nowrap;
+        align-self: flex-start;
+
+        @include tablet {
+            align-self: center;
+        }
+
+        &--pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        &--confirmed {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        &--completed {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+            border: 1px solid rgba(107, 114, 128, 0.2);
+        }
+
+        &--cancelled {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+    }
+
+    &__status-icon {
+        margin-right: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    &__id {
+        font-size: $font-size-sm;
+        color: var(--text-muted);
+        font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+        background: var(--bg-secondary);
+        padding: 0.25rem 0.5rem;
+        border-radius: $border-radius;
+        white-space: nowrap;
+        align-self: flex-end;
+    }
+
+    &__content {
+        padding: $spacing-md;
+
+        @include tablet {
+            padding: $spacing-lg;
+        }
+    }
+
+    &__datetime {
+        margin-bottom: $spacing-md;
+    }
+
+    &__date-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    &__date {
+        font-size: $font-size-base;
+        font-weight: 600;
+        color: var(--text-color);
+        text-transform: capitalize;
+
+        @include tablet {
+            font-size: $font-size-lg;
+        }
+    }
+
+    &__time-range {
+        font-size: $font-size-sm;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+
+        @include tablet {
+            font-size: $font-size-base;
+        }
+    }
+
+    &__duration {
+        font-weight: 600;
+        color: var(--primary-color);
+        font-size: $font-size-sm;
+    }
+
+    &__studio-details {
+        margin-bottom: $spacing-md;
+        padding: $spacing-md;
+        background: var(--bg-secondary);
+        border-radius: $border-radius;
+    }
+
+    &__address {
+        font-weight: 500;
+        color: var(--text-color);
+        margin-bottom: 0.25rem;
+    }
+
+    &__city {
+        font-size: $font-size-sm;
+        color: var(--text-muted);
+    }
+
+    &__special-requests {
+        padding: $spacing-md;
+        background: rgba(59, 130, 246, 0.05);
+        border: 1px solid rgba(59, 130, 246, 0.1);
+        border-radius: $border-radius;
+        margin-top: $spacing-md;
+    }
+
+    &__requests-label {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+        font-size: $font-size-sm;
+    }
+
+    &__requests-content {
+        color: var(--text-muted);
+        font-style: italic;
+        line-height: 1.5;
+        font-size: $font-size-sm;
+    }
+
+    &__footer {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: $spacing-md;
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border-color);
+        gap: $spacing-md;
+
+        @include tablet {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: $spacing-lg;
+        }
+    }
+
+    &__price {
+        font-size: $font-size-xl;
+        font-weight: 700;
+        color: var(--success-color);
+        order: 1;
+        text-align: center;
+        margin-bottom: $spacing-sm;
+
+        @include tablet {
+            order: 2;
+            text-align: left;
+            margin-bottom: 0;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+        order: 2;
+
+        @include tablet {
+            order: 1;
+            flex-direction: row;
+        }
+    }
+
+    &__btn {
+        @include button-base;
+        padding: 0.625rem 1.25rem;
+        font-size: $font-size-sm;
+        font-weight: 600;
+        border-radius: $border-radius;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+        white-space: nowrap;
+
+        &:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        &--primary {
+            background: var(--primary-color);
+            color: white;
+            border: 1px solid var(--primary-color);
+
+            &:hover {
+                background: var(--primary-dark);
+                border-color: var(--primary-dark);
+                transform: translateY(-1px);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
+
+        &--secondary {
+            background: white;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+
+            &:hover {
+                background: var(--bg-secondary);
+                border-color: var(--text-muted);
+            }
+        }
+
+        &--danger {
+            background: #dc2626;
+            color: white;
+            border: 1px solid #dc2626;
+
+            &:hover {
+                background: #b91c1c;
+                border-color: #b91c1c;
+                transform: translateY(-1px);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
+    }
+}
+
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+    .reservation-card {
+        &__btn--secondary {
+            background: var(--bg-primary);
+            color: var(--text-color);
+
+            &:hover {
+                background: var(--bg-secondary);
+            }
+        }
+    }
+}
