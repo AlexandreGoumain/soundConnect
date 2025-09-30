@@ -21,14 +21,23 @@ const DATE_FORMAT_OPTIONS = {
 
 export default function Overview() {
     const [range, setRange] = useState("year");
-    const { data, loading, error } = useOverview(range);
+    const { data, loading, error, updateReservationStatus } =
+        useOverview(range);
 
     if (loading)
         return <div className="container">Chargement du dashboard…</div>;
     if (error) return <div className="container">Erreur: {error}</div>;
     if (!data) return <div className="container">Aucune donnée</div>;
 
-    const { totals, rating, reservations_by_status } = data;
+    const { totals, rating, upcoming } = data;
+
+    // Regrouper les réservations par statut
+    const reservationsByStatus = {
+        pending: upcoming?.filter((r) => r.status === "pending") || [],
+        confirmed: upcoming?.filter((r) => r.status === "confirmed") || [],
+        completed: upcoming?.filter((r) => r.status === "completed") || [],
+        cancelled: upcoming?.filter((r) => r.status === "cancelled") || [],
+    };
 
     return (
         <div className="container studio-dashboard">
@@ -80,68 +89,109 @@ export default function Overview() {
                             Réservations par statut
                         </h2>
                         <div className="reservations-grid">
-                            {Object.entries(reservations_by_status).map(
-                                ([status, reservations]) => (
-                                    <div
-                                        key={status}
-                                        className="reservation-status-card"
-                                    >
-                                        <div className="card-header">
-                                            <h3 className="card-title">
-                                                {STATUS_LABELS[status]}
-                                            </h3>
-                                            <span
-                                                className={`count-badge ${status}`}
-                                            >
-                                                {reservations.length}
-                                            </span>
-                                        </div>
-                                        <div className="reservation-list">
-                                            {reservations.length === 0 ? (
-                                                <p className="no-reservations">
-                                                    Aucune réservation
-                                                </p>
-                                            ) : (
-                                                reservations
-                                                    .slice(0, 5)
-                                                    .map((reservation) => (
-                                                        <div
-                                                            key={reservation.id}
-                                                            className="reservation-item"
-                                                        >
-                                                            <div className="reservation-info">
-                                                                <span className="client-name">
-                                                                    {
-                                                                        reservation.first_name
-                                                                    }{" "}
-                                                                    {
-                                                                        reservation.last_name
-                                                                    }
-                                                                </span>
-                                                                <span className="studio-name">
-                                                                    {
-                                                                        reservation.studio_name
-                                                                    }
-                                                                </span>
-                                                            </div>
-                                                            <div className="reservation-time">
-                                                                {formatDateWithOptions(
-                                                                    reservation.start_datetime,
-                                                                    DATE_FORMAT_OPTIONS
+                            {Object.entries(reservationsByStatus).map(
+                                ([status, reservations]) => {
+                                    const reservationList = Array.isArray(
+                                        reservations
+                                    )
+                                        ? reservations
+                                        : [];
+                                    return (
+                                        <div
+                                            key={status}
+                                            className="reservation-status-card"
+                                        >
+                                            <div className="card-header">
+                                                <h3 className="card-title">
+                                                    {STATUS_LABELS[status]}
+                                                </h3>
+                                                <span
+                                                    className={`count-badge ${status}`}
+                                                >
+                                                    {reservationList.length}
+                                                </span>
+                                            </div>
+                                            <div className="reservation-list">
+                                                {reservationList.length ===
+                                                0 ? (
+                                                    <p className="no-reservations">
+                                                        Aucune réservation
+                                                    </p>
+                                                ) : (
+                                                    reservationList
+                                                        .slice(0, 5)
+                                                        .map((reservation) => (
+                                                            <div
+                                                                key={
+                                                                    reservation.id
+                                                                }
+                                                                className="reservation-item"
+                                                            >
+                                                                <div className="reservation-info">
+                                                                    <span className="client-name">
+                                                                        {
+                                                                            reservation.first_name
+                                                                        }{" "}
+                                                                        {
+                                                                            reservation.last_name
+                                                                        }
+                                                                    </span>
+                                                                    <span className="studio-name">
+                                                                        {
+                                                                            reservation.studio_name
+                                                                        }
+                                                                    </span>
+                                                                    <div className="reservation-time">
+                                                                        {formatDateWithOptions(
+                                                                            reservation.start_datetime,
+                                                                            DATE_FORMAT_OPTIONS
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                                {status ===
+                                                                    "pending" && (
+                                                                    <div className="reservation-actions-compact">
+                                                                        <button
+                                                                            className="btn-icon btn-success"
+                                                                            onClick={() =>
+                                                                                updateReservationStatus(
+                                                                                    reservation.id,
+                                                                                    "confirmed"
+                                                                                )
+                                                                            }
+                                                                            title="Confirmer"
+                                                                        >
+                                                                            ✓
+                                                                        </button>
+                                                                        <button
+                                                                            className="btn-icon btn-danger"
+                                                                            onClick={() =>
+                                                                                updateReservationStatus(
+                                                                                    reservation.id,
+                                                                                    "cancelled"
+                                                                                )
+                                                                            }
+                                                                            title="Refuser"
+                                                                        >
+                                                                            ✕
+                                                                        </button>
+                                                                    </div>
                                                                 )}
                                                             </div>
-                                                        </div>
-                                                    ))
-                                            )}
-                                            {reservations.length > 5 && (
-                                                <div className="see-more">
-                                                    +{reservations.length - 5}{" "}
-                                                    autres
-                                                </div>
-                                            )}
+                                                        ))
+                                                )}
+                                                {reservationList.length > 5 && (
+                                                    <div className="see-more">
+                                                        +
+                                                        {reservationList.length -
+                                                            5}{" "}
+                                                        autres
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                )
+                                    );
+                                }
                             )}
                         </div>
                     </div>

@@ -296,6 +296,22 @@
                 transform: translateY(0);
             }
         }
+
+        &--success {
+            background: var(--success-color);
+            color: white;
+            border: 1px solid var(--success-color);
+
+            &:hover {
+                background: #059669;
+                border-color: #059669;
+                transform: translateY(-1px);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
     }
 }
 

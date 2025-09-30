@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useStudioFilter } from "../../hooks/useStudioFilter.js";
-import { useToast } from "../../hooks/useToast.js";
-import { apiClient } from "../../lib/apiClient.js";
-import { formatDateTime, calculateDuration } from "../../lib/dateUtils.js";
+import { calculateDuration, formatDateTime } from "../../lib/dateUtils.js";
 import "../../styles/components/_studio-dashboard.scss";
 import DashboardSidebar from "./components/DashboardSidebar.jsx";
 import { useMyReservations } from "./hooks/useMyReservations.js";
@@ -17,21 +15,37 @@ export default function StudioReservationsView({ all = false }) {
     const [sortBy, setSortBy] = useState("date");
     const [expandedDetails, setExpandedDetails] = useState(new Set());
 
-    const { showToast } = useToast();
-    const { reservations, loading, error, refetch } = useMyReservations(studioId);
+    const { reservations, loading, error, updateReservationStatus } =
+        useMyReservations(studioId);
 
     if (loading) return <div className="container">Chargement…</div>;
     if (error) return <div className="container">Erreur: {error}</div>;
+
+    // Ordre de priorité des statuts
+    const statusOrder = {
+        pending: 1,
+        confirmed: 2,
+        completed: 3,
+        cancelled: 4,
+    };
 
     // Filtrer et trier les réservations
     const filteredReservations = reservations
         .filter((r) => statusFilter === "all" || r.status === statusFilter)
         .sort((a, b) => {
             if (sortBy === "date") {
+                // D'abord par statut, puis par date
+                const statusDiff =
+                    statusOrder[a.status] - statusOrder[b.status];
+                if (statusDiff !== 0) return statusDiff;
                 return new Date(b.start_datetime) - new Date(a.start_datetime);
             }
             if (sortBy === "status") {
-                return a.status.localeCompare(b.status);
+                // Par statut puis par date
+                const statusDiff =
+                    statusOrder[a.status] - statusOrder[b.status];
+                if (statusDiff !== 0) return statusDiff;
+                return new Date(b.start_datetime) - new Date(a.start_datetime);
             }
             if (sortBy === "client") {
                 return `${a.first_name} ${a.last_name}`.localeCompare(
@@ -56,29 +70,9 @@ export default function StudioReservationsView({ all = false }) {
             pending: "⏳",
             confirmed: "✅",
             completed: "🏁",
-            cancelled: "❌"
+            cancelled: "❌",
         };
         return icons[status] || "📋";
-    };
-
-
-
-    const updateReservationStatus = async (reservationId, newStatus) => {
-        try {
-            await apiClient.put(`/reservations/${reservationId}`, {
-                status: newStatus
-            });
-
-            showToast(
-                `Réservation ${newStatus === 'confirmed' ? 'confirmée' : newStatus === 'cancelled' ? 'refusée' : 'mise à jour'} avec succès`,
-                "success"
-            );
-
-            refetch();
-        } catch (error) {
-            showToast("Erreur lors de la mise à jour de la réservation", "error");
-            console.error("Error updating reservation:", error);
-        }
     };
 
     const toggleDetails = (reservationId) => {
@@ -197,7 +191,9 @@ export default function StudioReservationsView({ all = false }) {
                                                         className={`status-badge ${reservation.status}`}
                                                     >
                                                         <span className="status-icon">
-                                                            {getStatusIcon(reservation.status)}
+                                                            {getStatusIcon(
+                                                                reservation.status
+                                                            )}
                                                         </span>
                                                         {getStatusLabel(
                                                             reservation.status
@@ -265,24 +261,27 @@ export default function StudioReservationsView({ all = false }) {
                                                     </div>
                                                 </div>
 
-                                                {reservation.special_requests && expandedDetails.has(reservation.id) && (
-                                                    <div className="requests-section">
-                                                        <div className="icon">
-                                                            💬
-                                                        </div>
-                                                        <div>
-                                                            <div className="label">
-                                                                Demandes
-                                                                spéciales :
+                                                {reservation.special_requests &&
+                                                    expandedDetails.has(
+                                                        reservation.id
+                                                    ) && (
+                                                        <div className="requests-section">
+                                                            <div className="icon">
+                                                                💬
                                                             </div>
-                                                            <div className="content">
-                                                                {
-                                                                    reservation.special_requests
-                                                                }
+                                                            <div>
+                                                                <div className="label">
+                                                                    Demandes
+                                                                    spéciales :
+                                                                </div>
+                                                                <div className="content">
+                                                                    {
+                                                                        reservation.special_requests
+                                                                    }
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                )}
+                                                    )}
                                             </div>
                                         </div>
 
@@ -302,31 +301,56 @@ export default function StudioReservationsView({ all = false }) {
                                                 {reservation.special_requests && (
                                                     <button
                                                         className="btn-secondary btn-sm"
-                                                        onClick={() => toggleDetails(reservation.id)}
+                                                        onClick={() =>
+                                                            toggleDetails(
+                                                                reservation.id
+                                                            )
+                                                        }
                                                     >
-                                                        {expandedDetails.has(reservation.id) ? 'Masquer détails' : 'Voir détails'}
+                                                        {expandedDetails.has(
+                                                            reservation.id
+                                                        )
+                                                            ? "Masquer détails"
+                                                            : "Voir détails"}
                                                     </button>
                                                 )}
-                                                {reservation.status === "pending" && (
+                                                {reservation.status ===
+                                                    "pending" && (
                                                     <>
                                                         <button
                                                             className="btn-primary btn-sm"
-                                                            onClick={() => updateReservationStatus(reservation.id, 'confirmed')}
+                                                            onClick={() =>
+                                                                updateReservationStatus(
+                                                                    reservation.id,
+                                                                    "confirmed"
+                                                                )
+                                                            }
                                                         >
                                                             Confirmer
                                                         </button>
                                                         <button
                                                             className="btn-danger btn-sm"
-                                                            onClick={() => updateReservationStatus(reservation.id, 'cancelled')}
+                                                            onClick={() =>
+                                                                updateReservationStatus(
+                                                                    reservation.id,
+                                                                    "cancelled"
+                                                                )
+                                                            }
                                                         >
                                                             Refuser
                                                         </button>
                                                     </>
                                                 )}
-                                                {reservation.status === "confirmed" && (
+                                                {reservation.status ===
+                                                    "confirmed" && (
                                                     <button
                                                         className="btn-success btn-sm"
-                                                        onClick={() => updateReservationStatus(reservation.id, 'completed')}
+                                                        onClick={() =>
+                                                            updateReservationStatus(
+                                                                reservation.id,
+                                                                "completed"
+                                                            )
+                                                        }
                                                     >
                                                         Marquer terminé
                                                     </button>

@@ -101,7 +101,37 @@ export function useMyReservations() {
         return canCancel && isFuture;
     };
 
+    const canLeaveReview = (reservation) => {
+        const now = new Date();
+        const endTime = new Date(reservation.end_datetime);
+        const isCompleted = reservation.status === "completed";
+        const isPast = endTime < now;
+        const hasNotReviewed = !reservation.has_reviewed;
+
+        return isCompleted && isPast && hasNotReviewed;
+    };
+
     // Handlers
+
+    const submitReview = async (reviewData) => {
+        try {
+            await apiClient.post("/reviews", {
+                studio_id: reviewData.studio_id,
+                ...reviewData,
+            });
+
+            showToast("Avis publié avec succès", "success");
+            refetch({
+                page: currentPage,
+                limit: pageSize,
+                status: statusFilter,
+                sort: sortBy,
+            });
+        } catch (error) {
+            showToast("Erreur lors de la publication de l'avis", "error");
+            throw error;
+        }
+    };
 
     const cancelReservation = async (reservationId) => {
         if (!confirm("Êtes-vous sûr de vouloir annuler cette réservation ?")) {
@@ -168,6 +198,7 @@ export function useMyReservations() {
         cancelReservation,
         toggleDetails,
         handleModifyReservation,
+        submitReview,
 
         // Pagination controls
         nextPage,
@@ -181,5 +212,6 @@ export function useMyReservations() {
         calculateDuration,
         isReservationModifiable,
         isReservationCancellable,
+        canLeaveReview,
     };
 }

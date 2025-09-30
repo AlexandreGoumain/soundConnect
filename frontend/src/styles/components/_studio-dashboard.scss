@@ -137,6 +137,11 @@
             }
 
             .reservation-info {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+
                 .client-name {
                     font-weight: 600;
                     color: var(--text-color);
@@ -146,14 +151,52 @@
                 .studio-name {
                     color: var(--text-muted);
                     font-size: $font-size-sm;
-                    margin-top: 0.25rem;
+                }
+
+                .reservation-time {
+                    font-size: $font-size-sm;
+                    color: var(--text-muted);
                 }
             }
 
-            .reservation-time {
-                font-size: $font-size-sm;
-                color: var(--text-muted);
-                text-align: right;
+            .reservation-actions-compact {
+                display: flex;
+                gap: 0.5rem;
+                align-items: center;
+
+                .btn-icon {
+                    width: 32px;
+                    height: 32px;
+                    border-radius: 50%;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 1rem;
+                    font-weight: bold;
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    &.btn-success {
+                        background: var(--success-color);
+                        color: white;
+
+                        &:hover {
+                            background: darken(#10b981, 10%);
+                            transform: scale(1.1);
+                        }
+                    }
+
+                    &.btn-danger {
+                        background: var(--danger-color);
+                        color: white;
+
+                        &:hover {
+                            background: darken(#ef4444, 10%);
+                            transform: scale(1.1);
+                        }
+                    }
+                }
             }
         }
 
@@ -218,4 +261,178 @@
     display: flex;
     flex-direction: column;
     gap: $spacing-lg;
+}
+
+.reservation-detail-card {
+    @include card;
+    padding: $spacing-lg;
+    border: 2px solid var(--border-color);
+    transition: all 0.2s ease;
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -#{$spacing-lg / 2};
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        height: 1px;
+        background: linear-gradient(to right, transparent, var(--border-color), transparent);
+    }
+
+    &:last-child::after {
+        display: none;
+    }
+
+    &:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+
+    .reservation-main {
+        margin-bottom: $spacing-md;
+    }
+
+    .reservation-header {
+        @include flex-between;
+        margin-bottom: $spacing-lg;
+        padding-bottom: $spacing-md;
+        border-bottom: 2px solid var(--bg-secondary);
+
+        .studio-info {
+            display: flex;
+            align-items: center;
+            gap: $spacing-md;
+
+            .studio-name {
+                font-size: $font-size-xl;
+                font-weight: 600;
+                margin: 0;
+                color: var(--text-color);
+            }
+
+            .status-badge {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                border-radius: $border-radius;
+                font-size: $font-size-sm;
+                font-weight: 600;
+                color: white;
+
+                .status-icon {
+                    font-size: 1.2em;
+                }
+
+                &.pending { background: var(--warning-color); }
+                &.confirmed { background: var(--success-color); }
+                &.completed { background: var(--text-muted); }
+                &.cancelled { background: var(--danger-color); }
+            }
+        }
+
+        .reservation-id {
+            font-size: $font-size-sm;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+    }
+
+    .reservation-content {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-md;
+
+        .datetime-section,
+        .client-section,
+        .requests-section {
+            .date-info,
+            .client-info {
+                display: flex;
+                align-items: flex-start;
+                gap: $spacing-md;
+
+                .icon {
+                    font-size: 1.5rem;
+                    flex-shrink: 0;
+                }
+
+                .date {
+                    font-weight: 600;
+                    color: var(--text-color);
+                    margin-bottom: 0.25rem;
+                }
+
+                .time-range {
+                    color: var(--text-muted);
+                    font-size: $font-size-sm;
+
+                    .duration {
+                        margin-left: 0.5rem;
+                        color: var(--text-muted);
+                        font-style: italic;
+                    }
+                }
+
+                .client-name {
+                    font-weight: 600;
+                    color: var(--text-color);
+                    margin-bottom: 0.25rem;
+                }
+
+                .client-details {
+                    color: var(--text-muted);
+                    font-size: $font-size-sm;
+                }
+            }
+        }
+
+        .requests-section {
+            display: flex;
+            gap: $spacing-md;
+            padding: $spacing-md;
+            background: var(--bg-secondary);
+            border-radius: $border-radius;
+            margin-top: $spacing-sm;
+
+            .icon {
+                font-size: 1.5rem;
+                flex-shrink: 0;
+            }
+
+            .label {
+                font-weight: 600;
+                color: var(--text-color);
+                margin-bottom: 0.5rem;
+            }
+
+            .content {
+                color: var(--text-muted);
+                line-height: 1.5;
+            }
+        }
+    }
+
+    .reservation-actions {
+        @include flex-between;
+        margin-top: $spacing-lg;
+        padding-top: $spacing-md;
+        border-top: 1px solid var(--border-color);
+
+        .price-info {
+            .price {
+                font-size: $font-size-xl;
+                font-weight: 700;
+                color: var(--primary-color);
+            }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: $spacing-sm;
+        }
+    }
 }

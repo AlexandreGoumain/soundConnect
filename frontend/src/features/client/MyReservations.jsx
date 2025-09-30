@@ -1,11 +1,16 @@
+import { useState } from "react";
 import SelectDropdown from "../../components/shared/SelectDropdown.jsx";
 import ReservationCard from "./components/ReservationCard.jsx";
+import ReviewModal from "../../components/shared/ReviewModal.jsx";
 import "../../styles/components/_studio-dashboard.scss";
 import "../../styles/components/_reservation-card.scss";
 import { useMyReservations } from "./hooks/useMyReservations.js";
 
 
 export default function MyReservations() {
+    const [reviewModalOpen, setReviewModalOpen] = useState(false);
+    const [selectedReservation, setSelectedReservation] = useState(null);
+
     const {
         statusFilter,
         sortBy,
@@ -23,6 +28,7 @@ export default function MyReservations() {
         cancelReservation,
         toggleDetails,
         handleModifyReservation,
+        submitReview,
         nextPage,
         prevPage,
         goToPage,
@@ -32,7 +38,26 @@ export default function MyReservations() {
         calculateDuration,
         isReservationModifiable,
         isReservationCancellable,
+        canLeaveReview,
     } = useMyReservations();
+
+    const handleLeaveReview = (reservation) => {
+        setSelectedReservation(reservation);
+        setReviewModalOpen(true);
+    };
+
+    const handleCloseReviewModal = () => {
+        setReviewModalOpen(false);
+        setSelectedReservation(null);
+    };
+
+    const handleSubmitReview = async (reviewData) => {
+        await submitReview({
+            ...reviewData,
+            studio_id: selectedReservation?.studio_id
+        });
+        handleCloseReviewModal();
+    };
 
     if (loading) return <div className="container">Chargement…</div>;
     if (error) return <div className="container">Erreur: {error}</div>;
@@ -105,12 +130,14 @@ export default function MyReservations() {
                                 onToggleDetails={toggleDetails}
                                 onCancelReservation={cancelReservation}
                                 onModifyReservation={handleModifyReservation}
+                                onLeaveReview={handleLeaveReview}
                                 formatDateTime={formatDateTime}
                                 calculateDuration={calculateDuration}
                                 getStatusLabel={getStatusLabel}
                                 getStatusIcon={getStatusIcon}
                                 isReservationModifiable={isReservationModifiable}
                                 isReservationCancellable={isReservationCancellable}
+                                canLeaveReview={canLeaveReview}
                             />
                         ))}
                     </div>
@@ -154,6 +181,15 @@ export default function MyReservations() {
                     </div>
                 )}
             </div>
+
+            {/* Review Modal */}
+            <ReviewModal
+                isOpen={reviewModalOpen}
+                onClose={handleCloseReviewModal}
+                onSubmit={handleSubmitReview}
+                studioName={selectedReservation?.studio_name}
+                reservationId={selectedReservation?.id}
+            />
         </div>
     );
 }
