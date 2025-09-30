@@ -4,12 +4,14 @@ export default function ReservationCard({
     onToggleDetails,
     onCancelReservation,
     onModifyReservation,
+    onLeaveReview,
     formatDateTime,
     calculateDuration,
     getStatusLabel,
     getStatusIcon,
     isReservationModifiable,
-    isReservationCancellable
+    isReservationCancellable,
+    canLeaveReview
 }) {
     const startFormat = formatDateTime(reservation.start_datetime);
     const endFormat = formatDateTime(reservation.end_datetime);
@@ -87,6 +89,15 @@ export default function ReservationCard({
                             onClick={() => onToggleDetails(reservation.id)}
                         >
                             {isExpanded ? "Masquer détails" : "Voir détails"}
+                        </button>
+                    )}
+
+                    {canLeaveReview && canLeaveReview(reservation) && (
+                        <button
+                            className="reservation-card__btn reservation-card__btn--success"
+                            onClick={() => onLeaveReview(reservation)}
+                        >
+                            ⭐ Laisser un avis
                         </button>
                     )}
 

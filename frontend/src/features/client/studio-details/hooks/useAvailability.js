@@ -23,7 +23,40 @@ export const useAvailability = (studioId) => {
                     `/availability/${studioId}/slots?date=${date}&duration=${duration}`
                 );
 
-                setAvailableSlots(response.data.data.available_slots || []);
+                const slots = response.data.data.available_slots || [];
+
+                // Filter out slots that have already passed
+                const now = new Date();
+                const selectedDate = new Date(date);
+                selectedDate.setHours(0, 0, 0, 0);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const filteredSlots = slots.filter((slot) => {
+                    // If the selected date is in the future, show all slots
+                    if (selectedDate > today) {
+                        return true;
+                    }
+
+                    // If the selected date is today, only show future slots
+                    if (selectedDate.getTime() === today.getTime()) {
+                        const [hours, minutes] = slot.start_time
+                            .split(":")
+                            .map(Number);
+                        const slotDateTime = new Date();
+                        slotDateTime.setHours(hours, minutes, 0, 0);
+
+                        // Only show slots that are at least 1 hour in the future
+                        const oneHourFromNow = new Date(
+                            now.getTime() + 60 * 60 * 1000
+                        );
+                        return slotDateTime >= oneHourFromNow;
+                    }
+
+                    return false;
+                });
+
+                setAvailableSlots(filteredSlots);
             } catch {
                 showError("Erreur lors du chargement des créneaux disponibles");
                 setAvailableSlots([]);

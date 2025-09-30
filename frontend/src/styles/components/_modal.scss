@@ -1,0 +1,208 @@
+@use "../utils/variables" as *;
+@use "../utils/mixins" as *;
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: $spacing-md;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: var(--bg-primary);
+    border-radius: $border-radius-lg;
+    max-width: 550px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-lg;
+    border-bottom: 1px solid var(--border-color);
+
+    h2 {
+        margin: 0;
+        font-size: $font-size-xl;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: var(--bg-secondary);
+            color: var(--text-color);
+        }
+    }
+}
+
+.modal-body {
+    padding: $spacing-lg;
+
+    .form-group {
+        margin-bottom: $spacing-lg;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: $spacing-sm;
+        font-weight: 600;
+        color: var(--text-color);
+        font-size: $font-size-base;
+    }
+
+    .studio-name-display {
+        font-size: $font-size-lg;
+        font-weight: 500;
+        color: var(--primary-color);
+        margin: 0;
+        padding: $spacing-sm 0;
+    }
+
+    .star-rating {
+        display: flex;
+        gap: $spacing-sm;
+        margin: $spacing-sm 0;
+
+        .star {
+            background: none;
+            border: none;
+            font-size: 2.5rem;
+            color: var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0;
+
+            &:hover,
+            &.active {
+                color: #fbbf24;
+                transform: scale(1.1);
+            }
+
+            &:focus {
+                outline: none;
+            }
+        }
+    }
+
+    .rating-text {
+        margin-top: $spacing-sm;
+        color: var(--text-muted);
+        font-size: $font-size-sm;
+    }
+
+    .form-textarea {
+        @include input-base;
+        width: 100%;
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+        line-height: 1.5;
+    }
+
+    .char-count {
+        margin-top: $spacing-xs;
+        font-size: $font-size-sm;
+        color: var(--text-muted);
+        text-align: right;
+    }
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-md;
+    padding: $spacing-lg;
+    border-top: 1px solid var(--border-color);
+
+    button {
+        padding: $spacing-sm $spacing-lg;
+        border-radius: $border-radius;
+        font-weight: 600;
+        font-size: $font-size-base;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+
+        &:hover:not(:disabled) {
+            background: var(--bg-secondary);
+            border-color: var(--text-muted);
+        }
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+        border: 1px solid var(--primary-color);
+
+        &:hover:not(:disabled) {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        max-width: 100%;
+        margin: $spacing-sm;
+    }
+
+    .modal-body {
+        .star-rating .star {
+            font-size: 2rem;
+        }
+    }
+}
