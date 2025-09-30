@@ -1,5 +1,6 @@
 import Reservation from "../models/Reservation.js";
 import Studio from "../models/Studio.js";
+import { isSameDay } from "../utils/compareDate.js";
 
 class ReservationError extends Error {
     constructor(statusCode, message) {
@@ -56,12 +57,7 @@ export async function createReservationForUser(user, payload) {
         throw new ReservationError(400, "End date must be after start date");
     }
 
-    const sameDay =
-        startTime.getFullYear() === now.getFullYear() &&
-        startTime.getMonth() === now.getMonth() &&
-        startTime.getDate() === now.getDate();
-
-    if (sameDay) {
+    if (isSameDay(startTime, now)) {
         const minAdvance = new Date(now.getTime() + HOUR_IN_MS);
         if (startTime < minAdvance) {
             throw new ReservationError(
