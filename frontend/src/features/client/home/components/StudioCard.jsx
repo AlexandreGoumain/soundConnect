@@ -16,51 +16,107 @@ export default function StudioCard({ studio }) {
     );
 
     const coverImage = studioImages[0] || "";
+    const averageRating = studio.review_stats?.average_rating || 0;
+    const totalReviews = studio.review_stats?.total_reviews || 0;
 
     return (
-        <Link to={`/studios/${studio.id}`} className="studio-card">
-            <div className="studio-image">
-                {coverImage ? (
-                    <img
-                        src={coverImage}
-                        alt={`Photo du studio ${studio.name}`}
-                        loading="lazy"
-                    />
-                ) : (
-                    <div className="image-placeholder">
-                        <span>Image indisponible</span>
-                    </div>
-                )}
-            </div>
-            <div className="studio-info">
-                <h3 className="studio-name">{studio.name}</h3>
-                <p className="studio-location">
-                    {studio.city} - {studio.postal_code}
-                </p>
-                <p className="studio-price">
-                    <span className="price">{studio.hourly_rate}€/h</span>
-                    <div className="rating">
-                        <StarRating
-                            rating={studio.review_stats?.average_rating || 0}
-                            showNumber={true}
-                            size="small"
+        <article
+            className="studio-card"
+            itemScope
+            itemType="https://schema.org/MusicVenue"
+        >
+            <Link
+                to={`/studios/${studio.id}`}
+                aria-label={`Voir les détails du studio ${studio.name} à ${studio.city}`}
+            >
+                <figure className="studio-image">
+                    {coverImage ? (
+                        <img
+                            src={coverImage}
+                            alt={`Studio d'enregistrement ${studio.name}`}
+                            loading="lazy"
+                            width="300"
+                            height="200"
+                            itemProp="image"
                         />
-                        <span className="review-count">
-                            ({studio.review_stats?.total_reviews || 0} avis)
+                    ) : (
+                        <div
+                            className="image-placeholder"
+                            role="img"
+                            aria-label="Aucune image disponible"
+                        >
+                            <span>Image indisponible</span>
+                        </div>
+                    )}
+                </figure>
+                <div className="studio-info">
+                    <h3 className="studio-name" itemProp="name">
+                        {studio.name}
+                    </h3>
+                    <p
+                        className="studio-location"
+                        itemProp="address"
+                        itemScope
+                        itemType="https://schema.org/PostalAddress"
+                    >
+                        <span itemProp="addressLocality">{studio.city}</span> -{" "}
+                        <span itemProp="postalCode">{studio.postal_code}</span>
+                    </p>
+                    <div className="studio-price-rating">
+                        <p className="studio-price">
+                            <span className="price" itemProp="priceRange">
+                                {studio.hourly_rate}€/h
+                            </span>
+                        </p>
+                        <div
+                            className="rating"
+                            itemProp="aggregateRating"
+                            itemScope
+                            itemType="https://schema.org/AggregateRating"
+                        >
+                            <meta
+                                itemProp="ratingValue"
+                                content={averageRating.toString()}
+                            />
+                            <meta
+                                itemProp="reviewCount"
+                                content={totalReviews.toString()}
+                            />
+                            <StarRating
+                                rating={averageRating}
+                                showNumber={true}
+                                size="small"
+                            />
+                            <span
+                                className="review-count"
+                                aria-label={`${totalReviews} avis`}
+                            >
+                                ({totalReviews} avis)
+                            </span>
+                        </div>
+                    </div>
+                    {truncatedDescription && (
+                        <p
+                            className="studio-description"
+                            itemProp="description"
+                        >
+                            {truncatedDescription}...
+                        </p>
+                    )}
+                    <div
+                        className="studio-badges"
+                        role="list"
+                        aria-label="Labels du studio"
+                    >
+                        <span className="badge badge-pro" role="listitem">
+                            {BADGES.PRO}
+                        </span>
+                        <span className="badge badge-trending" role="listitem">
+                            {BADGES.TRENDING}
                         </span>
                     </div>
-                </p>
-                <p className="studio-description">
-                    {truncatedDescription}
-                    {truncatedDescription && "..."}
-                </p>
-                <div className="studio-badges">
-                    <span className="badge badge-pro">{BADGES.PRO}</span>
-                    <span className="badge badge-trending">
-                        {BADGES.TRENDING}
-                    </span>
                 </div>
-            </div>
-        </Link>
+            </Link>
+        </article>
     );
 }

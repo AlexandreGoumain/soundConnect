@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../../../hooks/useAuth.js";
 import { apiClient } from "../../../../lib/apiClient.js";
 import { validateRegistrationForm } from "../../../../lib/validation/formValidators.js";
@@ -13,6 +13,7 @@ export const ROLE_DISPLAY = {
 export function useRegisterForm() {
     const { register, status, user } = useAuth();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     // Form state
     const [step, setStep] = useState(1);
@@ -84,6 +85,24 @@ export function useRegisterForm() {
         setAccountType({ id: role.id, name: role.name, label: display.label });
         setStep(2);
     };
+
+    useEffect(() => {
+        const roleParam = searchParams.get("role");
+        if (roleParam && roles.length > 0 && !accountType) {
+            const matchingRole = roles.find((role) => role.name === roleParam);
+            if (matchingRole) {
+                const display = ROLE_DISPLAY[matchingRole.name] || {
+                    label: matchingRole.name,
+                };
+                setAccountType({
+                    id: matchingRole.id,
+                    name: matchingRole.name,
+                    label: display.label,
+                });
+                setStep(2);
+            }
+        }
+    }, [searchParams, roles, accountType]);
 
     const handleBackToStep1 = () => {
         setStep(1);

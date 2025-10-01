@@ -1,4 +1,8 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+    useEscapeKey,
+    useFocusTrap,
+} from "../../hooks/useKeyboardNavigation.js";
 import "../../styles/components/_modal.scss";
 
 export default function ReviewModal({
@@ -12,6 +16,25 @@ export default function ReviewModal({
     const [hoveredRating, setHoveredRating] = useState(0);
     const [comment, setComment] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const modalRef = useRef(null);
+
+    // Focus trap pour garder le focus dans la modal
+    useFocusTrap(modalRef, isOpen);
+
+    // Fermer avec Escape
+    useEscapeKey(onClose, isOpen);
+
+    // Bloquer le scroll du body quand la modal est ouverte
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -48,14 +71,25 @@ export default function ReviewModal({
     };
 
     return (
-        <div className="modal-overlay" onClick={handleCancel}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div
+            className="modal-overlay"
+            onClick={handleCancel}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="review-modal-title"
+        >
+            <div
+                className="modal-content"
+                onClick={(e) => e.stopPropagation()}
+                ref={modalRef}
+            >
                 <div className="modal-header">
-                    <h2>Laisser un avis</h2>
+                    <h2 id="review-modal-title">Laisser un avis</h2>
                     <button
                         className="modal-close"
                         onClick={handleCancel}
-                        aria-label="Fermer"
+                        aria-label="Fermer la fenêtre"
+                        type="button"
                     >
                         ✕
                     </button>

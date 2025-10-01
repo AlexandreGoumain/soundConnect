@@ -41,25 +41,41 @@ export default function HowItWorksSection() {
     };
 
     return (
-        <section className="how-it-works-section">
+        <section
+            className="how-it-works-section"
+            id="how-it-works"
+            aria-labelledby="how-it-works-title"
+        >
             <div className="container">
-                <div className="section-header">
-                    <h2 className="section-title">Comment ça marche</h2>
+                <header className="section-header">
+                    <h2 className="section-title" id="how-it-works-title">
+                        Comment ça marche
+                    </h2>
                     <p className="section-subtitle">
                         Découvrez comment SoundConnect facilite la connexion
                         entre artistes et studios
                     </p>
-                </div>
+                </header>
 
                 {/* Navigation par onglets */}
-                <div className="tabs-navigation">
+                <div
+                    className="tabs-navigation"
+                    role="tablist"
+                    aria-label="Type d'utilisateur"
+                >
                     <button
                         className={`tab-btn ${
                             activeTab === "artists" ? "active" : ""
                         }`}
                         onClick={() => setActiveTab("artists")}
+                        role="tab"
+                        aria-selected={activeTab === "artists"}
+                        aria-controls="artists-panel"
+                        id="artists-tab"
                     >
-                        <span className="tab-icon">🎤</span>
+                        <span className="tab-icon" aria-hidden="true">
+                            🎤
+                        </span>
                         Pour les artistes
                     </button>
                     <button
@@ -67,8 +83,14 @@ export default function HowItWorksSection() {
                             activeTab === "studios" ? "active" : ""
                         }`}
                         onClick={() => setActiveTab("studios")}
+                        role="tab"
+                        aria-selected={activeTab === "studios"}
+                        aria-controls="studios-panel"
+                        id="studios-tab"
                     >
-                        <span className="tab-icon">🎛️</span>
+                        <span className="tab-icon" aria-hidden="true">
+                            🎛️
+                        </span>
                         Pour les studios
                     </button>
                 </div>
@@ -76,18 +98,26 @@ export default function HowItWorksSection() {
                 {/* Contenu des onglets */}
                 <div className="tab-content">
                     {activeTab === "artists" && (
-                        <div className="steps-container">
-                            <div className="steps-grid enhanced">
+                        <div
+                            className="steps-container"
+                            role="tabpanel"
+                            id="artists-panel"
+                            aria-labelledby="artists-tab"
+                        >
+                            <ol className="steps-grid enhanced">
                                 {STEPS_DATA.map((step, index) => (
-                                    <div
-                                        key={step.id}
-                                        className="step enhanced"
-                                    >
+                                    <li key={step.id} className="step enhanced">
                                         <div className="step-icon-wrapper">
-                                            <div className="step-number">
+                                            <div
+                                                className="step-number"
+                                                aria-label={`Étape ${step.id}`}
+                                            >
                                                 {step.id}
                                             </div>
-                                            <div className="step-icon">
+                                            <div
+                                                className="step-icon"
+                                                aria-hidden="true"
+                                            >
                                                 {getStepIcon(
                                                     step.id,
                                                     "artists"
@@ -95,35 +125,46 @@ export default function HowItWorksSection() {
                                             </div>
                                         </div>
                                         <div className="step-content">
-                                            <h4 className="step-title">
+                                            <h3 className="step-title">
                                                 {step.title}
-                                            </h4>
+                                            </h3>
                                             <p className="step-description">
                                                 {step.description}
                                             </p>
                                         </div>
                                         {index < STEPS_DATA.length - 1 && (
-                                            <div className="step-connector"></div>
+                                            <div
+                                                className="step-connector"
+                                                aria-hidden="true"
+                                            ></div>
                                         )}
-                                    </div>
+                                    </li>
                                 ))}
-                            </div>
+                            </ol>
                         </div>
                     )}
 
                     {activeTab === "studios" && (
-                        <div className="steps-container">
-                            <div className="steps-grid enhanced">
+                        <div
+                            className="steps-container"
+                            role="tabpanel"
+                            id="studios-panel"
+                            aria-labelledby="studios-tab"
+                        >
+                            <ol className="steps-grid enhanced">
                                 {STUDIO_STEPS_DATA.map((step, index) => (
-                                    <div
-                                        key={step.id}
-                                        className="step enhanced"
-                                    >
+                                    <li key={step.id} className="step enhanced">
                                         <div className="step-icon-wrapper">
-                                            <div className="step-number">
+                                            <div
+                                                className="step-number"
+                                                aria-label={`Étape ${step.id}`}
+                                            >
                                                 {step.id}
                                             </div>
-                                            <div className="step-icon">
+                                            <div
+                                                className="step-icon"
+                                                aria-hidden="true"
+                                            >
                                                 {getStepIcon(
                                                     step.id,
                                                     "studios"
@@ -131,20 +172,23 @@ export default function HowItWorksSection() {
                                             </div>
                                         </div>
                                         <div className="step-content">
-                                            <h4 className="step-title">
+                                            <h3 className="step-title">
                                                 {step.title}
-                                            </h4>
+                                            </h3>
                                             <p className="step-description">
                                                 {step.description}
                                             </p>
                                         </div>
                                         {index <
                                             STUDIO_STEPS_DATA.length - 1 && (
-                                            <div className="step-connector"></div>
+                                            <div
+                                                className="step-connector"
+                                                aria-hidden="true"
+                                            ></div>
                                         )}
-                                    </div>
+                                    </li>
                                 ))}
-                            </div>
+                            </ol>
                         </div>
                     )}
                 </div>
