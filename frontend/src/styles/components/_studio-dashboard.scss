@@ -1,3 +1,5 @@
+@use "sass:color";
+@use "sass:math";
 @use "../utils/variables" as *;
 @use "../utils/mixins" as *;
 
@@ -182,7 +184,7 @@
                         color: white;
 
                         &:hover {
-                            background: darken(#10b981, 10%);
+                            background: color.adjust(#10b981, $lightness: -10%);
                             transform: scale(1.1);
                         }
                     }
@@ -192,7 +194,7 @@
                         color: white;
 
                         &:hover {
-                            background: darken(#ef4444, 10%);
+                            background: color.adjust(#ef4444, $lightness: -10%);
                             transform: scale(1.1);
                         }
                     }
@@ -273,7 +275,7 @@
     &::after {
         content: '';
         position: absolute;
-        bottom: -#{$spacing-lg / 2};
+        bottom: calc(-1 * #{math.div($spacing-lg, 2)});
         left: 50%;
         transform: translateX(-50%);
         width: 80%;

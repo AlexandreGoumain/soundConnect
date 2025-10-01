@@ -5,7 +5,7 @@ export default function HeroSection() {
     const { query, error, handleChange, handleSubmit } = useHeroSection();
 
     return (
-        <section className="hero-section">
+        <section className="hero-section" aria-label="Recherche de studios">
             <div className="hero-content">
                 <h1 className="hero-title">
                     Trouvez le studio idéal en quelques clics
@@ -14,7 +14,12 @@ export default function HeroSection() {
                     Réservez les meilleurs studios d'enregistrement près de chez
                     vous
                 </p>
-                <form className="search-form" onSubmit={handleSubmit}>
+                <form
+                    className="search-form"
+                    onSubmit={handleSubmit}
+                    role="search"
+                    aria-label="Rechercher un studio par localisation"
+                >
                     <div className="search-input-group">
                         <InputField
                             className="search-input"
@@ -24,10 +29,13 @@ export default function HeroSection() {
                             onChange={handleChange}
                             aria-label="Ville ou code postal"
                             error={error}
+                            id="hero-search"
+                            name="location"
                         />
                         <button
                             className="btn btn-primary search-btn"
                             type="submit"
+                            aria-label="Lancer la recherche"
                         >
                             Rechercher
                         </button>

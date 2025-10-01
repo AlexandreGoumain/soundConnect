@@ -21,11 +21,22 @@ export default function ClientLayout() {
 
     return (
         <div className="main-layout">
-            <header>
+            <a href="#main-content" className="skip-link">
+                Aller au contenu principal
+            </a>
+            <a href="#main-navigation" className="skip-link">
+                Aller à la navigation
+            </a>
+
+            <header id="main-navigation">
                 <Navbar links={navigationLinks} />
             </header>
 
-            <main className="main-layout-content">
+            <main
+                id="main-content"
+                className="main-layout-content"
+                tabIndex={-1}
+            >
                 <Outlet />
             </main>
 

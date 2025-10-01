@@ -21,14 +21,26 @@ export default function StudiosList() {
 
     return (
         <div className="container studios-container">
-            <h2>Rechercher</h2>
+            <h1>Rechercher un studio</h1>
             <SearchFilters />
-            {loading && <p>Chargement...</p>}
-            {error && <p className="studios-error">Erreur: {String(error)}</p>}
+            {loading && (
+                <p role="status" aria-live="polite">
+                    Chargement...
+                </p>
+            )}
+            {error && (
+                <p role="alert" className="studios-error">
+                    Erreur: {String(error)}
+                </p>
+            )}
             {!loading && !error && (
                 <>
                     {hasStudios && (
-                        <div className="studios-results-info">
+                        <div
+                            className="studios-results-info"
+                            role="status"
+                            aria-live="polite"
+                        >
                             <p>
                                 {totalStudios} studio
                                 {totalStudios > 1 ? "s" : ""} trouvé
@@ -38,27 +50,33 @@ export default function StudiosList() {
                         </div>
                     )}
 
-                    <div className="studios-grid">
-                        {!hasStudios ? (
-                            <p>Aucun studio trouvé</p>
-                        ) : (
-                            studios.map((s) => (
-                                <StudioCard key={s.id} studio={s} />
-                            ))
-                        )}
-                    </div>
+                    {hasStudios ? (
+                        <ul className="studios-grid">
+                            {studios.map((s) => (
+                                <li key={s.id}>
+                                    <StudioCard studio={s} />
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p role="status">Aucun studio trouvé</p>
+                    )}
 
                     {hasStudios && totalPages > 1 && (
-                        <div className="pagination-controls">
+                        <nav
+                            aria-label="Pagination des résultats"
+                            className="pagination-controls"
+                        >
                             <button
                                 onClick={prevPage}
                                 disabled={!hasPrevPage}
                                 className="pagination-btn"
+                                aria-label="Page précédente"
                             >
                                 ← Précédent
                             </button>
 
-                            <div className="pagination-pages">
+                            <div className="pagination-pages" role="list">
                                 {[...Array(totalPages)].map((_, index) => {
                                     const page = index + 1;
                                     return (
@@ -70,6 +88,12 @@ export default function StudiosList() {
                                                     ? "active"
                                                     : ""
                                             }`}
+                                            aria-label={`Page ${page}`}
+                                            aria-current={
+                                                currentPage === page
+                                                    ? "page"
+                                                    : undefined
+                                            }
                                         >
                                             {page}
                                         </button>
@@ -81,10 +105,11 @@ export default function StudiosList() {
                                 onClick={nextPage}
                                 disabled={!hasNextPage}
                                 className="pagination-btn"
+                                aria-label="Page suivante"
                             >
                                 Suivant →
                             </button>
-                        </div>
+                        </nav>
                     )}
                 </>
             )}

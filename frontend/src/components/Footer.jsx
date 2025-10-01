@@ -1,14 +1,13 @@
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Footer() {
-    const navigate = useNavigate();
     return (
-        <footer className="footer">
+        <footer className="footer" role="contentinfo">
             <div className="container">
                 <div className="footer-content">
                     <div className="footer-brand">
-                        <h1 className="footer-logo">SoundConnect</h1>
+                        <p className="footer-logo">SoundConnect</p>
                         <p className="footer-tagline">
                             La meilleure façon de trouver et réserver votre
                             studio d'enregistrement
@@ -16,72 +15,97 @@ export default function Footer() {
                     </div>
 
                     <div className="footer-links">
-                        <div className="footer-column">
+                        <nav
+                            className="footer-column"
+                            aria-label="Navigation secondaire"
+                        >
                             <h4 className="footer-title">Navigation</h4>
                             <ul className="footer-menu">
                                 <li>
-                                    <button
-                                        type="button"
-                                        onClick={() => navigate("/")}
-                                        className="footer-link"
-                                    >
+                                    <Link to="/studios" className="footer-link">
                                         Rechercher
-                                    </button>
+                                    </Link>
                                 </li>
                                 <li>
-                                    <button
-                                        type="button"
-                                        onClick={() => navigate("/")}
+                                    <Link
+                                        to="/#how-it-works"
                                         className="footer-link"
                                     >
                                         Comment ça marche
-                                    </button>
+                                    </Link>
                                 </li>
                             </ul>
-                        </div>
+                        </nav>
 
-                        <div className="footer-column">
+                        <nav
+                            className="footer-column"
+                            aria-label="Mentions légales"
+                        >
                             <h4 className="footer-title">Légal</h4>
                             <ul className="footer-menu">
-                                <li onClick={() => navigate("/")}>CGU</li>
-                                <li onClick={() => navigate("/")}>
-                                    Confidentialité
+                                <li>
+                                    <a href="#" className="footer-link">
+                                        CGU
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" className="footer-link">
+                                        Confidentialité
+                                    </a>
                                 </li>
                             </ul>
-                        </div>
+                        </nav>
 
                         <div className="footer-column">
                             <h4 className="footer-title">Suivez-nous</h4>
-                            <div className="social-links">
-                                <button
-                                    type="button"
-                                    onClick={() => navigate("/")}
-                                    className="social-link"
-                                >
-                                    <FaFacebook />
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => navigate("/")}
-                                    className="social-link"
-                                >
-                                    <FaInstagram />
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => navigate("/")}
-                                    className="social-link"
-                                >
-                                    <FaTwitter />
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => navigate("/")}
-                                    className="social-link"
-                                >
-                                    <FaYoutube />
-                                </button>
-                            </div>
+                            <nav aria-label="Réseaux sociaux">
+                                <ul className="social-links">
+                                    <li>
+                                        <a
+                                            href="https://facebook.com"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="social-link"
+                                            aria-label="Suivez-nous sur Facebook"
+                                        >
+                                            <FaFacebook aria-hidden="true" />
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="https://instagram.com"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="social-link"
+                                            aria-label="Suivez-nous sur Instagram"
+                                        >
+                                            <FaInstagram aria-hidden="true" />
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="https://twitter.com"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="social-link"
+                                            aria-label="Suivez-nous sur Twitter"
+                                        >
+                                            <FaTwitter aria-hidden="true" />
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            href="https://youtube.com"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="social-link"
+                                            aria-label="Suivez-nous sur YouTube"
+                                        >
+                                            <FaYoutube aria-hidden="true" />
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
