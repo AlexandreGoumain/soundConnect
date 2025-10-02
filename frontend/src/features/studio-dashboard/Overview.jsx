@@ -10,6 +10,7 @@ const STATUS_LABELS = {
     confirmed: "Confirmées",
     completed: "Terminées",
     cancelled: "Annulées",
+    expired: "Expirées",
 };
 
 const DATE_FORMAT_OPTIONS = {
@@ -37,6 +38,7 @@ export default function Overview() {
         confirmed: upcoming?.filter((r) => r.status === "confirmed") || [],
         completed: upcoming?.filter((r) => r.status === "completed") || [],
         cancelled: upcoming?.filter((r) => r.status === "cancelled") || [],
+        expired: upcoming?.filter((r) => r.status === "expired") || [],
     };
 
     return (

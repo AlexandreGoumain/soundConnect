@@ -66,6 +66,7 @@ export function useMyReservations() {
             confirmed: "Confirmée",
             completed: "Terminée",
             cancelled: "Annulée",
+            expired: "Expirée",
         };
         return labels[status] || status;
     };
@@ -77,6 +78,7 @@ export function useMyReservations() {
             confirmed: "✅",
             completed: "🏁",
             cancelled: "❌",
+            expired: "⌛",
         };
         return icons[status] || "📋";
     };

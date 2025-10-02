@@ -151,6 +151,7 @@ export async function updateReservationForActor(user, id, payload) {
             "confirmed",
             "completed",
             "cancelled",
+            "expired",
         ];
         if (!validStatuses.includes(status)) {
             throw new ReservationError(400, "Invalid reservation status");
@@ -163,15 +164,16 @@ export async function updateReservationForActor(user, id, payload) {
             throw new ReservationError(400, "Cannot modify past reservations");
         }
 
-        // Artists can cancel their reservations (except if already cancelled/completed)
+        // Artists can cancel their reservations (except if already cancelled/completed/expired)
         if (isOwner && status === "cancelled") {
             if (
                 reservation.status === "cancelled" ||
-                reservation.status === "completed"
+                reservation.status === "completed" ||
+                reservation.status === "expired"
             ) {
                 throw new ReservationError(
                     400,
-                    "Cannot change status of completed or cancelled reservations"
+                    "Cannot change status of completed, cancelled, or expired reservations"
                 );
             }
         }
@@ -184,15 +186,16 @@ export async function updateReservationForActor(user, id, payload) {
                 );
             }
         }
-        // Studio owners can update status as before (except completed/cancelled reservations)
+        // Studio owners can update status as before (except completed/cancelled/expired reservations)
         else if (isStudioOwner) {
             if (
                 reservation.status === "cancelled" ||
-                reservation.status === "completed"
+                reservation.status === "completed" ||
+                reservation.status === "expired"
             ) {
                 throw new ReservationError(
                     400,
-                    "Cannot change status of completed or cancelled reservations"
+                    "Cannot change status of completed, cancelled, or expired reservations"
                 );
             }
 
@@ -357,9 +360,12 @@ export async function cleanupExpiredReservations() {
             now
         );
 
-        // Update each expired reservation to cancelled status
+        // Update each expired reservation based on their status:
+        // - 'confirmed' reservations become 'completed' (user can leave review)
+        // - 'pending' reservations become 'expired' (user cannot leave review)
         for (const reservation of expiredReservations) {
-            await Reservation.update(reservation.id, { status: "cancelled" });
+            const newStatus = reservation.status === "confirmed" ? "completed" : "expired";
+            await Reservation.update(reservation.id, { status: newStatus });
         }
 
         return expiredReservations.length;

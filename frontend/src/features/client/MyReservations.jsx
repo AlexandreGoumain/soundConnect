@@ -1,11 +1,10 @@
 import { useState } from "react";
-import SelectDropdown from "../../components/shared/SelectDropdown.jsx";
-import ReservationCard from "./components/ReservationCard.jsx";
 import ReviewModal from "../../components/shared/ReviewModal.jsx";
-import "../../styles/components/_studio-dashboard.scss";
+import SelectDropdown from "../../components/shared/SelectDropdown.jsx";
 import "../../styles/components/_reservation-card.scss";
+import "../../styles/components/_studio-dashboard.scss";
+import ReservationCard from "./components/ReservationCard.jsx";
 import { useMyReservations } from "./hooks/useMyReservations.js";
-
 
 export default function MyReservations() {
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -52,11 +51,16 @@ export default function MyReservations() {
     };
 
     const handleSubmitReview = async (reviewData) => {
-        await submitReview({
-            ...reviewData,
-            studio_id: selectedReservation?.studio_id
-        });
-        handleCloseReviewModal();
+        try {
+            await submitReview({
+                ...reviewData,
+                studio_id: selectedReservation?.studio_id,
+            });
+            handleCloseReviewModal();
+        } catch (error) {
+            console.error("Error in handleSubmitReview:", error);
+            // On ne ferme PAS la modal en cas d'erreur
+        }
     };
 
     if (loading) return <div className="container">Chargement…</div>;
@@ -69,10 +73,14 @@ export default function MyReservations() {
                     <div>
                         <h1 className="title">Mes réservations</h1>
                         <p className="subtitle">
-                            {totalReservations} réservation{totalReservations > 1 ? "s" : ""}
+                            {totalReservations} réservation
+                            {totalReservations > 1 ? "s" : ""}
                             {statusFilter !== "all" &&
-                                ` (${getStatusLabel(statusFilter).toLowerCase()})`}
-                            {totalPages > 1 && ` - Page ${currentPage} sur ${totalPages}`}
+                                ` (${getStatusLabel(
+                                    statusFilter
+                                ).toLowerCase()})`}
+                            {totalPages > 1 &&
+                                ` - Page ${currentPage} sur ${totalPages}`}
                         </p>
                     </div>
 
@@ -89,6 +97,7 @@ export default function MyReservations() {
                                     { value: "confirmed", label: "Confirmées" },
                                     { value: "completed", label: "Terminées" },
                                     { value: "cancelled", label: "Annulées" },
+                                    { value: "expired", label: "Expirées" },
                                 ]}
                             />
                         </div>
@@ -135,8 +144,12 @@ export default function MyReservations() {
                                 calculateDuration={calculateDuration}
                                 getStatusLabel={getStatusLabel}
                                 getStatusIcon={getStatusIcon}
-                                isReservationModifiable={isReservationModifiable}
-                                isReservationCancellable={isReservationCancellable}
+                                isReservationModifiable={
+                                    isReservationModifiable
+                                }
+                                isReservationCancellable={
+                                    isReservationCancellable
+                                }
                                 canLeaveReview={canLeaveReview}
                             />
                         ))}

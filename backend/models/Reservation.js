@@ -122,12 +122,13 @@ class Reservation {
         const totalReservations = countResult[0].total;
         const totalPages = Math.ceil(totalReservations / limitInt);
 
-        // Get paginated results
+        // Get paginated results with has_reviewed flag
         const [reservations] = await pool.execute(
             `SELECT r.*,
                     s.name as studio_name, s.email as studio_email, s.phone as studio_phone,
                     s.street_number, s.street_name, s.city as studio_city, s.postal_code as studio_postal_code,
-                    CONCAT(s.street_number, ' ', s.street_name) as studio_address
+                    CONCAT(s.street_number, ' ', s.street_name) as studio_address,
+                    EXISTS(SELECT 1 FROM reviews WHERE reservation_id = r.id) as has_reviewed
              FROM reservations r
              JOIN studios s ON r.studio_id = s.id
              ${whereClause}
@@ -154,7 +155,8 @@ class Reservation {
             `SELECT r.*,
                     s.name as studio_name, s.email as studio_email, s.phone as studio_phone,
                     s.street_number, s.street_name, s.city as studio_city, s.postal_code as studio_postal_code,
-                    CONCAT(s.street_number, ' ', s.street_name) as studio_address
+                    CONCAT(s.street_number, ' ', s.street_name) as studio_address,
+                    EXISTS(SELECT 1 FROM reviews WHERE reservation_id = r.id) as has_reviewed
              FROM reservations r
              JOIN studios s ON r.studio_id = s.id
              WHERE r.user_id = ?
@@ -267,7 +269,7 @@ class Reservation {
         const [reservations] = await pool.execute(
             `SELECT * FROM reservations
              WHERE end_datetime < ?
-             AND status NOT IN ('completed', 'cancelled')`,
+             AND status NOT IN ('completed', 'cancelled', 'expired')`,
             [currentTime]
         );
 

@@ -27,6 +27,7 @@ export default function StudioReservationsView({ all = false }) {
         confirmed: 2,
         completed: 3,
         cancelled: 4,
+        expired: 5,
     };
 
     // Filtrer et trier les réservations
@@ -61,6 +62,7 @@ export default function StudioReservationsView({ all = false }) {
             confirmed: "Confirmée",
             completed: "Terminée",
             cancelled: "Annulée",
+            expired: "Expirée",
         };
         return labels[status] || status;
     };
@@ -71,6 +73,7 @@ export default function StudioReservationsView({ all = false }) {
             confirmed: "✅",
             completed: "🏁",
             cancelled: "❌",
+            expired: "⌛",
         };
         return icons[status] || "📋";
     };

@@ -133,7 +133,7 @@ function handleReviewError(res, error, fallbackMessage) {
         });
     }
 
-    error(fallbackMessage, error);
+    console.error(fallbackMessage, error);
     return res.status(500).json({
         success: false,
         message: fallbackMessage,
