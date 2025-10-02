@@ -15,11 +15,12 @@ export default function StarRating({
 
     const renderStars = () => {
         const stars = [];
+        const numericRating = Number(rating) || 0;
         for (let i = 1; i <= maxRating; i++) {
             stars.push(
                 <span
                     key={i}
-                    className={`star ${i <= rating ? "filled" : ""} ${
+                    className={`star ${i <= numericRating ? "filled" : ""} ${
                         interactive ? "interactive" : ""
                     } ${size}`}
                     onClick={interactive ? () => handleStarClick(i) : undefined}
@@ -35,7 +36,7 @@ export default function StarRating({
         <div className={`star-rating ${className}`.trim()}>
             <div className="stars">{renderStars()}</div>
             {showNumber && (
-                <span className="rating-number">{rating.toFixed(1)}</span>
+                <span className="rating-number">{Number(rating).toFixed(1)}</span>
             )}
         </div>
     );

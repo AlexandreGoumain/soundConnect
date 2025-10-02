@@ -3,15 +3,17 @@ import StarRating from "./StarRating.jsx";
 export default function ReviewStats({ stats }) {
     if (!stats) return null;
 
+    const avgRating = Number(stats.average_rating) || 0;
+
     return (
         <div className="review-stats">
             <div className="average-rating">
                 <span className="rating-number">
-                    {stats.average_rating?.toFixed(1) || "0.0"}
+                    {avgRating.toFixed(1)}
                 </span>
-                <StarRating rating={Math.round(stats.average_rating || 0)} />
+                <StarRating rating={Math.round(avgRating)} />
                 <span className="total-reviews">
-                    ({stats.total_reviews} avis)
+                    ({stats.total_reviews || 0} avis)
                 </span>
             </div>
         </div>
