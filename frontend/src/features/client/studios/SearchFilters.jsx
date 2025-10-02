@@ -2,6 +2,7 @@ import DateInput from "../../../components/shared/DateInput.jsx";
 import InputField from "../../../components/shared/InputField.jsx";
 import SectionCard from "../../../components/shared/SectionCard.jsx";
 import SelectField from "../../../components/shared/SelectField.jsx";
+import TagsInput from "../../../components/shared/TagsInput.jsx";
 import "../../../styles/components/_studios-list.scss";
 import { useSearchFilters } from "./hooks/useSearchFilters.js";
 
@@ -99,23 +100,21 @@ export default function SearchFilters() {
                         Spécialités et équipements
                     </h3>
                     <div className="search-filters__row search-filters__row--two-cols">
-                        <InputField
+                        <TagsInput
                             id="tags"
                             name="tags"
                             label="Tags"
-                            hint="Séparés par virgules"
                             value={filters.tags}
                             onChange={handleTagsChange}
-                            placeholder="mixage, batterie"
+                            placeholder="mixage, batterie..."
                         />
-                        <InputField
+                        <TagsInput
                             id="equipment"
                             name="equipment"
                             label="Équipements"
-                            hint="Séparés par virgules"
                             value={filters.equipment}
                             onChange={handleEquipmentChange}
-                            placeholder="piano, batterie"
+                            placeholder="piano, batterie..."
                         />
                     </div>
                 </div>
