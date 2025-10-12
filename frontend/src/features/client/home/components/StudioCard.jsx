@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import StarRating from "../../../../components/shared/StarRating.jsx";
+import ImageWithFallback from "../../../../components/shared/ImageWithFallback.jsx";
 import { resolveStudioImages } from "../../../studio-dashboard/lib/studioImages.js";
 import { BADGES, HOME_CONSTANTS } from "../constants/homeConstants.js";
 
@@ -31,10 +32,9 @@ export default function StudioCard({ studio }) {
             >
                 <figure className="studio-image">
                     {coverImage ? (
-                        <img
+                        <ImageWithFallback
                             src={coverImage}
                             alt={`Studio d'enregistrement ${studio.name}`}
-                            loading="lazy"
                             width="300"
                             height="200"
                             itemProp="image"

@@ -4,6 +4,7 @@ import { useAuth } from "../../../hooks/useAuth.js";
 import { useToast } from "../../../hooks/useToast.js";
 import "../../../styles/components/_profile.scss";
 import { useProfile } from "./hooks/useProfile.js";
+import ImageWithFallback from "../../../components/shared/ImageWithFallback.jsx";
 
 export default function Profile() {
     const { refresh, user } = useAuth();
@@ -57,14 +58,13 @@ export default function Profile() {
                                         }`}
                                     >
                                         {avatarUrl ? (
-                                            <img
+                                            <ImageWithFallback
                                                 src={avatarUrl}
                                                 alt={`Avatar de ${
                                                     displayName ||
                                                     profileInfo?.username ||
                                                     "votre compte"
                                                 }`}
-                                                loading="lazy"
                                             />
                                         ) : (
                                             <span aria-hidden="true">

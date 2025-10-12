@@ -1,6 +1,7 @@
 import { useStudioImagesManager } from "../hooks/useStudioImagesManager.js";
 import { MAX_STUDIO_IMAGES } from "../lib/studioImages.js";
 import "../../../styles/components/_studio-dashboard.scss";
+import ImageWithFallback from "../../../components/shared/ImageWithFallback.jsx";
 
 export default function StudioImagesManager({
     studioId,
@@ -64,7 +65,7 @@ export default function StudioImagesManager({
                             >
                                 <div className="studio-image-card__preview">
                                     {imageUrl ? (
-                                        <img
+                                        <ImageWithFallback
                                             src={resolveImageSrc(imageUrl)}
                                             alt={`Studio ${index + 1}`}
                                         />

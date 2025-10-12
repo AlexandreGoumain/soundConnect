@@ -52,6 +52,11 @@
     max-width: 500px;
     margin: 0 auto;
     gap: $spacing-sm;
+    align-items: stretch;
+    .form-group {
+        margin-bottom: 0;
+        width: 100%;
+    }
 
     @include tablet {
         flex-direction: row;
@@ -74,7 +79,8 @@
 
 .search-btn {
     white-space: nowrap;
-    padding: $spacing-md $spacing-xl;
+    // Match input vertical padding (see input-base mixin)
+    padding: 0.75rem $spacing-xl;
     font-weight: 600;
     width: 100%;
 
@@ -258,20 +264,25 @@
 
 // How it works Section - Enhanced
 .how-it-works-section {
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-studios) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--bg-primary) 0%,
+        var(--bg-studios) 100%
+    );
     padding: $spacing-xxl 0;
     text-align: center;
     position: relative;
     overflow: hidden;
 
     &::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></svg>')
+            repeat;
         background-size: 50px 50px;
         opacity: 0.3;
         pointer-events: none;
@@ -385,13 +396,17 @@
             position: relative;
 
             &::before {
-                content: '';
+                content: "";
                 position: absolute;
                 top: 50%;
                 left: 20%;
                 right: 20%;
                 height: 2px;
-                background: linear-gradient(to right, var(--primary-light), var(--primary));
+                background: linear-gradient(
+                    to right,
+                    var(--primary-light),
+                    var(--primary)
+                );
                 transform: translateY(-50%);
                 z-index: 0;
                 opacity: 0.3;
@@ -437,7 +452,11 @@
 .step-number {
     width: 64px;
     height: 64px;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--primary) 0%,
+        var(--primary-light) 100%
+    );
     color: var(--text-white);
     border-radius: 50%;
     display: flex;
@@ -484,7 +503,11 @@
         right: -$spacing-xxl;
         width: $spacing-xxl;
         height: 2px;
-        background: linear-gradient(to right, var(--primary-light), transparent);
+        background: linear-gradient(
+            to right,
+            var(--primary-light),
+            transparent
+        );
         transform: translateY(-50%);
         z-index: 0;
     }
@@ -507,13 +530,17 @@
     overflow: hidden;
 
     &::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(to right, var(--primary), var(--primary-light));
+        background: linear-gradient(
+            to right,
+            var(--primary),
+            var(--primary-light)
+        );
     }
 
     @include tablet {
@@ -541,7 +568,11 @@
 }
 
 .cta-button {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--primary) 0%,
+        var(--primary-light) 100%
+    );
     color: var(--text-white);
     border: none;
     border-radius: $border-radius;
@@ -555,13 +586,18 @@
     overflow: hidden;
 
     &::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+        );
         transition: left 0.6s;
     }
 

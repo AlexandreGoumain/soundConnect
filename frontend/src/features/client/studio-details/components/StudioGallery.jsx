@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import ImageWithFallback from "../../../../components/shared/ImageWithFallback.jsx";
 
 export default function StudioGallery({
     carouselImages,
@@ -14,12 +15,9 @@ export default function StudioGallery({
         <div className="studio-gallery">
             <div className="main-image">
                 {activeImage ? (
-                    <img
+                    <ImageWithFallback
                         src={activeImage}
-                        alt={`Photo ${
-                            currentImageIndex + 1
-                        } du studio ${studioName}`}
-                        loading="lazy"
+                        alt={`Photo ${currentImageIndex + 1} du studio ${studioName}`}
                     />
                 ) : (
                     <div className="image-placeholder">
